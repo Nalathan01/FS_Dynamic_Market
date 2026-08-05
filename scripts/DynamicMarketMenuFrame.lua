@@ -66,18 +66,6 @@ local function dmMonthLabel(value)
     return label
 end
 
-local function dmFormatMoneyDelta(value)
-    local number = tonumber(value) or 0
-    local absolute = math.abs(number)
-    local text = g_i18n:formatMoney(absolute * 1000, 0, true, true)
-    if number > 0.00001 then
-        return "+" .. text
-    elseif number < -0.00001 then
-        return "-" .. text
-    end
-    return text
-end
-
 function DynamicMarketMenuFrame.new(i18n, messageCenter)
     local self = DynamicMarketMenuFrame:superClass().new(nil, DynamicMarketMenuFrame._mt)
     self.name = "DynamicMarketMenuFrame"
@@ -86,14 +74,38 @@ function DynamicMarketMenuFrame.new(i18n, messageCenter)
     self.rows = {}
     self.allRows = {}
     self.searchText = ""
-    self.onlyStored = false
+    self.stockFilterState = 0
     self.isOpen = false
     self.refreshTimerMs = 0
     self.lastUiPriceRefreshToken = -1
     self.backButtonInfo = {
         inputAction = InputAction.MENU_BACK
     }
-    self:setMenuButtonInfo({self.backButtonInfo})
+    self.showStockButtonInfo = {
+        text = self.i18n:getText("dm_action_show_stock_locations"),
+        inputAction = InputAction.MENU_ACTIVATE,
+        disabled = true,
+        callback = function()
+            self:showStockLocations()
+        end
+    }
+    self.mapHotspotButtonInfo = {
+        text = self.i18n:getText("dm_action_show_on_map"),
+        inputAction = InputAction.MENU_ACCEPT,
+        disabled = true,
+        callback = function()
+            self:onClickMapHotspot()
+        end
+    }
+    self.toggleFavoriteButtonInfo = {
+        text = self.i18n:getText("dm_action_add_favorite"),
+        inputAction = InputAction.MENU_EXTRA_1,
+        disabled = true,
+        callback = function()
+            self:onClickToggleFavorite()
+        end
+    }
+    self:setMenuButtonInfo({self.backButtonInfo, self.showStockButtonInfo, self.mapHotspotButtonInfo, self.toggleFavoriteButtonInfo})
     return self
 end
 
@@ -159,7 +171,10 @@ function DynamicMarketMenuFrame:onFrameOpen()
     self:updateYearlyAverageOptionVisibility()
     self:updateContent()
     self:updateSortIcons()
-    self:activateSearchInput()
+    self:deactivateSearchInput()
+    if self.dynamicMarketTable ~= nil and FocusManager ~= nil then
+        FocusManager:setFocus(self.dynamicMarketTable)
+    end
 end
 
 function DynamicMarketMenuFrame:onFrameClose()
@@ -236,19 +251,20 @@ function DynamicMarketMenuFrame:getSortValue(row, column)
         return dmNumber(row.marketFactor)
     elseif column == "price" then
         return dmNumber(row.bestPrice or row.currentBestPrice)
+    elseif column == "pressure" then
+        return dmNumber(row.pressureAmount)
     elseif column == "stock" then
         return dmNumber(row.stockLevel)
     elseif column == "yearlyAverage" then
-        if self:isYearlyAverageEnabled() then
-            return dmNumber(row.yearlyAveragePrice)
-        end
         return dmNumber(row.baseCurrentPrice)
-    elseif column == "bestMonthPrice" then
-        return dmNumber((row.bestPrice or row.currentBestPrice) - (row.baseCurrentPrice or 0))
+    elseif column == "stockValue" then
+        return dmNumber(row.stockLevel) * dmNumber(row.bestPrice or row.currentBestPrice)
     elseif column == "station" then
         return dmLowerText(row.bestStation)
     elseif column == "month" then
         return tonumber(row.bestMonthNumber) or dmMonthOrder(row.bestMonth)
+    elseif column == "favorite" then
+        return DynamicMarket ~= nil and DynamicMarket:isFavorite(row.name) and 1 or 0
     end
     return dmLowerText(row.title)
 end
@@ -270,7 +286,10 @@ function DynamicMarketMenuFrame:sortRows()
 end
 
 function DynamicMarketMenuFrame:rowMatchesSearch(row)
-    if self.onlyStored == true and dmNumber(row.stockLevel) <= 0 then
+    if self.stockFilterState == 1 and dmNumber(row.stockLevel) <= 0 then
+        return false
+    end
+    if self.stockFilterState == 2 and not (DynamicMarket ~= nil and DynamicMarket:isFavorite(row.name)) then
         return false
     end
     local search = dmLowerText(self.searchText)
@@ -308,6 +327,10 @@ function DynamicMarketMenuFrame:updateContent()
     if self.dynamicMarketTable ~= nil then
         self.dynamicMarketTable:reloadData()
     end
+    if self.selectedRow == nil and self.rows[1] ~= nil then
+        self.selectedRow = self.rows[1]
+    end
+    self:updateActionButtonStates()
 end
 
 function DynamicMarketMenuFrame:setSortColumn(column)
@@ -341,10 +364,12 @@ end
 
 
 function DynamicMarketMenuFrame:onClickStoredOnly(element)
-    self.onlyStored = not self.onlyStored
+    self.stockFilterState = (self.stockFilterState + 1) % 3
     if self.storedOnlyButton ~= nil then
-        if self.onlyStored == true then
+        if self.stockFilterState == 1 then
             self.storedOnlyButton:setText(g_i18n:getText("dm_filter_stored_on"))
+        elseif self.stockFilterState == 2 then
+            self.storedOnlyButton:setText(g_i18n:getText("dm_filter_favorites_on"))
         else
             self.storedOnlyButton:setText(g_i18n:getText("dm_filter_stored_off"))
         end
@@ -361,7 +386,7 @@ function DynamicMarketMenuFrame:getSortHeaderLabelKey(column)
             return "dm_header_yearlyaverage"
         end
         return "dm_header_baseprice"
-    elseif column == "bestMonthPrice" then
+    elseif column == "stockValue" then
         return "dm_header_difference"
     elseif column == "good" then
         return "dm_header_good"
@@ -389,7 +414,7 @@ function DynamicMarketMenuFrame:getSortHeaderElements()
         stock = self.stockHeader,
         market = self.marketHeader,
         yearlyAverage = self.yearlyAverageHeader,
-        bestMonthPrice = self.bestMonthPriceHeader,
+        stockValue = self.stockValueHeader,
         station = self.stationHeader,
         month = self.monthHeader
     }
@@ -399,8 +424,6 @@ function DynamicMarketMenuFrame:updateSortIcons()
     if g_i18n == nil then
         return
     end
-    local activeColumn = DynamicMarketMenuFrame.sortColumn
-    local ascending = DynamicMarketMenuFrame.sortAscending ~= false
     for column, element in pairs(self:getSortHeaderElements()) do
         if element ~= nil and element.setText ~= nil then
             local labelKey = self:getSortHeaderLabelKey(column)
@@ -427,6 +450,28 @@ function DynamicMarketMenuFrame:populateCellForItemInSection(list, section, inde
     local icon = cell:getAttribute("icon")
     if icon ~= nil and row.hudOverlayFilename ~= nil then
         icon:setImageFilename(row.hudOverlayFilename)
+    end
+
+    local favoriteCell = cell:getAttribute("favorite")
+    if favoriteCell ~= nil then
+        local isFav = DynamicMarket ~= nil and DynamicMarket:isFavorite(row.name)
+        favoriteCell:setText(isFav and "*" or "-")
+        local r, g, b = 0.4, 0.4, 0.4
+        if isFav then
+            r, g, b = 1, 0.85, 0.15
+        end
+        if favoriteCell.setTextColor ~= nil then
+            favoriteCell:setTextColor(r, g, b, 1)
+        end
+        if favoriteCell.setTextSelectedColor ~= nil then
+            favoriteCell:setTextSelectedColor(r, g, b, 1)
+        end
+        if favoriteCell.setTextFocusedColor ~= nil then
+            favoriteCell:setTextFocusedColor(r, g, b, 1)
+        end
+        if favoriteCell.setTextHighlightedColor ~= nil then
+            favoriteCell:setTextHighlightedColor(r, g, b, 1)
+        end
     end
 
     local goodCell = cell:getAttribute("good")
@@ -462,15 +507,38 @@ function DynamicMarketMenuFrame:populateCellForItemInSection(list, section, inde
     local priceCell = cell:getAttribute("price")
     if priceCell ~= nil then
         priceCell:setText(g_i18n:formatMoney((tonumber(row.bestPrice or row.currentBestPrice) or 0) * 1000, 0, true, true))
+        if priceCell.setTextColor ~= nil then
+            if row.stationPressureActive == true then
+                priceCell:setTextColor(0.95, 0.10, 0.10, 1)
+            else
+                priceCell:setTextColor(1, 1, 1, 1)
+            end
+        end
+    end
+
+    local pressureCell = cell:getAttribute("pressure")
+    if pressureCell ~= nil then
+        local pressureAmount = tonumber(row.pressureAmount) or 0
+        if row.pressureActive == true then
+            pressureCell:setText(g_i18n:formatMoney(pressureAmount * 1000, 0, true, true))
+            if pressureCell.setTextColor ~= nil then
+                if row.pressureRecovering == true then
+                    pressureCell:setTextColor(0.95, 0.65, 0.10, 1)
+                else
+                    pressureCell:setTextColor(0.95, 0.10, 0.10, 1)
+                end
+            end
+        else
+            pressureCell:setText("-")
+            if pressureCell.setTextColor ~= nil then
+                pressureCell:setTextColor(0.55, 0.55, 0.55, 1)
+            end
+        end
     end
 
     local yearlyAverage = cell:getAttribute("yearlyaverage")
     if yearlyAverage ~= nil then
-        if self:isYearlyAverageEnabled() then
-            yearlyAverage:setText(g_i18n:formatMoney((tonumber(row.yearlyAveragePrice) or 0) * 1000, 0, true, true))
-        else
-            yearlyAverage:setText(g_i18n:formatMoney((tonumber(row.baseCurrentPrice) or 0) * 1000, 0, true, true))
-        end
+        yearlyAverage:setText(g_i18n:formatMoney((tonumber(row.baseCurrentPrice) or 0) * 1000, 0, true, true))
     end
     local stationCell = cell:getAttribute("station")
     if stationCell ~= nil then
@@ -478,17 +546,16 @@ function DynamicMarketMenuFrame:populateCellForItemInSection(list, section, inde
     end
 
 
-    local basePriceCell = cell:getAttribute("bestmonthprice")
-    if basePriceCell ~= nil then
-        local difference = (tonumber(row.bestPrice or row.currentBestPrice) or 0) - (tonumber(row.baseCurrentPrice) or 0)
-        basePriceCell:setText(dmFormatMoneyDelta(difference))
-        if basePriceCell.setTextColor ~= nil then
-            if difference > 0.00001 then
-                basePriceCell:setTextColor(0.55, 0.82, 0.10, 1)
-            elseif difference < -0.00001 then
-                basePriceCell:setTextColor(0.95, 0.10, 0.10, 1)
+    local stockValueCell = cell:getAttribute("stockvalue")
+    if stockValueCell ~= nil then
+        local stockLevel = tonumber(row.stockLevel) or 0
+        local totalValue = stockLevel * (tonumber(row.bestPrice or row.currentBestPrice) or 0)
+        stockValueCell:setText(g_i18n:formatMoney(totalValue, 0, true, true))
+        if stockValueCell.setTextColor ~= nil then
+            if stockLevel > 0 then
+                stockValueCell:setTextColor(1, 1, 1, 1)
             else
-                basePriceCell:setTextColor(0.75, 0.75, 0.75, 1)
+                stockValueCell:setTextColor(0.55, 0.55, 0.55, 1)
             end
         end
     end
@@ -525,8 +592,97 @@ function DynamicMarketMenuFrame:onClickPriceHeader(element)
     self:setSortColumn("price")
 end
 
+function DynamicMarketMenuFrame:onClickPressureHeader(element)
+    self:setSortColumn("pressure")
+end
+
 function DynamicMarketMenuFrame:onClickStockHeader(element)
     self:setSortColumn("stock")
+end
+
+function DynamicMarketMenuFrame:onClickFavoriteHeader(element)
+    self:setSortColumn("favorite")
+end
+
+function DynamicMarketMenuFrame:updateActionButtonStates()
+    local row = self.selectedRow
+
+    if self.showStockButtonInfo ~= nil then
+        self.showStockButtonInfo.disabled = row == nil
+    end
+
+    self.mapHotspot = nil
+    if row ~= nil and DynamicMarket ~= nil and DynamicMarket.getStationMapHotspot ~= nil then
+        self.mapHotspot = DynamicMarket:getStationMapHotspot(row.bestStationObject)
+    end
+    if self.mapHotspotButtonInfo ~= nil then
+        self.mapHotspotButtonInfo.disabled = self.mapHotspot == nil
+        if self.mapHotspot ~= nil and g_currentMission ~= nil and self.mapHotspot == g_currentMission.currentMapTargetHotspot then
+            self.mapHotspotButtonInfo.text = self.i18n:getText("dm_action_hide_from_map")
+        else
+            self.mapHotspotButtonInfo.text = self.i18n:getText("dm_action_show_on_map")
+        end
+    end
+
+    if self.toggleFavoriteButtonInfo ~= nil then
+        self.toggleFavoriteButtonInfo.disabled = row == nil
+        if row ~= nil and DynamicMarket ~= nil and DynamicMarket:isFavorite(row.name) then
+            self.toggleFavoriteButtonInfo.text = self.i18n:getText("dm_action_remove_favorite")
+        else
+            self.toggleFavoriteButtonInfo.text = self.i18n:getText("dm_action_add_favorite")
+        end
+    end
+
+    self:setMenuButtonInfoDirty()
+end
+
+function DynamicMarketMenuFrame:onListSelectionChanged(list, section, index)
+    self.selectedRow = self.rows[index]
+    self:updateActionButtonStates()
+end
+
+function DynamicMarketMenuFrame:onClickMapHotspot()
+    local hotspot = self.mapHotspot
+    if hotspot == nil or g_currentMission == nil then
+        return
+    end
+
+    if hotspot == g_currentMission.currentMapTargetHotspot then
+        g_currentMission:setMapTargetHotspot()
+    else
+        g_currentMission:setMapTargetHotspot(hotspot)
+    end
+
+    self:updateActionButtonStates()
+end
+
+function DynamicMarketMenuFrame:onClickToggleFavorite()
+    local row = self.selectedRow
+    if row == nil or DynamicMarket == nil then
+        return
+    end
+
+    DynamicMarket:setFavorite(row.name, not DynamicMarket:isFavorite(row.name))
+    self:updateActionButtonStates()
+    if self.dynamicMarketTable ~= nil then
+        self.dynamicMarketTable:reloadData()
+    end
+end
+
+function DynamicMarketMenuFrame:showStockLocations()
+    local row = self.selectedRow
+    if row == nil then
+        return
+    end
+
+    if g_gui == nil or g_gui.showDialog == nil then
+        return
+    end
+
+    local dialog = g_gui:showDialog("DynamicMarketStockLocationDialog")
+    if dialog ~= nil and dialog.target ~= nil and dialog.target.setStockData ~= nil then
+        dialog.target:setStockData(tostring(row.title or ""), row.stockLocations)
+    end
 end
 
 function DynamicMarketMenuFrame:onClickYearlyAverageHeader(element)
@@ -539,8 +695,8 @@ function DynamicMarketMenuFrame:onClickStationHeader(element)
     self:setSortColumn("station")
 end
 
-function DynamicMarketMenuFrame:onClickBestMonthPriceHeader(element)
-    self:setSortColumn("bestMonthPrice")
+function DynamicMarketMenuFrame:onClickStockValueHeader(element)
+    self:setSortColumn("stockValue")
 end
 
 function DynamicMarketMenuFrame:onClickMonthHeader(element)

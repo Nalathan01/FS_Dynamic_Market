@@ -29,9 +29,6 @@
         <textSelectedColor value="$preset_colorWhite" />
         <textDisabledColor value="$preset_colorDisabled" />
         <textOffset value="8px 0px" />
-        <cursorColor value="$preset_colorWhite" />
-        <cursorSize value="3px 24px" />
-        <cursorOffset value="9px 3px" />
         <maxInputTextWidth value="330px" />
     </Profile>
     <Profile name="dynamicMarketStoredOnlyButton" extends="wideButton" with="anchorMiddleLeft">
@@ -118,5 +115,37 @@
     <Profile name="dynamicMarketListSliderBox" extends="fs25_listSliderBox" with="anchorTopStretchingX pivotTopRight">
         <position value="28px -84px" />
         <absoluteSizeOffset value="0px 80px" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationDialogFrame" extends="fs25_dialogBg">
+        <size value="500px 550px" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationHeaderBox" extends="fs25_statisticsHeaderBox" with="anchorTopStretchingX pivotTopLeft">
+        <position value="0px -44px" />
+        <size value="430px 32px" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationHeader" extends="baseReference" with="anchorMiddleLeft">
+        <textBold value="true" />
+        <textSize value="16px" />
+        <textColor value="$preset_colorWhite" />
+        <textUpperCase value="true" />
+        <textAlignment value="left" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationHeaderRight" extends="dynamicMarketStockLocationHeader">
+        <textAlignment value="right" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationList" extends="emptyPanel" with="anchorStretchingYLeft pivotTopLeft">
+        <position value="0px -84px" />
+        <absoluteSizeOffset value="0px 130px" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationListItem" extends="baseReference" with="anchorTopStretchingX alternating">
+        <height value="32px"/>
+        <imageColor value="$preset_fs25_colorGrey" />
+        <alternateBackgroundColor value="$preset_fs25_colorGreyDark_50" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationCellName" extends="dynamicMarketRowCellLeft">
+        <size value="280px 32px" />
+    </Profile>
+    <Profile name="dynamicMarketStockLocationCellAmount" extends="dynamicMarketRowCellCenter">
+        <size value="150px 32px" />
     </Profile>
 </GUIProfiles>

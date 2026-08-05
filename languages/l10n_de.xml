@@ -3,8 +3,12 @@
     <translationContributors/>
     <texts>
         <text name="dm_notice_title" text="Dynamischer Markt"/>
+        <text name="dm_stock_alert_title" text="Preisanstieg im Lager"/>
         <text name="dm_notice_updated" text="Neue Marktpreise berechnet."/>
         <text name="dm_notice_stable" text="Die wichtigsten Warengruppen bleiben stabil."/>
+        <text name="dm_notice_station_pressure_falling" text="%s bei %s: Preis auf %s gefallen (-%d%%)."/>
+        <text name="dm_notice_station_pressure_recovered" text="%s bei %s: Preis wieder bei %s."/>
+        <text name="dm_notice_station_pressure_recovering" text="%s bei %s: Preis auf %s gestiegen (noch -%d%%)."/>
         <text name="dm_notice_up_light" text="%s steigt leicht"/>
         <text name="dm_notice_up_clear" text="%s steigt deutlich"/>
         <text name="dm_notice_up_strong" text="%s steigt stark"/>
@@ -17,6 +21,7 @@
         <text name="dm_group_livestock" text="Nutztiere"/>
         <text name="dm_group_processedGoods" text="verarbeitete Waren"/>
         <text name="dm_group_buildingMaterial" text="Baustoffe &amp; Holz"/>
+        <text name="dm_group_mapOwn" text="Kartenspezifisch"/>
         <text name="dm_menu_title" text="Dynamischer Markt"/>
         <text name="dm_header_icon" text=""/>
         <text name="dm_header_good" text="Ware"/>
@@ -24,17 +29,28 @@
         <text name="dm_header_market" text="Markt"/>
         <text name="dm_header_trend" text=""/>
         <text name="dm_header_price" text="Akt. Preis"/>
+        <text name="dm_header_pressure" text="Druck"/>
         <text name="dm_header_baseprice" text="Basispreis"/>
         <text name="dm_header_yearlyaverage" text="Jahresbasis"/>
         <text name="dm_header_station" text="Beste Verkaufsstelle"/>
-        <text name="dm_header_difference" text="Differenz"/>
+        <text name="dm_header_difference" text="Verkaufswert"/>
         <text name="dm_header_bestmonthprice" text="Basispreis"/>
         <text name="dm_header_bestmonth" text="Bester Monat"/>
         <text name="dm_header_stock" text="Bestand"/>
+        <text name="dm_location_bale" text="Ballen"/>
+        <text name="dm_action_show_stock_locations" text="Lagerorte anzeigen"/>
+        <text name="dm_action_show_on_map" text="Auf Karte zeigen"/>
+        <text name="dm_action_hide_from_map" text="Von Karte entfernen"/>
+        <text name="dm_action_add_favorite" text="Zu Favoriten hinzufügen"/>
+        <text name="dm_action_remove_favorite" text="Aus Favoriten entfernen"/>
+        <text name="dm_dialog_location_header" text="Standort"/>
+        <text name="dm_dialog_amount_header" text="Menge"/>
+        <text name="dm_dialog_close" text="Schließen"/>
         <text name="dm_search_label" text="Suche"/>
         <text name="dm_footer_visible" text=""/>
         <text name="dm_filter_stored_off" text="Alle Waren"/>
         <text name="dm_filter_stored_on" text="Nur Lagerbestand"/>
+        <text name="dm_filter_favorites_on" text="Nur Favoriten"/>
         <text name="dm_settings_header" text="Dynamic Market"/>
         <text name="dm_setting_pricebase_title" text="Preisbasis"/>
         <text name="dm_setting_pricebase_desc" text="Normal: aktuelle GIANTS-Saisonpreise. Jahr Ø: stabile Jahresbasis."/>
@@ -44,6 +60,19 @@
         <text name="dm_setting_dailyrecalc_desc" text="Aus: Neuberechnung nur bei Monatswechsel. An: bei mehreren Tagen pro Monat jeden Tag neu berechnen."/>
         <text name="dm_setting_dailyrecalc_off" text="Aus"/>
         <text name="dm_setting_dailyrecalc_on" text="An"/>
+        <text name="dm_setting_stationthreshold_title" text="Schwelle Verkaufsdruck"/>
+        <text name="dm_setting_stationthreshold_desc" text="Ab dieser Menge pro Verkaufsstelle und Ware beginnt der Preis zu fallen, wenn weiter verkauft wird."/>
+        <text name="dm_setting_stationthreshold_1" text="10.000 l"/>
+        <text name="dm_setting_stationthreshold_2" text="25.000 l"/>
+        <text name="dm_setting_stationthreshold_3" text="50.000 l"/>
+        <text name="dm_setting_stationthreshold_4" text="100.000 l"/>
+        <text name="dm_setting_stationthreshold_5" text="200.000 l"/>
+        <text name="dm_setting_stationpercent_title" text="Preisabschlag pro Stufe"/>
+        <text name="dm_setting_stationpercent_desc" text="Wie stark der Preis je weiterer Schwelle an dieser Verkaufsstelle zusätzlich fällt."/>
+        <text name="dm_setting_stationpercent_1" text="1 %"/>
+        <text name="dm_setting_stationpercent_2" text="2 %"/>
+        <text name="dm_setting_stationpercent_3" text="3 %"/>
+        <text name="dm_setting_stationpercent_4" text="5 %"/>
         <text name="dm_month_jan" text="Jan"/>
         <text name="dm_month_feb" text="Feb"/>
         <text name="dm_month_mar" text="März"/>

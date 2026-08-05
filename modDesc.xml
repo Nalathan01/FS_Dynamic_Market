@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<modDesc descVersion="110">
+<modDesc descVersion="111">
     <author>Nalathan</author>
-    <version>1.1.1.0</version>
+    <version>1.1.9.0</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
         <fr>Marché Dynamique</fr>
     </title>
     <description>
-        <en><![CDATA[Extends the Farming Simulator selling price system with an additional dynamic monthly market layer. The base game pricing and seasonal logic remain unchanged and are used as foundation in standard mode. On top of this, an independent market adjustment applies monthly price variations based on product group and global market state.
+        <en><![CDATA[Dynamic Market makes selling prices change over time, on top of the normal seasonal swings from the base game. Each product group develops differently, so the best time to sell keeps changing.
 
-Optionally, a yearly average mode can be enabled. In this mode the Giants seasonal price curve is disabled and replaced by a stable yearly mean value. This yearly average is calculated based on the usual Giants pricing logic, including difficulty settings and selling station influence. It provides a consistent reference over the whole year and allows players to decide the best selling month without relying on predictable seasonal peaks.
+Prices
+- Additional monthly market swing on top of base game prices
+- Every product group (crop farming, forage crops, animal products, livestock, processed goods, building materials, map-specific goods) follows its own price curve
+- Optional yearly average mode: replaces the base game's seasonal peaks with one stable yearly value, so you don't have to wait for a specific month
+- Sales pressure at selling stations: selling large quantities at once temporarily lowers the price there, which then recovers over time (threshold and strength adjustable)
 
-Each product category (crop farming, forage crops, animal products, livestock, processed goods and building materials) follows its own price curve. This prevents uniform price changes and creates more realistic market behavior across different goods.
+Stock & Notifications
+- Shows your actual stock per product: in storage, trailers/implements, and the output storage of production buildings and animal barns
+- In-game notification when a good you have in stock rises notably in price
+- Show an item's storage locations at the press of a button, including map markers for the storage location and the best sell point
 
-A dedicated market screen displays the base game price, the dynamically adjusted selling price or yearly average value depending on mode, the percentage difference, the selling location and the best selling month from the base game. Search and storage filter allow fast navigation through available products.
+Overview
+- Dedicated market screen with base game price, adjusted price, percentage difference, selling location and best selling month
+- Search, storage filter and sortable columns for fast navigation
 
-All market calculations are server-side in multiplayer to ensure consistent pricing across all clients.
+Automatic detection
+- Automatically detects sellable goods from any map or mod, without manual setup
+- Goods that don't fit an existing group but can genuinely be sold end up in their own "Map-specific" group instead of being ignored
+- Manual group assignment available for special cases
 
-Features:
-- additional dynamic monthly market layer on top of base game pricing
-- optional yearly average mode replacing Giants seasonal curve
-- yearly average based on Giants pricing logic, difficulty and selling station
-- independent price curves per product group
-- comparison between base game price and adjusted market result
-- percentage deviation display
-- in-game market overview page with search and storage filter
-- automatic detection of sellable products from maps and mods
-- manual product group assignment for custom or misdetected items
-- server-authoritative pricing for multiplayer savegames
+Multiplayer
+- All market calculations run server-side, so every player sees the same prices
 
 Feedback and issues on GitHub: https://github.com/Nalathan01
 
-Changelog 1.1.1.0:
+Changelog 1.1.9.0:
+- New: get an in-game notification when a good you have in stock rises notably in price
+- New: show an item's storage locations at the press of a button, including map tagging for the storage location and the best sell point
+- New: the "Sale value" column now shows stock x current price instead of just the price difference to base price
+- New: goods in trailers/implements and production building outputs now count towards the shown stock
+- New: manure, liquid manure and digestate are now tracked as sellable animal products
+- New: unclassified but genuinely sellable goods now get their own "Map-specific" price group instead of being ignored
 - Fixed: market prices were recalculated every 5 seconds even when the period had not changed
-- Fixed: "Normal" price-base mode now keeps the GIANTS seasonal curve instead of flattening it
-- Fixed: group names and market notices now use the shipped translations for all languages
-- Fixed: crop farming and other merged categories had lost their seasonal price influence since the 1.1.0.0 category rework
+- Fixed: "Normal" price-base mode now keeps the original seasonal curve instead of flattening it
+- Fixed: group names and market notices now consistently use the shipped translations
+- Fixed: crop farming and other merged categories had lost their seasonal price influence
+- Only actually unloadable and sellable products are now shown for production buildings, animal barns and attached implements
+- New: sales pressure at selling stations: selling large quantities at once temporarily lowers the price there, which then recovers over time. Two new settings control the threshold and the price drop per step
+- Simplified how the mod's menu tab registers itself, to be more robust for gamepad/controller navigation
 
 Changelog 1.1.0.0:
 - New option: daily market recalculation, for savegames with multiple days per month
@@ -49,35 +61,47 @@ Changelog 1.0.2.0:
 Changelog 1.0.1.0:
 - UI adjustments for better text readability
 - Revised French translations]]></en>
-        <de><![CDATA[Erweitert das Verkaufspreissystem von Farming Simulator um eine zusätzliche dynamische monatliche Marktebene. Die Preislogik des Grundspiels bleibt im Standardmodus vollständig erhalten und bildet die Basis. Darauf aufbauend wird eine unabhängige Marktanpassung berechnet, die monatliche Preisbewegungen je Warengruppe erzeugt.
+        <de><![CDATA[Dynamischer Markt sorgt dafür, dass sich Verkaufspreise über die Zeit verändern, zusätzlich zu den normalen saisonalen Schwankungen des Grundspiels. Jede Warengruppe entwickelt sich unterschiedlich, sodass sich der beste Verkaufszeitpunkt laufend ändert.
 
-Optional kann ein Jahresmittelwert-Modus aktiviert werden. In diesem Modus wird die Giants-Saisonpreiskurve deaktiviert und durch einen stabilen Jahresmittelwert ersetzt. Dieser Jahresmittelwert basiert auf der üblichen Giants-Preislogik inklusive Schwierigkeitsgrad und Einfluss der Verkaufsstelle. Er dient als konstante Orientierung über das gesamte Jahr und ermöglicht es dem Spieler, den besten Verkaufszeitpunkt selbst zu bestimmen, ohne sich auf vorhersehbare saisonale Spitzen verlassen zu müssen.
+Preise
+- Zusätzliche monatliche Marktschwankung zu den Grundspielpreisen
+- Jede Warengruppe (Ackerfrüchte, Futterpflanzen, Tierprodukte, Nutztiere, verarbeitete Waren, Baustoffe, Kartenspezifisches) hat einen eigenen Preisverlauf
+- Optionaler Jahresdurchschnitt-Modus: ersetzt die saisonalen Spitzen des Grundspiels durch einen stabilen Jahreswert, damit du nicht auf einen bestimmten Monat warten musst
+- Verkaufsdruck an Verkaufsstellen: wer sehr viel auf einmal verkauft, drückt dort kurzzeitig den Preis, der sich danach wieder erholt (Schwelle und Stärke einstellbar)
 
-Ackerfrüchte, Futterpflanzen, Tierprodukte, Nutztiere, verarbeitete Waren und Baustoffe folgen jeweils eigenen Preisverläufen. Dadurch entstehen unterschiedliche Marktreaktionen statt einheitlicher Schwankungen über alle Produkte hinweg.
+Lagerbestand & Hinweise
+- Zeigt deinen tatsächlichen Bestand je Ware: in Lagerhallen, Anhängern/Anbaugeräten und im Ausgangslager von Produktionen und Tierställen
+- Ingame-Hinweis, wenn eine Ware, die du auf Lager hast, deutlich im Preis steigt
+- Lagerorte einer Ware per Tastendruck anzeigen, inklusive Kartenmarkierung für Lagerort und beste Verkaufsstelle
 
-Eine eigene Marktseite zeigt den Grundspielpreis, den dynamisch angepassten Verkaufspreis oder den Jahresmittelwert je nach Modus, die prozentuale Abweichung, die Verkaufsstelle sowie den besten Verkaufsmonat aus dem Grundspiel. Suche und Lagerfilter ermöglichen eine schnelle Navigation durch alle Produkte.
+Übersicht
+- Eigene Marktseite mit Grundspielpreis, angepasstem Preis, prozentualer Abweichung, Verkaufsstelle und bestem Verkaufsmonat
+- Suche, Lagerfilter und sortierbare Spalten für schnelle Navigation
 
-Alle Berechnungen erfolgen im Multiplayer serverseitig, um identische Preise für alle Spieler sicherzustellen.
+Automatische Erkennung
+- Erkennt automatisch verkaufbare Waren von jeder Karte oder jedem Mod, auch ohne eigene Anpassung
+- Waren, die keiner festen Gruppe zugeordnet werden können, aber tatsächlich verkauft werden können, landen in der eigenen Gruppe "Kartenspezifisch" statt ignoriert zu werden
+- Manuelle Gruppen-Zuordnung für Sonderfälle möglich
 
-Funktionen:
-- zusätzliche dynamische monatliche Marktebene auf Basis der Grundspielpreise
-- optionaler Jahresmittelwert-Modus als Ersatz der Giants-Saisonkurve
-- Jahresmittelwert basierend auf Giants-Preislogik, Schwierigkeitsgrad und Verkaufsstelle
-- getrennte Preisverläufe je Warengruppe
-- Vergleich zwischen Grundspielpreis und dynamischem Marktergebnis
-- Anzeige der prozentualen Abweichung
-- Ingame-Marktübersicht mit Suche und Lagerfilter
-- automatische Erkennung verkaufbarer Produkte aus Maps und Mods
-- manuelle Zuordnung von Warengruppen für eigene oder falsch erkannte Produkte
-- serverseitige Preisberechnung im Multiplayer
+Mehrspieler
+- Alle Marktberechnungen laufen serverseitig, damit alle Spieler dieselben Preise sehen
 
 Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01
 
-Changelog 1.1.1.0:
-- Behoben: Marktpreise wurden alle 5 Sekunden neu berechnet, auch wenn sich der Zeitraum nicht geändert hat
-- Behoben: Der Preismodus "Normal" behält nun die Giants-Saisonkurve, statt sie zu glätten
-- Behoben: Warengruppen-Namen und Markt-Hinweise nutzen jetzt die mitgelieferten Übersetzungen aller Sprachen
-- Behoben: Ackerfrüchte und andere zusammengelegte Warengruppen hatten seit der Kategorien-Überarbeitung in 1.1.0.0 keinen saisonalen Preiseinfluss mehr
+Changelog 1.1.9.0:
+- Neu: Ingame-Hinweis, wenn eine Ware, die du im Lager hast, deutlich im Preis steigt
+- Neu: Lagerorte einer Ware per Tastendruck anzeigen, inklusive Kartenmarkierung für den Lagerort und die beste Verkaufsstelle
+- Neu: Spalte "Verkaufswert" zeigt jetzt Bestand x aktueller Preis statt reiner Preisdifferenz zum Basispreis
+- Neu: Waren in Anhängern/Anbaugeräten sowie Produktionsausstoß zählen jetzt zum angezeigten Lagerbestand
+- Neu: Mist, Gülle und Gärrest werden jetzt als verkaufbare Tierprodukte erfasst
+- Neu: nicht klassifizierte, aber tatsächlich verkaufbare Waren erhalten jetzt eine eigene Warengruppe "Kartenspezifisch", statt ignoriert zu werden
+- Behoben: Marktpreise wurden alle 5 Sekunden neu berechnet, auch ohne Zeitraumwechsel
+- Behoben: Preismodus "Normal" behält jetzt die originale Saisonkurve, statt sie zu glätten
+- Behoben: Warengruppen-Namen und Markt-Hinweise nutzen jetzt durchgängig die mitgelieferten Übersetzungen
+- Behoben: Ackerfrüchte und andere zusammengelegte Warengruppen hatten keinen saisonalen Preiseinfluss mehr
+- In Produktionen, Tierställen und Anbaugeräten werden nur tatsächlich auslagerbare und verkaufbare Produkte angezeigt
+- Neu: Verkaufsdruck an Verkaufsstellen: wer sehr viel auf einmal an einer Station verkauft, drückt dort kurzzeitig den Preis, der sich danach wieder erholt. Zwei neue Einstellungen legen Schwelle und Preisabschlag pro Stufe fest
+- Registrierung des Mod-Menü-Tabs vereinfacht, um die Controller-Navigation robuster zu machen
 
 Changelog 1.1.0.0:
 - Neue Option: tägliche Marktneuberechnung, für Savegames mit mehreren Tagen pro Monat
@@ -90,35 +114,47 @@ Changelog 1.0.2.0:
 Changelog 1.0.1.0:
 - UI-Anpassungen für bessere Textlesbarkeit
 - Überarbeitete französische Übersetzungen]]></de>
-        <fr><![CDATA[Étend le système de prix de vente de Farming Simulator avec une couche de marché mensuelle dynamique supplémentaire. Le système de prix du jeu de base reste entièrement conservé en mode standard et sert de fondation. Par-dessus celui-ci, un ajustement de marché indépendant génère des variations mensuelles selon les groupes de produits et l’état global du marché.
+        <fr><![CDATA[Marché Dynamique fait évoluer les prix de vente au fil du temps, en plus des variations saisonnières normales du jeu de base. Chaque groupe de produits évolue différemment, si bien que le meilleur moment pour vendre change constamment.
 
-Un mode de moyenne annuelle peut être activé en option. Dans ce mode, la courbe saisonnière de Giants est désactivée et remplacée par une valeur moyenne annuelle stable. Cette moyenne annuelle est calculée à partir de la logique de prix de Giants, incluant le niveau de difficulté et l’influence du point de vente. Elle fournit une référence constante sur toute l’année et permet au joueur de déterminer le meilleur moment de vente sans dépendre de pics saisonniers prévisibles.
+Prix
+- Variation de marché mensuelle supplémentaire en plus des prix du jeu de base
+- Chaque groupe de produits (cultures, fourrages, produits animaux, bétail, produits transformés, matériaux de construction, produits spécifiques à la carte) suit sa propre courbe de prix
+- Mode moyenne annuelle en option : remplace les pics saisonniers du jeu de base par une valeur annuelle stable, pour ne plus dépendre d'un mois précis
+- Pression de vente sur les points de vente : vendre de grandes quantités d'un coup fait baisser temporairement le prix à cet endroit, qui se rétablit ensuite (seuil et intensité réglables)
 
-Les cultures, les fourrages, les produits animaux, le bétail, les produits transformés et les matériaux de construction suivent chacun des courbes de prix distinctes. Cela évite des fluctuations uniformes et crée un comportement de marché plus réaliste.
+Stock et notifications
+- Affiche votre stock réel par produit : dans les silos/hangars, les remorques/outils attelés, ainsi que le stock de sortie des bâtiments de production et des étables
+- Notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
+- Affichez les lieux de stockage d'un article par simple pression d'une touche, avec marquage sur la carte du lieu de stockage et du meilleur point de vente
 
-Une page de marché dédiée affiche le prix de base du jeu, le prix ajusté dynamiquement ou la valeur moyenne annuelle selon le mode, la variation en pourcentage, le point de vente ainsi que le meilleur mois de vente du jeu de base. Une fonction de recherche et un filtre de stockage facilitent la navigation.
+Aperçu
+- Page de marché dédiée avec prix de base, prix ajusté, écart en pourcentage, point de vente et meilleur mois de vente
+- Recherche, filtre de stockage et colonnes triables pour une navigation rapide
 
-Tous les calculs de marché sont effectués côté serveur en multijoueur afin d’assurer des prix identiques pour tous les joueurs.
+Détection automatique
+- Détecte automatiquement les produits vendables de n'importe quelle carte ou mod, sans configuration manuelle
+- Les produits qui ne correspondent à aucun groupe existant mais qui sont réellement vendables rejoignent leur propre groupe « Spécifique à la carte » au lieu d'être ignorés
+- Attribution manuelle des groupes possible pour les cas particuliers
 
-Fonctions :
-- couche de marché mensuelle dynamique supplémentaire basée sur les prix du jeu de base
-- mode moyenne annuelle optionnel remplaçant la courbe saisonnière de Giants
-- moyenne annuelle basée sur la logique de prix de Giants, la difficulté et le point de vente
-- courbes de prix indépendantes par groupe de produits
-- comparaison entre prix de base et résultat de marché dynamique
-- affichage de l’écart en pourcentage
-- page de marché en jeu avec recherche et filtre de stockage
-- détection automatique des produits vendables issus des cartes et des mods
-- attribution manuelle des groupes de produits pour les éléments personnalisés ou mal détectés
-- calcul des prix côté serveur en multijoueur
+Multijoueur
+- Tous les calculs de marché s'effectuent côté serveur, pour que tous les joueurs voient les mêmes prix
 
 Retours et signalement de problèmes sur GitHub: https://github.com/Nalathan01
 
-Changelog 1.1.1.0:
-- Corrigé : les prix du marché étaient recalculés toutes les 5 secondes même lorsque la période n'avait pas changé
-- Corrigé : le mode de base de prix « Normal » conserve désormais la courbe saisonnière de Giants au lieu de l'aplatir
-- Corrigé : les noms de groupes et les notifications de marché utilisent désormais les traductions fournies pour toutes les langues
-- Corrigé : les cultures et les autres groupes fusionnés avaient perdu leur influence saisonnière sur les prix depuis la refonte des catégories en 1.1.0.0
+Changelog 1.1.9.0:
+- Nouveau : notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
+- Nouveau : affichez les lieux de stockage d'un article par simple pression d'une touche, avec marquage sur la carte du lieu de stockage et du meilleur point de vente
+- Nouveau : la colonne « Valeur de vente » affiche désormais stock x prix actuel au lieu du simple écart avec le prix de base
+- Nouveau : les marchandises dans les remorques/outils attelés ainsi que la production des bâtiments comptent désormais dans le stock affiché
+- Nouveau : le fumier, le lisier et le digestat sont désormais suivis comme produits animaux vendables
+- Nouveau : les produits non classés mais réellement vendables obtiennent désormais leur propre groupe de prix « Spécifique à la carte » au lieu d'être ignorés
+- Corrigé : les prix du marché étaient recalculés toutes les 5 secondes même sans changement de période
+- Corrigé : le mode de prix « Normal » conserve désormais la courbe saisonnière d'origine au lieu de l'aplatir
+- Corrigé : les noms de groupes et les notifications de marché utilisent désormais systématiquement les traductions fournies
+- Corrigé : les cultures et les autres groupes fusionnés avaient perdu leur influence saisonnière sur les prix
+- Dans les bâtiments de production, les étables et les outils attelés, seuls les produits réellement déchargeables et vendables sont désormais affichés
+- Nouveau : pression de vente sur les points de vente : vendre de grandes quantités d'un coup fait baisser temporairement le prix à cet endroit, qui se rétablit ensuite. Deux nouveaux réglages permettent de définir le seuil et la baisse de prix par palier
+- Simplification de l'enregistrement de l'onglet du mod, pour une navigation à la manette plus fiable
 
 Changelog 1.1.0.0:
 - Nouvelle option: recalcul quotidien du marché, pour les parties avec plusieurs jours par mois

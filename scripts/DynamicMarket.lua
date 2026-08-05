@@ -3,13 +3,15 @@ DynamicMarket = {}
 DynamicMarket.MOD_NAME = g_currentModName or "FS25_DynamicMarket"
 DynamicMarket.MOD_DIR = g_currentModDirectory or ""
 DynamicMarket.LOG_PREFIX = "[DynamicMarket]"
-DynamicMarket.VERSION = "1.1.1.0"
+DynamicMarket.VERSION = "1.2.0.0"
 
 DynamicMarket.APPLY_CURVES = true
 
 DynamicMarket.CHANGE_EXISTING_CURVES = true
 
 DynamicMarket.PLAYER_MARKET_NOTICES = true
+
+DynamicMarket.INCLUDE_PRODUCTION_STOCK = true
 
 DynamicMarket.ENABLE_YEARLY_AVERAGE = true
 DynamicMarket.USE_YEARLY_AVERAGE_AS_BASE_PRICE = true
@@ -23,6 +25,19 @@ DynamicMarket.DAILY_RECALC_ENABLED = 2
 DynamicMarket.dailyRecalcMode = DynamicMarket.DAILY_RECALC_DISABLED
 
 DynamicMarket.MARKET_NOTICE_MIN_MOVEMENT = 0.015
+DynamicMarket.STOCK_PRICE_ALERT_MIN_MOVEMENT = 0.05
+
+DynamicMarket.STATION_PRESSURE_ENABLED = true
+DynamicMarket.STATION_PRESSURE_THRESHOLD_LITERS = 25000
+DynamicMarket.STATION_PRESSURE_PERCENT_PER_STEP = 2
+DynamicMarket.STATION_PRESSURE_MAX_PERCENT = 15
+DynamicMarket.STATION_PRESSURE_DECAY_PERCENT_PER_HOUR = 15
+DynamicMarket.__stationPressure = {}
+DynamicMarket.__pendingStationPressureRestore = {}
+DynamicMarket.STATION_SALE_POLL_INTERVAL_MS = 1000
+DynamicMarket.__stationSalePollMs = 0
+DynamicMarket.__stationPressureDecayMs = 0
+DynamicMarket.__lastReceivedByStationFillType = {}
 
 DynamicMarket.FILLTYPE_GROUP_OVERRIDES = {
 }
@@ -56,6 +71,7 @@ DynamicMarket.DIAGNOSTICS = {
 DynamicMarket.PERIODS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
 source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketMenuFrame.lua")
+source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketStockLocationDialog.lua")
 source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketSettings.lua")
 
 DynamicMarket.CURVES = {
@@ -64,7 +80,8 @@ DynamicMarket.CURVES = {
     animalProduct =   {1.08, 1.05, 1.02, 0.99, 0.96, 0.94, 0.94, 0.97, 1.01, 1.04, 1.07, 1.08},
     livestock =       {1.12, 1.08, 1.04, 1.00, 0.96, 0.93, 0.92, 0.95, 1.00, 1.05, 1.09, 1.12},
     processedGoods =  {1.06, 1.04, 1.02, 1.00, 0.98, 0.96, 0.96, 0.98, 1.01, 1.03, 1.05, 1.06},
-    buildingMaterial ={1.07, 1.05, 1.02, 1.00, 0.97, 0.95, 0.94, 0.97, 1.01, 1.04, 1.07, 1.08}
+    buildingMaterial ={1.07, 1.05, 1.02, 1.00, 0.97, 0.95, 0.94, 0.97, 1.01, 1.04, 1.07, 1.08},
+    mapOwn =          {1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00}
 }
 
 DynamicMarket.MARKET_GROUPS = {
@@ -73,7 +90,8 @@ DynamicMarket.MARKET_GROUPS = {
     animalProduct =    {volatility = 0.04, weather = 0.05, supply = 0.20, demand = 0.75},
     livestock =        {volatility = 0.07, weather = 0.10, supply = 0.35, demand = 0.55},
     processedGoods =   {volatility = 0.045, weather = 0.045, supply = 0.20, demand = 0.76},
-    buildingMaterial = {volatility = 0.065, weather = 0.085, supply = 0.20, demand = 0.72}
+    buildingMaterial = {volatility = 0.065, weather = 0.085, supply = 0.20, demand = 0.72},
+    mapOwn =           {volatility = 0.045, weather = 0.045, supply = 0.20, demand = 0.76}
 }
 
 DynamicMarket.__marketFactors = {}
@@ -86,6 +104,9 @@ DynamicMarket.__lastSellingStationCount = 0
 DynamicMarket.__uiPriceRefreshToken = 0
 DynamicMarket.__marketDriverReport = nil
 DynamicMarket.__lastPlayerNoticeKey = nil
+DynamicMarket.__lastStockAlertKey = nil
+DynamicMarket.__hasShownLoadNotice = false
+DynamicMarket.__hasShownLoadStockAlert = false
 
 
 DynamicMarket.NOTICE_TEXTS = {
@@ -97,7 +118,8 @@ DynamicMarket.NOTICE_TEXTS = {
         dm_group_animalProduct = "animal products",
         dm_group_livestock = "livestock",
         dm_group_processedGoods = "processed goods",
-        dm_group_buildingMaterial = "building materials"
+        dm_group_buildingMaterial = "building materials",
+        dm_group_mapOwn = "map-specific"
     },
     de = {
         dm_notice_title = "Dynamischer Markt",
@@ -107,7 +129,8 @@ DynamicMarket.NOTICE_TEXTS = {
         dm_group_animalProduct = "Tierprodukte",
         dm_group_livestock = "Nutztiere",
         dm_group_processedGoods = "verarbeitete Waren",
-        dm_group_buildingMaterial = "Baustoffe & Holz"
+        dm_group_buildingMaterial = "Baustoffe & Holz",
+        dm_group_mapOwn = "Kartenspezifisch"
     },
     fr = {
         dm_notice_title = "Marché Dynamique",
@@ -117,7 +140,8 @@ DynamicMarket.NOTICE_TEXTS = {
         dm_group_animalProduct = "produits animaux",
         dm_group_livestock = "bétail",
         dm_group_processedGoods = "produits transformés",
-        dm_group_buildingMaterial = "matériaux de construction"
+        dm_group_buildingMaterial = "matériaux de construction",
+        dm_group_mapOwn = "spécifique à la carte"
     }
 }
 
@@ -149,7 +173,8 @@ DynamicMarket.GROUPS = {
         SQUAREBALE = true, SQUAREBALE_DRYGRASS = true, SQUAREBALE_GRASS = true
     },
     animalProduct = {
-        MILK = true, GOATMILK = true, BUFFALOMILK = true, EGG = true, WOOL = true, HONEY = true
+        MILK = true, GOATMILK = true, BUFFALOMILK = true, EGG = true, WOOL = true, HONEY = true,
+        MANURE = true, LIQUIDMANURE = true, DIGESTATE = true
     },
     livestock = {
         COW_ANGUS = true, COW_HIGHLAND_CATTLE = true, COW_HOLSTEIN = true, COW_LIMOUSIN = true,
@@ -177,11 +202,12 @@ DynamicMarket.GROUPS = {
         ROOFPLATES = true, PREFABWALL = true,
         WOOD = true, WOODCHIPS = true, PLANKS = true, FURNITURE = true, BOARDS = true, TIMBER = true,
         WOODBEAM = true, TREE = true, ROUNDBALE_WOOD = true, SQUAREBALE_WOOD = true
-    }
+    },
+    mapOwn = {}
 }
 
 DynamicMarket.GROUP_ORDER = {
-    "cropFarming", "forage", "animalProduct", "livestock", "processedGoods", "buildingMaterial"
+    "cropFarming", "forage", "animalProduct", "livestock", "processedGoods", "buildingMaterial", "mapOwn"
 }
 
 DynamicMarket.PATTERN_GROUP_ORDER = {
@@ -193,14 +219,13 @@ DynamicMarket.EXCLUDED_EXACT = {
     DIESEL = true, DEF = true, ELECTRICCHARGE = true, METHANE = true, WATER = true, AIR = true,
     FERTILIZER = true, LIQUIDFERTILIZER = true, HERBICIDE = true, LIME = true, SEEDS = true,
     SILAGE_ADDITIVE = true, MINERAL_FEED = true, PIGFOOD = true, ROAD_SALT = true, SNOW = true,
-    LIQUIDMANURE = true, MANURE = true, DIGESTATE = true,
     OILSEEDRADISH = true, FLOWERINGCATCHCROP = true, HUMUSACTIVE = true, MEADOW = true,
     BALE_NET = true, BALE_TWINE = true, BALE_WRAP = true
 }
 
 DynamicMarket.EXCLUDED_PATTERNS = {
     "FERTILIZER", "HERBICIDE", "ADDITIVE", "DIESEL", "FUEL", "METHANE", "ELECTRIC", "WATER",
-    "MANURE", "DIGESTATE", "SEED", "SAPLING", "CUTTER", "HEADER"
+    "SEED", "SAPLING", "CUTTER", "HEADER"
 }
 
 DynamicMarket.GROUP_PATTERNS = {
@@ -219,6 +244,7 @@ DynamicMarket.__loadMapSeen = false
 DynamicMarket.__applyPass = 0
 DynamicMarket.__runtimeMs = 0
 DynamicMarket.__armedLogged = false
+DynamicMarket.__favorites = {}
 
 function DynamicMarket:formatCurve(curve)
     if curve == nil then
@@ -241,6 +267,18 @@ function DynamicMarket:getFillTypeName(fillType)
     return tostring(fillType.name or "UNKNOWN"):upper()
 end
 
+function DynamicMarket:isExcludedName(name)
+    if self.EXCLUDED_EXACT[name] == true then
+        return true
+    end
+    for _, pattern in ipairs(self.EXCLUDED_PATTERNS) do
+        if string.find(name, pattern, 1, true) ~= nil then
+            return true
+        end
+    end
+    return false
+end
+
 function DynamicMarket:getGroup(fillType)
     local name = self:getFillTypeName(fillType)
     local overrideGroup = self.FILLTYPE_GROUP_OVERRIDES[name]
@@ -249,25 +287,29 @@ function DynamicMarket:getGroup(fillType)
         return overrideGroup, "override"
     end
 
-    for _, groupName in ipairs(self.GROUP_ORDER) do
-        local names = self.GROUPS[groupName]
-        if names ~= nil and names[name] == true then
-            return groupName, "exact"
-        end
-    end
+    local isExcluded = self:isExcludedName(name)
 
-    for _, groupName in ipairs(self.PATTERN_GROUP_ORDER) do
-        local patterns = self.GROUP_PATTERNS[groupName]
-        if patterns ~= nil then
-            for _, pattern in ipairs(patterns) do
-                if string.find(name, pattern, 1, true) ~= nil then
-                    return groupName, "pattern:" .. pattern
+    if not isExcluded then
+        for _, groupName in ipairs(self.GROUP_ORDER) do
+            local names = self.GROUPS[groupName]
+            if names ~= nil and names[name] == true then
+                return groupName, "exact"
+            end
+        end
+
+        for _, groupName in ipairs(self.PATTERN_GROUP_ORDER) do
+            local patterns = self.GROUP_PATTERNS[groupName]
+            if patterns ~= nil then
+                for _, pattern in ipairs(patterns) do
+                    if string.find(name, pattern, 1, true) ~= nil then
+                        return groupName, "pattern:" .. pattern
+                    end
                 end
             end
         end
     end
 
-    return nil, "unknown"
+    return "mapOwn", isExcluded and "mapOwnExcluded" or "mapOwnUnknown"
 end
 
 function DynamicMarket:getExistingCurve(fillType)
@@ -315,16 +357,6 @@ function DynamicMarket:getSkipReason(fillType, groupName)
 
     if name == "UNKNOWN" or name == "" then
         return "unknownName"
-    end
-
-    if self.EXCLUDED_EXACT[name] == true then
-        return "excludedUtilityOrInternal"
-    end
-
-    for _, pattern in ipairs(self.EXCLUDED_PATTERNS) do
-        if string.find(name, pattern, 1, true) ~= nil then
-            return "excludedPattern:" .. pattern
-        end
     end
 
     if fillType.pricePerLiter == nil or tonumber(fillType.pricePerLiter) == nil or tonumber(fillType.pricePerLiter) < self.MIN_PRICE_PER_LITER then
@@ -696,6 +728,30 @@ function DynamicMarket:getStationRawPriceBase(station, fillTypeIndex)
     return nil
 end
 
+function DynamicMarket:getStationMapHotspot(station)
+    if station == nil then
+        return nil
+    end
+
+    if station.owningPlaceable ~= nil and station.owningPlaceable.spec_hotspots ~= nil and type(station.owningPlaceable.spec_hotspots.mapHotspots) == "table" then
+        for _, mapHotSpot in ipairs(station.owningPlaceable.spec_hotspots.mapHotspots) do
+            if mapHotSpot.worldX ~= nil and mapHotSpot.worldZ ~= nil then
+                return mapHotSpot
+            end
+        end
+    end
+
+    if station.spec_sellingStation ~= nil and station.spec_sellingStation.spec_hotspots ~= nil and type(station.spec_sellingStation.spec_hotspots.mapHotspots) == "table" then
+        for _, mapHotSpot in ipairs(station.spec_sellingStation.spec_hotspots.mapHotspots) do
+            if mapHotSpot.worldX ~= nil and mapHotSpot.worldZ ~= nil then
+                return mapHotSpot
+            end
+        end
+    end
+
+    return nil
+end
+
 function DynamicMarket:isValidSellingStationForFillType(station, fillTypeIndex)
     if station == nil or type(station) ~= "table" or fillTypeIndex == nil then
         return false
@@ -754,6 +810,405 @@ function DynamicMarket:prepareStationBasePriceCache(sellingStations)
             end
         end
     end
+end
+
+function DynamicMarket:reapplyStationPrice(station, fillTypeIndex)
+    if station == nil or fillTypeIndex == nil or station.fillTypePrices == nil then
+        return
+    end
+    local fillType = self:getFillTypeByIndex(fillTypeIndex)
+    if fillType == nil then
+        return
+    end
+    local groupName = self:getGroup(fillType)
+    if self:getSkipReason(fillType, groupName) ~= nil then
+        return
+    end
+
+    local basePrice = tonumber(station.fillTypePrices[fillTypeIndex])
+    local finalPrice, _, targetSkipReason = self:getTargetSalePrice(station, fillTypeIndex, fillType, basePrice)
+    if finalPrice ~= nil and targetSkipReason == nil and self.APPLY_MONTHLY_MARKET_TO_SALES then
+        self:writeTargetSalePrice(station, fillTypeIndex, finalPrice)
+        self.__uiPriceRefreshToken = (tonumber(self.__uiPriceRefreshToken) or 0) + 1
+    end
+end
+
+function DynamicMarket:registerStationSale(station, fillTypeIndex, litersSold)
+    if self.STATION_PRESSURE_ENABLED ~= true or station == nil or fillTypeIndex == nil then
+        return
+    end
+    litersSold = tonumber(litersSold) or 0
+    if litersSold <= 0 then
+        return
+    end
+
+    self:getStationRawPriceBase(station, fillTypeIndex)
+
+    local threshold = tonumber(self.STATION_PRESSURE_THRESHOLD_LITERS) or 25000
+    if threshold <= 0 then
+        return
+    end
+    local percentPerStep = tonumber(self.STATION_PRESSURE_PERCENT_PER_STEP) or 2
+    local maxPercent = tonumber(self.STATION_PRESSURE_MAX_PERCENT) or 15
+
+    self.__stationPressure[station] = self.__stationPressure[station] or {}
+    local byFillType = self.__stationPressure[station]
+    local entry = byFillType[fillTypeIndex]
+    if entry == nil then
+        entry = {percent = 0, overflowLiters = 0, peakPercent = 0, recoveryMilestone = 0}
+        byFillType[fillTypeIndex] = entry
+    end
+
+    local percentBefore = entry.percent
+    entry.overflowLiters = entry.overflowLiters + litersSold
+    while entry.overflowLiters >= threshold and entry.percent < maxPercent do
+        entry.overflowLiters = entry.overflowLiters - threshold
+        entry.percent = math.min(entry.percent + percentPerStep, maxPercent)
+    end
+    if entry.percent >= maxPercent then
+        entry.overflowLiters = 0
+    end
+
+    if entry.percent ~= percentBefore then
+        self:reapplyStationPrice(station, fillTypeIndex)
+        entry.peakPercent = entry.percent
+        entry.recoveryMilestone = 0
+        self:showStationPressureNotice(station, fillTypeIndex, true, entry.percent)
+        self:saveStationPressureEntry(station, fillTypeIndex)
+    end
+end
+
+function DynamicMarket:resetAllStationPressure()
+    if type(self.__stationPressure) ~= "table" then
+        return
+    end
+
+    for station, byFillType in pairs(self.__stationPressure) do
+        for fillTypeIndex, entry in pairs(byFillType) do
+            if entry.percent ~= nil and entry.percent > 0 then
+                local wasNotifiedPartially = tonumber(entry.peakPercent) ~= nil and entry.peakPercent > 0
+                entry.percent = 0
+                entry.overflowLiters = 0
+                entry.peakPercent = 0
+                entry.recoveryMilestone = 0
+                if wasNotifiedPartially then
+                    self:showStationPressureNotice(station, fillTypeIndex, false, 0)
+                end
+                self:reapplyStationPrice(station, fillTypeIndex)
+            end
+        end
+    end
+
+    self:saveStationPressureEntry(nil, nil)
+end
+
+function DynamicMarket:decayStationPressure(dt)
+    if self.STATION_PRESSURE_ENABLED ~= true or type(self.__stationPressure) ~= "table" then
+        return
+    end
+
+    self.__stationPressureDecayMs = (self.__stationPressureDecayMs or 0) + (tonumber(dt) or 0)
+    if self.__stationPressureDecayMs < self.STATION_SALE_POLL_INTERVAL_MS then
+        return
+    end
+    local elapsedMs = self.__stationPressureDecayMs
+    self.__stationPressureDecayMs = 0
+
+    local decayPerHour = tonumber(self.STATION_PRESSURE_DECAY_PERCENT_PER_HOUR) or 15
+    if decayPerHour <= 0 then
+        return
+    end
+    local elapsedHours = elapsedMs / 3600000
+    if elapsedHours <= 0 then
+        return
+    end
+
+    local threshold = tonumber(self.STATION_PRESSURE_THRESHOLD_LITERS) or 25000
+    local stockLevels = self:getStockLevelsByFillType()
+
+    for station, byFillType in pairs(self.__stationPressure) do
+        for fillTypeIndex, entry in pairs(byFillType) do
+            if entry.percent > 0 then
+                local stockLevel = tonumber(stockLevels[fillTypeIndex]) or 0
+                local effectiveDecayPerHour = decayPerHour / (1 + (stockLevel / threshold))
+                local percentBefore = entry.percent
+                entry.percent = math.max(entry.percent - effectiveDecayPerHour * elapsedHours, 0)
+
+                if entry.percent ~= percentBefore then
+                    self:reapplyStationPrice(station, fillTypeIndex)
+
+                    if tonumber(entry.peakPercent) ~= nil and entry.peakPercent > 0 then
+                        local recoveredFraction = 1 - (entry.percent / entry.peakPercent)
+                        local milestone = math.floor(recoveredFraction * 4 + 0.0001)
+                        if milestone > (tonumber(entry.recoveryMilestone) or 0) then
+                            entry.recoveryMilestone = milestone
+                            self:showStationPressureNotice(station, fillTypeIndex, false, entry.percent)
+                        end
+                    end
+
+                    if entry.percent <= 0 then
+                        entry.percent = 0
+                        entry.overflowLiters = 0
+                        entry.peakPercent = 0
+                        entry.recoveryMilestone = 0
+                    end
+
+                    self:saveStationPressureEntry(station, fillTypeIndex)
+                end
+            end
+        end
+    end
+end
+
+function DynamicMarket:getStationUniqueId(station)
+    if station == nil or station.owningPlaceable == nil then
+        return nil
+    end
+    local placeable = station.owningPlaceable
+    if placeable.getUniqueId == nil then
+        return nil
+    end
+    local callOk, uniqueId = pcall(placeable.getUniqueId, placeable)
+    if not callOk or uniqueId == nil or uniqueId == "" then
+        return nil
+    end
+    return uniqueId
+end
+
+function DynamicMarket:getStationPressureSaveKey()
+    return "gameSettings.dynamicMarket.stationPressure"
+end
+
+function DynamicMarket:saveStationPressureEntry(station, fillTypeIndex)
+    if g_savegameXML == nil or setXMLString == nil or setXMLFloat == nil or setXMLInt == nil or removeXMLProperty == nil then
+        return
+    end
+    if type(self.__stationPressure) ~= "table" then
+        return
+    end
+
+    local basePath = self:getStationPressureSaveKey()
+    removeXMLProperty(g_savegameXML, basePath)
+
+    local index = 0
+    for pressureStation, byFillType in pairs(self.__stationPressure) do
+        local stationId = self:getStationUniqueId(pressureStation)
+        if stationId ~= nil then
+            for entryFillType, entry in pairs(byFillType) do
+                if entry.percent ~= nil and entry.percent > 0 then
+                    local entryPath = string.format("%s.entry(%d)", basePath, index)
+                    setXMLString(g_savegameXML, entryPath .. "#stationId", stationId)
+                    setXMLInt(g_savegameXML, entryPath .. "#fillType", entryFillType)
+                    setXMLFloat(g_savegameXML, entryPath .. "#percent", entry.percent)
+                    setXMLFloat(g_savegameXML, entryPath .. "#overflowLiters", entry.overflowLiters or 0)
+                    setXMLFloat(g_savegameXML, entryPath .. "#peakPercent", entry.peakPercent or 0)
+                    setXMLInt(g_savegameXML, entryPath .. "#recoveryMilestone", entry.recoveryMilestone or 0)
+                    index = index + 1
+                end
+            end
+        end
+    end
+end
+
+function DynamicMarket:loadStationPressureFromSavegame()
+    self.__pendingStationPressureRestore = {}
+
+    if g_savegameXML == nil or hasXMLProperty == nil or getXMLString == nil or getXMLInt == nil or getXMLFloat == nil then
+        return
+    end
+
+    local basePath = self:getStationPressureSaveKey()
+    local i = 0
+    while true do
+        local entryPath = string.format("%s.entry(%d)", basePath, i)
+        if not hasXMLProperty(g_savegameXML, entryPath) then
+            break
+        end
+
+        local stationId = getXMLString(g_savegameXML, entryPath .. "#stationId")
+        local fillTypeIndex = getXMLInt(g_savegameXML, entryPath .. "#fillType")
+        local percent = getXMLFloat(g_savegameXML, entryPath .. "#percent")
+
+        if stationId ~= nil and stationId ~= "" and fillTypeIndex ~= nil and percent ~= nil and percent > 0 then
+            self.__pendingStationPressureRestore[stationId] = self.__pendingStationPressureRestore[stationId] or {}
+            self.__pendingStationPressureRestore[stationId][fillTypeIndex] = {
+                percent = percent,
+                overflowLiters = Utils.getNoNil(getXMLFloat(g_savegameXML, entryPath .. "#overflowLiters"), 0),
+                peakPercent = Utils.getNoNil(getXMLFloat(g_savegameXML, entryPath .. "#peakPercent"), percent),
+                recoveryMilestone = Utils.getNoNil(getXMLInt(g_savegameXML, entryPath .. "#recoveryMilestone"), 0)
+            }
+        end
+
+        i = i + 1
+    end
+end
+
+function DynamicMarket:restoreStationPressureIfPending(station)
+    if type(self.__pendingStationPressureRestore) ~= "table" or next(self.__pendingStationPressureRestore) == nil then
+        return
+    end
+
+    local stationId = self:getStationUniqueId(station)
+    if stationId == nil then
+        return
+    end
+
+    local pendingByFillType = self.__pendingStationPressureRestore[stationId]
+    if pendingByFillType == nil then
+        return
+    end
+
+    self.__stationPressure[station] = self.__stationPressure[station] or {}
+    for fillTypeIndex, pendingEntry in pairs(pendingByFillType) do
+        self.__stationPressure[station][fillTypeIndex] = {
+            percent = pendingEntry.percent,
+            overflowLiters = pendingEntry.overflowLiters,
+            peakPercent = pendingEntry.peakPercent,
+            recoveryMilestone = pendingEntry.recoveryMilestone
+        }
+        self:reapplyStationPrice(station, fillTypeIndex)
+    end
+
+    self.__pendingStationPressureRestore[stationId] = nil
+end
+
+function DynamicMarket:isFavorite(fillTypeName)
+    return self.__favorites[tostring(fillTypeName)] == true
+end
+
+function DynamicMarket:setFavorite(fillTypeName, isFavorite)
+    local key = tostring(fillTypeName)
+    if isFavorite == true then
+        self.__favorites[key] = true
+    else
+        self.__favorites[key] = nil
+    end
+    self:saveFavorites()
+end
+
+function DynamicMarket:getFavoritesSaveKey()
+    return "gameSettings.dynamicMarket.favorites"
+end
+
+function DynamicMarket:saveFavorites()
+    if g_savegameXML == nil or setXMLString == nil or removeXMLProperty == nil then
+        return
+    end
+
+    local basePath = self:getFavoritesSaveKey()
+    removeXMLProperty(g_savegameXML, basePath)
+
+    local index = 0
+    for fillTypeName, isFavorite in pairs(self.__favorites) do
+        if isFavorite == true then
+            local entryPath = string.format("%s.entry(%d)", basePath, index)
+            setXMLString(g_savegameXML, entryPath .. "#fillType", fillTypeName)
+            index = index + 1
+        end
+    end
+end
+
+function DynamicMarket:loadFavoritesFromSavegame()
+    self.__favorites = {}
+
+    if g_savegameXML == nil or hasXMLProperty == nil or getXMLString == nil then
+        return
+    end
+
+    local basePath = self:getFavoritesSaveKey()
+    local i = 0
+    while true do
+        local entryPath = string.format("%s.entry(%d)", basePath, i)
+        if not hasXMLProperty(g_savegameXML, entryPath) then
+            break
+        end
+
+        local fillTypeName = getXMLString(g_savegameXML, entryPath .. "#fillType")
+        if fillTypeName ~= nil and fillTypeName ~= "" then
+            self.__favorites[fillTypeName] = true
+        end
+
+        i = i + 1
+    end
+end
+
+function DynamicMarket:showStationPressureNotice(station, fillTypeIndex, isFalling, currentPercent)
+    if self.PLAYER_MARKET_NOTICES ~= true then
+        return
+    end
+    local mission = g_currentMission
+    if mission == nil or mission.addIngameNotification == nil then
+        return
+    end
+
+    local fillType = self:getFillTypeByIndex(fillTypeIndex)
+    local goodName = tostring(fillType ~= nil and (fillType.title or fillType.name) or fillTypeIndex)
+    local stationName = tostring(self:getPlaceableDisplayName(station ~= nil and station.owningPlaceable or nil))
+    local percentValue = math.floor((tonumber(currentPercent) or 0) + 0.5)
+
+    local currentPrice = nil
+    if station ~= nil and station.getEffectiveFillTypePrice ~= nil then
+        local callOk, result = pcall(station.getEffectiveFillTypePrice, station, fillTypeIndex)
+        if callOk and type(result) == "number" and result > 0 then
+            currentPrice = result
+        end
+    end
+    if currentPrice == nil and station ~= nil and station.fillTypePrices ~= nil and station.fillTypePrices[fillTypeIndex] ~= nil then
+        currentPrice = tonumber(station.fillTypePrices[fillTypeIndex])
+        if currentPrice ~= nil then
+            currentPrice = currentPrice * self:getEconomyPriceMultiplier()
+        end
+    end
+    local priceText = ""
+    if currentPrice ~= nil and g_i18n ~= nil and g_i18n.formatMoney ~= nil then
+        priceText = g_i18n:formatMoney(currentPrice * 1000, 0, true, true)
+    end
+
+    local text
+    if isFalling then
+        text = string.format(self:getLocalizedText("dm_notice_station_pressure_falling", "%s bei %s: Preis auf %s gefallen (-%d%%)."), goodName, stationName, priceText, percentValue)
+    elseif percentValue > 0 then
+        text = string.format(self:getLocalizedText("dm_notice_station_pressure_recovering", "%s bei %s: Preis auf %s gestiegen (noch -%d%%)."), goodName, stationName, priceText, percentValue)
+    else
+        text = string.format(self:getLocalizedText("dm_notice_station_pressure_recovered", "%s bei %s: Preis wieder bei %s."), goodName, stationName, priceText)
+    end
+
+    local notificationType = 0
+    if FSBaseMission ~= nil and FSBaseMission.INGAME_NOTIFICATION_OK ~= nil then
+        notificationType = FSBaseMission.INGAME_NOTIFICATION_OK
+    end
+    mission:addIngameNotification(notificationType, text)
+end
+
+function DynamicMarket:isStationPressureRecovering(station, fillTypeIndex)
+    if self.STATION_PRESSURE_ENABLED ~= true or type(self.__stationPressure) ~= "table" then
+        return false
+    end
+    local byFillType = self.__stationPressure[station]
+    if byFillType == nil then
+        return false
+    end
+    local entry = byFillType[fillTypeIndex]
+    if entry == nil or entry.percent == nil or entry.percent <= 0 then
+        return false
+    end
+    local peak = tonumber(entry.peakPercent) or 0
+    return peak > 0 and entry.percent < peak
+end
+
+function DynamicMarket:getStationPressureScale(station, fillTypeIndex)
+    if self.STATION_PRESSURE_ENABLED ~= true or type(self.__stationPressure) ~= "table" then
+        return 1
+    end
+    local byFillType = self.__stationPressure[station]
+    if byFillType == nil then
+        return 1
+    end
+    local entry = byFillType[fillTypeIndex]
+    if entry == nil or entry.percent == nil or entry.percent <= 0 then
+        return 1
+    end
+    return 1 - (entry.percent / 100)
 end
 
 function DynamicMarket:getStationNegativePriceScale(station, fillTypeIndex)
@@ -832,7 +1287,8 @@ function DynamicMarket:getTargetSalePrice(station, fillTypeIndex, fillType, curr
     end
 
     local stationScale = self:getStationNegativePriceScale(station, fillTypeIndex)
-    return neutralPrice * stationScale, groupName, nil
+    local pressureScale = self:getStationPressureScale(station, fillTypeIndex)
+    return neutralPrice * stationScale * pressureScale, groupName, nil
 end
 
 function DynamicMarket:writeTargetSalePrice(station, fillTypeIndex, targetPrice)
@@ -1191,8 +1647,13 @@ function DynamicMarket:applyMonthlyMarketToSellingStations(passName)
         self.__uiPriceRefreshToken = (tonumber(self.__uiPriceRefreshToken) or 0) + 1
     end
 
+    local previousMarketKey = self.__lastSalesMarketKey
     self.__lastSalesMarketKey = marketKey
     self.__lastObservedMarketKey = marketKey
+
+    if previousMarketKey ~= nil and previousMarketKey ~= marketKey then
+        self:resetAllStationPressure()
+    end
 
     if self.DIAGNOSTICS.saleMarket then
         table.sort(changedNames)
@@ -1312,7 +1773,8 @@ function DynamicMarket:getMarketGroupDisplayName(groupName)
         animalProduct = "Tierprodukte",
         livestock = "Nutztiere",
         processedGoods = "verarbeitete Waren",
-        buildingMaterial = "Baustoffe & Holz"
+        buildingMaterial = "Baustoffe & Holz",
+        mapOwn = "Kartenspezifisch"
     }
 
     return self:getLocalizedText("dm_group_" .. tostring(groupName or "unknown"), fallbacks[groupName] or tostring(groupName or "Markt"))
@@ -1335,6 +1797,145 @@ function DynamicMarket:formatNoticeMovement(groupName, factor)
     end
 
     return string.format("%s %s", self:getMarketGroupDisplayName(groupName), self:formatMarketPercent(factor))
+end
+
+function DynamicMarket:getStockPriceAlerts()
+    local alerts = {}
+    local stockLevels = self:getStockLevelsByFillType()
+    local threshold = tonumber(self.STOCK_PRICE_ALERT_MIN_MOVEMENT) or 0.05
+
+    for fillTypeIndex, stockLevel in pairs(stockLevels) do
+        if tonumber(stockLevel) ~= nil and stockLevel > 0 then
+            local fillType = self:getFillTypeByIndex(fillTypeIndex)
+            if fillType ~= nil then
+                local groupName = self:getGroup(fillType)
+                local factor = self:getMarketFactor(groupName)
+                if factor - 1 >= threshold then
+                    table.insert(alerts, {
+                        title = tostring(fillType.title or fillType.name or fillTypeIndex),
+                        factor = factor
+                    })
+                end
+            end
+        end
+    end
+
+    table.sort(alerts, function(a, b)
+        return a.factor > b.factor
+    end)
+
+    return alerts
+end
+
+function DynamicMarket:showStockPriceAlert(passName)
+    if self.PLAYER_MARKET_NOTICES ~= true or tostring(passName or "") ~= "periodUpdate" then
+        return
+    end
+
+    local mission = g_currentMission
+    if mission == nil or mission.getFarmId == nil then
+        return
+    end
+    local farmId = mission:getFarmId()
+    local spectatorFarmId = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 0
+    if farmId == nil or farmId == spectatorFarmId then
+        return
+    end
+
+    local marketKey = self.__lastSalesMarketKey or self:getMarketKey()
+    if marketKey == nil or marketKey == self.__lastStockAlertKey then
+        return
+    end
+    self.__lastStockAlertKey = marketKey
+
+    local alerts = self:getStockPriceAlerts()
+    if #alerts == 0 then
+        return
+    end
+
+    local parts = {}
+    local maxItems = 4
+    for i = 1, math.min(#alerts, maxItems) do
+        local alert = alerts[i]
+        table.insert(parts, string.format("%s %s", alert.title, self:formatMarketPercent(alert.factor)))
+    end
+
+    local title = self:getLocalizedText("dm_stock_alert_title", "Preisanstieg im Lager")
+    local text = title .. ": " .. table.concat(parts, ", ")
+
+    if mission.addIngameNotification ~= nil then
+        local notificationType = 0
+        if FSBaseMission ~= nil and FSBaseMission.INGAME_NOTIFICATION_OK ~= nil then
+            notificationType = FSBaseMission.INGAME_NOTIFICATION_OK
+        end
+        mission:addIngameNotification(notificationType, text)
+    end
+end
+
+function DynamicMarket:showLoadNoticesOnce()
+    if self.__hasShownLoadNotice == true then
+        return
+    end
+    self.__hasShownLoadNotice = true
+    self:showMarketNotice("periodUpdate")
+end
+
+function DynamicMarket:pollStationSales(dt)
+    if self.STATION_PRESSURE_ENABLED ~= true then
+        return
+    end
+    self.__stationSalePollMs = (self.__stationSalePollMs or 0) + (tonumber(dt) or 0)
+    if self.__stationSalePollMs < self.STATION_SALE_POLL_INTERVAL_MS then
+        return
+    end
+    self.__stationSalePollMs = 0
+
+    local mission = g_currentMission
+    if mission == nil or mission.storageSystem == nil or mission.storageSystem.getUnloadingStations == nil then
+        return
+    end
+    local stations = mission.storageSystem:getUnloadingStations()
+    if stations == nil then
+        return
+    end
+
+    for _, station in pairs(stations) do
+        if station ~= nil and station.isa ~= nil and SellingStation ~= nil and station:isa(SellingStation)
+            and station.getTotalReceived ~= nil and station.acceptedFillTypes ~= nil then
+
+            self:restoreStationPressureIfPending(station)
+
+            for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
+                if isAccepted == true then
+                    local callOk, result = pcall(station.getTotalReceived, station, fillTypeIndex)
+                    if callOk and type(result) == "number" then
+                        self.__lastReceivedByStationFillType[station] = self.__lastReceivedByStationFillType[station] or {}
+                        local byFillType = self.__lastReceivedByStationFillType[station]
+                        local lastReceived = byFillType[fillTypeIndex]
+
+                        if lastReceived == nil then
+                            byFillType[fillTypeIndex] = result
+                            self:getStationRawPriceBase(station, fillTypeIndex)
+                        elseif result > lastReceived then
+                            local delta = result - lastReceived
+                            byFillType[fillTypeIndex] = result
+                            self:registerStationSale(station, fillTypeIndex, delta)
+                        elseif result < lastReceived then
+                            byFillType[fillTypeIndex] = result
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+function DynamicMarket:showLoadStockAlertOnce()
+    if self.__hasShownLoadStockAlert == true then
+        return
+    end
+    self.__hasShownLoadStockAlert = true
+    self:showStockPriceAlert("periodUpdate")
 end
 
 function DynamicMarket:showMarketNotice(passName)
@@ -1605,6 +2206,8 @@ function DynamicMarket:ensurePricesReadyForUi(passName)
         self:applyAll(g_fillTypeManager, passName or "uiReady")
         if self.__lastSaleMarketReport ~= nil and self.__lastSaleMarketReport.success == true then
             self.__finalApplied = true
+            self:showLoadNoticesOnce()
+            self:showLoadStockAlertOnce()
             return true
         end
         return false
@@ -1658,7 +2261,7 @@ end
 
 
 
-function DynamicMarket:fixInGameMenuPage(frame, pageName, uvs, position, predicateFunc)
+function DynamicMarket:fixInGameMenuPage(frame, pageName, uvs, predicateFunc)
     local inGameMenu = nil
     if g_gui ~= nil and type(g_gui.screenControllers) == "table" and InGameMenu ~= nil then
         inGameMenu = g_gui.screenControllers[InGameMenu]
@@ -1670,15 +2273,6 @@ function DynamicMarket:fixInGameMenuPage(frame, pageName, uvs, position, predica
         return true
     end
 
-    local insertPosition = tonumber(position) or 3
-    for i = 1, #inGameMenu.pagingElement.elements do
-        local child = inGameMenu.pagingElement.elements[i]
-        if child == inGameMenu["pageStatistics"] then
-            insertPosition = i
-            break
-        end
-    end
-
     if inGameMenu.controlIDs ~= nil then
         inGameMenu.controlIDs[pageName] = nil
     end
@@ -1686,39 +2280,19 @@ function DynamicMarket:fixInGameMenuPage(frame, pageName, uvs, position, predica
     inGameMenu[pageName] = frame
     inGameMenu.pagingElement:addElement(inGameMenu[pageName])
     inGameMenu:exposeControlsAsFields(pageName)
-
-    for i = 1, #inGameMenu.pagingElement.elements do
-        local child = inGameMenu.pagingElement.elements[i]
-        if child == inGameMenu[pageName] then
-            table.remove(inGameMenu.pagingElement.elements, i)
-            table.insert(inGameMenu.pagingElement.elements, insertPosition, child)
-            break
-        end
-    end
-
-    for i = 1, #inGameMenu.pagingElement.pages do
-        local child = inGameMenu.pagingElement.pages[i]
-        if child.element == inGameMenu[pageName] then
-            table.remove(inGameMenu.pagingElement.pages, i)
-            table.insert(inGameMenu.pagingElement.pages, insertPosition, child)
-            break
-        end
-    end
-
     inGameMenu.pagingElement:updateAbsolutePosition()
     inGameMenu.pagingElement:updatePageMapping()
-    inGameMenu:registerPage(inGameMenu[pageName], insertPosition, predicateFunc or function() return true end)
-    inGameMenu:addPageTab(inGameMenu[pageName], Utils.getFilename("images/menuIcon.dds", self.MOD_DIR), GuiUtils.getUVs(uvs or {0,0,1024,1024}))
 
-    for i = 1, #inGameMenu.pageFrames do
-        local child = inGameMenu.pageFrames[i]
-        if child == inGameMenu[pageName] then
-            table.remove(inGameMenu.pageFrames, i)
-            table.insert(inGameMenu.pageFrames, insertPosition, child)
+    local actualPosition = #inGameMenu.pagingElement.elements
+    for i = 1, #inGameMenu.pagingElement.elements do
+        if inGameMenu.pagingElement.elements[i] == inGameMenu[pageName] then
+            actualPosition = i
             break
         end
     end
 
+    inGameMenu:registerPage(inGameMenu[pageName], actualPosition, predicateFunc or function() return true end)
+    inGameMenu:addPageTab(inGameMenu[pageName], Utils.getFilename("images/menuIcon.dds", self.MOD_DIR), GuiUtils.getUVs(uvs or {0,0,1024,1024}))
     inGameMenu:rebuildTabList()
     return true
 end
@@ -1733,9 +2307,13 @@ function DynamicMarket:registerMenuPage()
 
     g_gui:loadProfiles(self.MOD_DIR .. "gui/dynamicMarketProfiles.xml")
 
+    if DynamicMarketStockLocationDialog ~= nil then
+        g_gui:loadGui(self.MOD_DIR .. "gui/DynamicMarketStockLocationDialog.xml", "DynamicMarketStockLocationDialog", DynamicMarketStockLocationDialog.new())
+    end
+
     local frame = DynamicMarketMenuFrame.new(g_i18n)
     g_gui:loadGui(self.MOD_DIR .. "gui/DynamicMarketMenuFrame.xml", "DynamicMarketMenuFrame", frame, true)
-    if self:fixInGameMenuPage(frame, "pageDynamicMarket", {0,0,1024,1024}, 3, function() return true end) then
+    if self:fixInGameMenuPage(frame, "pageDynamicMarket", {0,0,1024,1024}, function() return true end) then
         if frame.initialize ~= nil then
             frame:initialize()
         end
@@ -1814,15 +2392,64 @@ function DynamicMarket:getTrendDirection(groupName)
 end
 
 
-function DynamicMarket:addStockLevel(stockLevels, fillTypeIndex, fillLevel)
+function DynamicMarket:getPlaceableDisplayName(placeable)
+    if placeable == nil then
+        return "?"
+    end
+    if placeable.getName ~= nil then
+        local ok, name = pcall(placeable.getName, placeable)
+        if ok and name ~= nil and tostring(name) ~= "" then
+            return tostring(name)
+        end
+    end
+    if placeable.configFileName ~= nil then
+        local fileName = tostring(placeable.configFileName)
+        local baseName = fileName:match("([^/\\]+)%.xml$")
+        if baseName ~= nil then
+            return baseName
+        end
+    end
+    return "?"
+end
+
+function DynamicMarket:getPlaceableMapHotspot(placeable)
+    if placeable == nil or placeable.spec_hotspots == nil or type(placeable.spec_hotspots.mapHotspots) ~= "table" then
+        return nil
+    end
+    for _, mapHotSpot in ipairs(placeable.spec_hotspots.mapHotspots) do
+        if mapHotSpot.worldX ~= nil and mapHotSpot.worldZ ~= nil then
+            return mapHotSpot
+        end
+    end
+    return nil
+end
+
+function DynamicMarket:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, locationName, locationHotspot)
     fillTypeIndex = tonumber(fillTypeIndex)
     fillLevel = tonumber(fillLevel) or 0
     if fillTypeIndex ~= nil and fillLevel > 0 then
         stockLevels[fillTypeIndex] = (stockLevels[fillTypeIndex] or 0) + fillLevel
+        if locations ~= nil then
+            local byName = locations[fillTypeIndex]
+            if byName == nil then
+                byName = {}
+                locations[fillTypeIndex] = byName
+            end
+            local name = locationName or "?"
+            local entry = byName[name]
+            if entry == nil then
+                entry = {amount = 0, hotspot = locationHotspot}
+                byName[name] = entry
+            end
+            entry.amount = entry.amount + fillLevel
+            if entry.hotspot == nil then
+                entry.hotspot = locationHotspot
+            end
+        end
     end
 end
 
-function DynamicMarket:addStorageFillLevels(stockLevels, storage)
+function DynamicMarket:addStorageFillLevels(stockLevels, storage, locations, locationName, locationHotspot, excludeGroupName)
     if storage == nil or type(storage.fillLevels) ~= "table" then
         return
     end
@@ -1831,13 +2458,38 @@ function DynamicMarket:addStorageFillLevels(stockLevels, storage)
     if storage.ownerFarmId ~= nil and farmId ~= nil and storage.ownerFarmId ~= farmId then
         return
     end
+    local excludeSet = excludeGroupName ~= nil and self.GROUPS[excludeGroupName] or nil
     for fillTypeIndex, fillLevel in pairs(storage.fillLevels) do
-        self:addStockLevel(stockLevels, fillTypeIndex, fillLevel)
+        local skip = false
+        if excludeSet ~= nil then
+            local fillType = self:getFillTypeByIndex(fillTypeIndex)
+            if fillType ~= nil and fillType.name ~= nil and excludeSet[fillType.name] == true then
+                skip = true
+            end
+        end
+        if not skip then
+            self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, locationName, locationHotspot)
+        end
     end
 end
 
-function DynamicMarket:getStockLevelsByFillType()
+function DynamicMarket:buildStockLocationList(byName)
+    local list = {}
+    if type(byName) ~= "table" then
+        return list
+    end
+    for name, entry in pairs(byName) do
+        table.insert(list, {name = name, amount = entry.amount, hotspot = entry.hotspot})
+    end
+    table.sort(list, function(a, b)
+        return a.amount > b.amount
+    end)
+    return list
+end
+
+function DynamicMarket:getStockLevelsByFillType(collectLocations)
     local stockLevels = {}
+    local locations = collectLocations == true and {} or nil
     local mission = g_currentMission
     local farmId = mission ~= nil and mission.getFarmId ~= nil and mission:getFarmId() or nil
 
@@ -1846,45 +2498,69 @@ function DynamicMarket:getStockLevelsByFillType()
             local ownerFarmId = placeable.ownerFarmId
             local belongsToFarm = farmId == nil or ownerFarmId == nil or ownerFarmId == farmId or ownerFarmId == 0
             if belongsToFarm then
+                local placeableName = locations ~= nil and self:getPlaceableDisplayName(placeable) or nil
+                local placeableHotspot = locations ~= nil and self:getPlaceableMapHotspot(placeable) or nil
+
                 if placeable.spec_silo ~= nil then
                     if type(placeable.spec_silo.storages) == "table" then
                         for _, storage in ipairs(placeable.spec_silo.storages) do
-                            self:addStorageFillLevels(stockLevels, storage)
+                            self:addStorageFillLevels(stockLevels, storage, locations, placeableName, placeableHotspot)
                         end
                     elseif placeable.spec_silo.loadingStation ~= nil and placeable.spec_silo.loadingStation.getAllFillLevels ~= nil and farmId ~= nil then
                         for fillTypeIndex, fillLevel in pairs(placeable.spec_silo.loadingStation:getAllFillLevels(farmId) or {}) do
-                            self:addStockLevel(stockLevels, fillTypeIndex, fillLevel)
+                            self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, placeableName, placeableHotspot)
                         end
                     end
                 end
 
                 if placeable.spec_siloExtension ~= nil then
-                    self:addStorageFillLevels(stockLevels, placeable.spec_siloExtension.storage)
+                    self:addStorageFillLevels(stockLevels, placeable.spec_siloExtension.storage, locations, placeableName, placeableHotspot)
                 end
 
                 if placeable.spec_husbandry ~= nil then
-                    self:addStorageFillLevels(stockLevels, placeable.spec_husbandry.storage)
+                    self:addStorageFillLevels(stockLevels, placeable.spec_husbandry.storage, locations, placeableName, placeableHotspot, "forage")
                 end
 
                 if placeable.spec_manureHeap ~= nil and placeable.spec_manureHeap.manureHeap ~= nil and type(placeable.spec_manureHeap.manureHeap.fillLevels) == "table" then
                     for fillTypeIndex, fillLevel in pairs(placeable.spec_manureHeap.manureHeap.fillLevels) do
-                        self:addStockLevel(stockLevels, fillTypeIndex, fillLevel)
+                        self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, placeableName, placeableHotspot)
                     end
                 end
             end
         end
     end
 
-    if mission ~= nil and mission.productionChainManager ~= nil and type(mission.productionChainManager.productionPoints) == "table" then
+    if mission ~= nil and mission.vehicleSystem ~= nil and type(mission.vehicleSystem.vehicles) == "table" then
+        for _, vehicle in pairs(mission.vehicleSystem.vehicles) do
+            local isPallet = vehicle ~= nil and (vehicle.isPallet == true or vehicle.typeName == "globalTransportPallet" or vehicle.typeName == "globalTransportPalletLiquids")
+            if vehicle ~= nil and not isPallet and vehicle.getFillUnitFillLevel ~= nil and vehicle.getFillUnitFillType ~= nil
+                and vehicle.spec_dischargeable ~= nil and type(vehicle.spec_dischargeable.fillUnitDischargeNodeMapping) == "table" then
+                local ownerFarmId = vehicle.getOwnerFarmId ~= nil and vehicle:getOwnerFarmId() or nil
+                local belongsToFarm = farmId == nil or ownerFarmId == nil or ownerFarmId == farmId or ownerFarmId == 0
+                if belongsToFarm then
+                    local vehicleName = locations ~= nil and (vehicle.getFullName ~= nil and vehicle:getFullName() or "?") or nil
+                    local vehicleHotspot = locations ~= nil and vehicle.getMapHotspot ~= nil and vehicle:getMapHotspot() or nil
+                    for fillUnitIndex, _ in pairs(vehicle.spec_dischargeable.fillUnitDischargeNodeMapping) do
+                        local fillLevel = vehicle:getFillUnitFillLevel(fillUnitIndex)
+                        local fillTypeIndex = vehicle:getFillUnitFillType(fillUnitIndex)
+                        self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, vehicleName, vehicleHotspot)
+                    end
+                end
+            end
+        end
+    end
+
+    if self.INCLUDE_PRODUCTION_STOCK == true and mission ~= nil and mission.productionChainManager ~= nil and type(mission.productionChainManager.productionPoints) == "table" then
         for _, productionPoint in ipairs(mission.productionChainManager.productionPoints) do
             local isMine = farmId == nil or productionPoint.getOwnerFarmId == nil or productionPoint:getOwnerFarmId() == farmId
             if isMine and productionPoint.storage ~= nil then
+                local productionName = locations ~= nil and (tostring(productionPoint.name or "") ~= "" and tostring(productionPoint.name) or self:getPlaceableDisplayName(productionPoint.owningPlaceable)) or nil
+                local productionHotspot = locations ~= nil and self:getPlaceableMapHotspot(productionPoint.owningPlaceable) or nil
                 if type(productionPoint.outputFillTypeIdsArray) == "table" and productionPoint.storage.getFillLevel ~= nil then
                     for _, fillTypeIndex in ipairs(productionPoint.outputFillTypeIdsArray) do
-                        self:addStockLevel(stockLevels, fillTypeIndex, productionPoint.storage:getFillLevel(fillTypeIndex))
+                        local fillLevel = productionPoint.storage:getFillLevel(fillTypeIndex)
+                        self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, productionName, productionHotspot)
                     end
-                else
-                    self:addStorageFillLevels(stockLevels, productionPoint.storage)
                 end
             end
         end
@@ -1894,8 +2570,10 @@ function DynamicMarket:getStockLevelsByFillType()
         for _, vehicle in ipairs(mission.vehicleSystem.vehicles) do
             if (farmId == nil or vehicle.ownerFarmId == farmId) and vehicle.spec_fillUnit ~= nil and type(vehicle.spec_fillUnit.fillUnits) == "table" then
                 if vehicle.isPallet == true or vehicle.typeName == "globalTransportPallet" or vehicle.typeName == "globalTransportPalletLiquids" then
+                    local vehicleName = locations ~= nil and self:getPlaceableDisplayName(vehicle) or nil
+                    local vehicleHotspot = locations ~= nil and vehicle.mapHotspot or nil
                     for _, fillUnit in ipairs(vehicle.spec_fillUnit.fillUnits) do
-                        self:addStockLevel(stockLevels, fillUnit.fillType, fillUnit.fillLevel)
+                        self:addStockLevel(stockLevels, fillUnit.fillType, fillUnit.fillLevel, locations, vehicleName, vehicleHotspot)
                     end
                 end
             end
@@ -1903,22 +2581,23 @@ function DynamicMarket:getStockLevelsByFillType()
     end
 
     if mission ~= nil and mission.itemSystem ~= nil and type(mission.itemSystem.itemsToSave) == "table" then
+        local baleName = locations ~= nil and self:getLocalizedText("dm_location_bale", "Bale") or nil
         for _, item in pairs(mission.itemSystem.itemsToSave) do
             local bale = item.item
             if bale ~= nil and bale.isa ~= nil and Bale ~= nil and bale:isa(Bale) and (farmId == nil or bale.ownerFarmId == farmId) then
-                self:addStockLevel(stockLevels, bale.fillType, bale.fillLevel)
+                self:addStockLevel(stockLevels, bale.fillType, bale.fillLevel, locations, baleName)
             end
         end
     end
 
-    return stockLevels
+    return stockLevels, locations
 end
 
 function DynamicMarket:buildMarketOverviewRows()
     self:buildMarketFactors(nil)
 
     local rowsByFillType = {}
-    local stockLevelsByFillType = self:getStockLevelsByFillType()
+    local stockLevelsByFillType, stockLocationsByFillType = self:getStockLevelsByFillType(true)
     local mission = g_currentMission
     local storageSystem = mission ~= nil and mission.storageSystem or nil
     if storageSystem == nil or storageSystem.getUnloadingStations == nil then
@@ -1939,10 +2618,10 @@ function DynamicMarket:buildMarketOverviewRows()
                     local skipReason = self:getSkipReason(fillType, groupName)
                     if fillType ~= nil and skipReason == nil then
                         local price = 0
-                        if station.getEffectiveFillTypePrice ~= nil then
+                        if station.fillTypePrices ~= nil and station.fillTypePrices[fillTypeIndex] ~= nil then
+                            price = (tonumber(station.fillTypePrices[fillTypeIndex]) or 0) * self:getEconomyPriceMultiplier()
+                        elseif station.getEffectiveFillTypePrice ~= nil then
                             price = tonumber(station:getEffectiveFillTypePrice(fillTypeIndex)) or 0
-                        elseif station.fillTypePrices ~= nil then
-                            price = tonumber(station.fillTypePrices[fillTypeIndex]) or 0
                         end
 
                         local row = rowsByFillType[fillTypeIndex]
@@ -1961,14 +2640,18 @@ function DynamicMarket:buildMarketOverviewRows()
                                 currentBestPrice = 0,
                                 stationBestPrice = 0,
                                 bestStation = "",
+                                stationPressureActive = false,
+                                pressureAmount = 0,
+                                pressureActive = false,
+                                pressureRecovering = false,
                                 bestMonth = self:getBestMonthForFillType(fillType),
                                 bestMonthNumber = 1,
-                                bestMonthPrice = 0,
                                 baseCurrentPrice = 0,
                                 yearlyAveragePrice = 0,
                                 priceTrend = 0,
                                 sellPointCount = 0,
-                                stockLevel = tonumber(stockLevelsByFillType[fillTypeIndex]) or 0
+                                stockLevel = tonumber(stockLevelsByFillType[fillTypeIndex]) or 0,
+                                stockLocations = self:buildStockLocationList(stockLocationsByFillType and stockLocationsByFillType[fillTypeIndex])
                             }
                             row.bestMonthNumber = tonumber(row.bestMonth) or 1
                             rowsByFillType[fillTypeIndex] = row
@@ -2013,6 +2696,7 @@ function DynamicMarket:buildMarketOverviewRows()
                             row.stationBestPrice = stationComparePrice
                             row.bestStation = stationName
                             row.bestStationObject = stationObject
+                            row.stationPressureActive = self:getStationPressureScale(stationObject, fillTypeIndex) < 1
                             if stationObject ~= nil and stationObject.getCurrentPricingTrend ~= nil then
                                 row.priceTrend = stationObject:getCurrentPricingTrend(fillTypeIndex)
                             else
@@ -2020,6 +2704,48 @@ function DynamicMarket:buildMarketOverviewRows()
                             end
                         end
                     end
+                end
+            end
+        end
+    end
+
+    for fillTypeIndex, row in pairs(rowsByFillType) do
+        if row.bestStationObject ~= nil then
+            local bestStation = row.bestStationObject
+            local effectivePrice = nil
+            if bestStation.getEffectiveFillTypePrice ~= nil then
+                local callOk, result = pcall(bestStation.getEffectiveFillTypePrice, bestStation, fillTypeIndex)
+                if callOk and type(result) == "number" and result > 0 then
+                    effectivePrice = result
+                end
+            end
+
+            if effectivePrice ~= nil then
+                row.bestPrice = effectivePrice
+                row.currentBestPrice = effectivePrice
+
+                local pressureScale = self:getStationPressureScale(bestStation, fillTypeIndex)
+                local priceWithoutPressure = effectivePrice
+                if pressureScale ~= nil and pressureScale > 0 then
+                    priceWithoutPressure = effectivePrice / pressureScale
+                end
+
+                row.pressureAmount = effectivePrice - priceWithoutPressure
+                row.pressureActive = row.pressureAmount < -0.0001
+                row.pressureRecovering = self:isStationPressureRecovering(bestStation, fillTypeIndex)
+
+                local marketFactor = tonumber(row.marketFactor) or 1
+                if marketFactor ~= 0 then
+                    row.baseCurrentPrice = priceWithoutPressure / marketFactor
+                else
+                    row.baseCurrentPrice = priceWithoutPressure
+                end
+            elseif bestStation.fillTypePrices ~= nil and bestStation.fillTypePrices[fillTypeIndex] ~= nil then
+                local displayPrice = tonumber(bestStation.fillTypePrices[fillTypeIndex])
+                if displayPrice ~= nil and displayPrice > 0 then
+                    displayPrice = displayPrice * self:getEconomyPriceMultiplier()
+                    row.bestPrice = displayPrice
+                    row.currentBestPrice = displayPrice
                 end
             end
         end
@@ -2124,6 +2850,13 @@ function DynamicMarket:loadMap(name)
     self.__lastSellingStationCount = 0
     self.__periodCheckMs = 0
     self.__lastPlayerNoticeKey = nil
+    self.__lastStockAlertKey = nil
+    self.__hasShownLoadNotice = false
+    self.__hasShownLoadStockAlert = false
+    self.__stationPressure = {}
+    self.__lastReceivedByStationFillType = {}
+    self:loadStationPressureFromSavegame()
+    self:loadFavoritesFromSavegame()
     if self.settings ~= nil then
         self.settings:install()
         self.settings:loadSettings()
@@ -2140,6 +2873,9 @@ end
 
 function DynamicMarket:update(dt)
     local delta = tonumber(dt) or 0
+
+    self:decayStationPressure(delta)
+    self:pollStationSales(delta)
 
     if self.__finalApplied then
         self.__periodCheckMs = (self.__periodCheckMs or 0) + delta
@@ -2164,6 +2900,7 @@ function DynamicMarket:update(dt)
                 self:reportFinalStatus("periodUpdate")
                 self:reportMarketWatch("periodUpdate")
                 self:showMarketNotice("periodUpdate")
+                self:showStockPriceAlert("periodUpdate")
             elseif self.RECHECK_SALES_ON_STATION_COUNT_CHANGE == true then
                 local stationCount = self:getSellingStationCount()
                 if stationCount > 0 and stationCount ~= (tonumber(self.__lastSellingStationCount) or 0) then
@@ -2204,6 +2941,7 @@ function DynamicMarket:update(dt)
         self.__lastSellingStationCount = 0
         self.__periodCheckMs = 0
             self.__lastPlayerNoticeKey = nil
+            self.__lastStockAlertKey = nil
         if self.DIAGNOSTICS.debugLog then
             Logging.info("%s armedFallback version=%s initialFillTypes=%d mode=stableFinal", self.LOG_PREFIX, self.VERSION, self.__lastFillTypeCount)
         end
@@ -2232,6 +2970,8 @@ function DynamicMarket:update(dt)
         self:applyAll(g_fillTypeManager, "initialReady")
         if self.__lastSaleMarketReport ~= nil and self.__lastSaleMarketReport.success == true then
             self.__finalApplied = true
+            self:showLoadNoticesOnce()
+            self:showLoadStockAlertOnce()
         else
             self.__stableMs = 0
             self.__armedLogged = false
@@ -2253,6 +2993,7 @@ function DynamicMarket:deleteMap()
     self.__lastSellingStationCount = 0
     self.__periodCheckMs = 0
     self.__lastPlayerNoticeKey = nil
+    self.__lastStockAlertKey = nil
     self.__armedLogged = false
     self.__bestStationRawPriceByFillType = nil
     self.__bestStationNameByFillType = nil

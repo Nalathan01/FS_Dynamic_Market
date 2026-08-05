@@ -7,6 +7,8 @@ function DynamicMarketSettings.new(dynamicMarket, customMt)
     self.installed = false
     self.mode = dynamicMarket ~= nil and dynamicMarket.PRICE_BASE_YEAR_AVERAGE or 2
     self.dailyRecalcMode = dynamicMarket ~= nil and dynamicMarket.DAILY_RECALC_DISABLED or 1
+    self.stationThresholdState = 2
+    self.stationPercentState = 2
     self.settingsHeader = nil
     self.settingsRow = nil
     self.dailyRecalcRow = nil
@@ -64,6 +66,32 @@ function DynamicMarketSettings:normalizeDailyRecalcMode(mode)
     return mode
 end
 
+function DynamicMarketSettings:normalizeStationThresholdMode(state)
+    state = tonumber(state) or 2
+    local count = #self.STATION_THRESHOLD_VALUES
+    if state < 1 or state > count then
+        state = 2
+    end
+    return state
+end
+
+function DynamicMarketSettings:normalizeStationPercentMode(state)
+    state = tonumber(state) or 2
+    local count = #self.STATION_PERCENT_VALUES
+    if state < 1 or state > count then
+        state = 2
+    end
+    return state
+end
+
+function DynamicMarketSettings:getStationThresholdSaveKey()
+    return "gameSettings.dynamicMarket.stationThreshold#state"
+end
+
+function DynamicMarketSettings:getStationPercentSaveKey()
+    return "gameSettings.dynamicMarket.stationPercent#state"
+end
+
 function DynamicMarketSettings:loadSettings()
     local mode = self.mode
     if g_savegameXML ~= nil and getXMLInt ~= nil then
@@ -76,23 +104,43 @@ function DynamicMarketSettings:loadSettings()
         dailyRecalcMode = Utils.getNoNil(getXMLInt(g_savegameXML, self:getDailyRecalcSaveKey()), dailyRecalcMode)
     end
     self.dailyRecalcMode = self:normalizeDailyRecalcMode(dailyRecalcMode)
+
+    local stationThresholdState = self.stationThresholdState
+    if g_savegameXML ~= nil and getXMLInt ~= nil then
+        stationThresholdState = Utils.getNoNil(getXMLInt(g_savegameXML, self:getStationThresholdSaveKey()), stationThresholdState)
+    end
+    self.stationThresholdState = self:normalizeStationThresholdMode(stationThresholdState)
+
+    local stationPercentState = self.stationPercentState
+    if g_savegameXML ~= nil and getXMLInt ~= nil then
+        stationPercentState = Utils.getNoNil(getXMLInt(g_savegameXML, self:getStationPercentSaveKey()), stationPercentState)
+    end
+    self.stationPercentState = self:normalizeStationPercentMode(stationPercentState)
 end
 
 function DynamicMarketSettings:saveSettings()
     if g_savegameXML ~= nil and setXMLInt ~= nil then
         setXMLInt(g_savegameXML, self:getSaveKey(), self.mode)
         setXMLInt(g_savegameXML, self:getDailyRecalcSaveKey(), self.dailyRecalcMode)
+        setXMLInt(g_savegameXML, self:getStationThresholdSaveKey(), self.stationThresholdState)
+        setXMLInt(g_savegameXML, self:getStationPercentSaveKey(), self.stationPercentState)
     end
 end
 
 function DynamicMarketSettings:applyToModule(save)
     self.mode = self:normalizeMode(self.mode)
     self.dailyRecalcMode = self:normalizeDailyRecalcMode(self.dailyRecalcMode)
+    self.stationThresholdState = self:normalizeStationThresholdMode(self.stationThresholdState)
+    self.stationPercentState = self:normalizeStationPercentMode(self.stationPercentState)
     if self.dynamicMarket ~= nil and self.dynamicMarket.setPriceBaseMode ~= nil then
         self.dynamicMarket:setPriceBaseMode(self.mode, "gameSetting")
     end
     if self.dynamicMarket ~= nil and self.dynamicMarket.setDailyRecalcMode ~= nil then
         self.dynamicMarket:setDailyRecalcMode(self.dailyRecalcMode, "gameSetting")
+    end
+    if self.dynamicMarket ~= nil then
+        self.dynamicMarket.STATION_PRESSURE_THRESHOLD_LITERS = self.STATION_THRESHOLD_VALUES[self.stationThresholdState]
+        self.dynamicMarket.STATION_PRESSURE_PERCENT_PER_STEP = self.STATION_PERCENT_VALUES[self.stationPercentState]
     end
     if save == true then
         self:saveSettings()
@@ -190,6 +238,9 @@ function DynamicMarketSettings:setTooltipText(element, text)
     end
 end
 
+DynamicMarketSettings.STATION_THRESHOLD_VALUES = {10000, 25000, 50000, 100000, 200000}
+DynamicMarketSettings.STATION_PERCENT_VALUES = {1, 2, 3, 5}
+
 DynamicMarketSettings.OPTION_DEFS = {
     priceBase = {
         rowName = "dmPriceBaseRow",
@@ -214,10 +265,34 @@ DynamicMarketSettings.OPTION_DEFS = {
         rowField = "dailyRecalcRow",
         normalizeFn = "normalizeDailyRecalcMode",
         onClickFn = "onClickDailyRecalc"
+    },
+    stationThreshold = {
+        rowName = "dmStationThresholdRow",
+        optionId = "dmStationThreshold",
+        modeField = "stationThresholdState",
+        titleKey = "dm_setting_stationthreshold_title",
+        descKey = "dm_setting_stationthreshold_desc",
+        textKeys = {"dm_setting_stationthreshold_1", "dm_setting_stationthreshold_2", "dm_setting_stationthreshold_3", "dm_setting_stationthreshold_4", "dm_setting_stationthreshold_5"},
+        optionField = "stationThresholdOption",
+        rowField = "stationThresholdRow",
+        normalizeFn = "normalizeStationThresholdMode",
+        onClickFn = "onClickStationThreshold"
+    },
+    stationPercent = {
+        rowName = "dmStationPercentRow",
+        optionId = "dmStationPercent",
+        modeField = "stationPercentState",
+        titleKey = "dm_setting_stationpercent_title",
+        descKey = "dm_setting_stationpercent_desc",
+        textKeys = {"dm_setting_stationpercent_1", "dm_setting_stationpercent_2", "dm_setting_stationpercent_3", "dm_setting_stationpercent_4"},
+        optionField = "stationPercentOption",
+        rowField = "stationPercentRow",
+        normalizeFn = "normalizeStationPercentMode",
+        onClickFn = "onClickStationPercent"
     }
 }
 
-DynamicMarketSettings.OPTION_ORDER = {"priceBase", "dailyRecalc"}
+DynamicMarketSettings.OPTION_ORDER = {"priceBase", "dailyRecalc", "stationThreshold", "stationPercent"}
 
 function DynamicMarketSettings:getDescriptionText(kind)
     local def = self.OPTION_DEFS[kind or "priceBase"]
@@ -348,7 +423,11 @@ function DynamicMarketSettings:setOptionTexts(kind)
         option:setLabel(g_i18n:getText(def.titleKey))
     end
     if option.setTexts ~= nil then
-        option:setTexts({g_i18n:getText(def.textKeys[1]), g_i18n:getText(def.textKeys[2])})
+        local texts = {}
+        for i, textKey in ipairs(def.textKeys) do
+            texts[i] = g_i18n:getText(textKey)
+        end
+        option:setTexts(texts)
     end
     if option.setState ~= nil then
         option:setState(self[def.modeField])
@@ -386,6 +465,20 @@ function DynamicMarketSettings:onClickDailyRecalc(a, b, c)
     self:applyToModule(true)
     self:setOptionTexts("dailyRecalc")
     self:onDailyRecalcFocus()
+end
+
+function DynamicMarketSettings:onClickStationThreshold(a, b, c)
+    self.stationThresholdState = self:normalizeStationThresholdMode(self:getStateFromCallback("stationThreshold", a, b, c))
+    self:applyToModule(true)
+    self:setOptionTexts("stationThreshold")
+    self:onOptionFocus("stationThreshold")
+end
+
+function DynamicMarketSettings:onClickStationPercent(a, b, c)
+    self.stationPercentState = self:normalizeStationPercentMode(self:getStateFromCallback("stationPercent", a, b, c))
+    self:applyToModule(true)
+    self:setOptionTexts("stationPercent")
+    self:onOptionFocus("stationPercent")
 end
 
 function DynamicMarketSettings:prepareOptionRow(row, kind)

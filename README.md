@@ -6,7 +6,9 @@ A mod for Farming Simulator 25 that introduces realistic market dynamics and pri
 
 Always get the latest version directly here:
 
-👉 [Download Newest Version](https://sharemods.com)
+👉 [Forbidden Mods (always up to date)](https://forbidden-mods.de/filebase/file/78050-dynamic-market/)
+
+👉 [Official GIANTS ModHub](https://www.farming-simulator.com/mod.php?mod_id=366174&title=fs2025)
 
 ## 🔧 Installation
 
@@ -24,7 +26,9 @@ Ein Mod für den Landwirtschafts-Simulator 25, der die Marktdynamik und Preisges
 
 Lade dir immer die aktuellste Version direkt hier herunter:
 
-👉 [Newest Version Download](https://sharemods.com/kib138n9kzam/FS25_DynamicMarket.zip.html)
+👉 [Forbidden Mods (immer aktuell)](https://forbidden-mods.de/filebase/file/78050-dynamic-market/)
+
+👉 [Offizieller GIANTS ModHub](https://www.farming-simulator.com/mod.php?mod_id=366174&title=fs2025)
 
 ## 🔧 Installation
 

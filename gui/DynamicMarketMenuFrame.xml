@@ -18,30 +18,34 @@
             <Button profile="dynamicMarketStoredOnlyButton" id="storedOnlyButton" text="$l10n_dm_filter_stored_off" onClick="onClickStoredOnly"/>
         </GuiElement>
         <GuiElement profile="dynamicMarketHeaderBox" position="0px -44px">
-            <Button profile="dynamicMarketHeaderCenter" position="0px 0px" size="40px 32px" text="$l10n_dm_header_icon" handleFocus="false" />
-            <Button profile="dynamicMarketHeader" position="40px 0px" size="165px 32px" text="$l10n_dm_header_good" id="goodsHeader" onClick="onClickGoodsHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="205px 0px" size="150px 32px" text="$l10n_dm_header_group" id="groupHeader" onClick="onClickGroupHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="355px 0px" size="165px 32px" text="$l10n_dm_header_price" id="priceHeader" onClick="onClickPriceHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="520px 0px" size="110px 32px" text="$l10n_dm_header_stock" id="stockHeader" onClick="onClickStockHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="630px 0px" size="95px 32px" text="$l10n_dm_header_market" id="marketHeader" onClick="onClickMarketHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="725px 0px" size="125px 32px" text="$l10n_dm_header_yearlyaverage" id="yearlyAverageHeader" onClick="onClickYearlyAverageHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="850px 0px" size="125px 32px" text="$l10n_dm_header_difference" id="bestMonthPriceHeader" onClick="onClickBestMonthPriceHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="975px 0px" size="210px 32px" text="$l10n_dm_header_station" id="stationHeader" onClick="onClickStationHeader"/>
-            <Button profile="dynamicMarketHeaderCenter" position="1185px 0px" size="130px 32px" text="$l10n_dm_header_bestmonth" id="monthHeader" onClick="onClickMonthHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="0px 0px" size="40px 32px" text="*" id="favoriteHeader" onClick="onClickFavoriteHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="40px 0px" size="40px 32px" text="$l10n_dm_header_icon" handleFocus="false" />
+            <Button profile="dynamicMarketHeader" position="80px 0px" size="165px 32px" text="$l10n_dm_header_good" id="goodsHeader" onClick="onClickGoodsHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="245px 0px" size="150px 32px" text="$l10n_dm_header_group" id="groupHeader" onClick="onClickGroupHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="395px 0px" size="165px 32px" text="$l10n_dm_header_price" id="priceHeader" onClick="onClickPriceHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="560px 0px" size="100px 32px" text="$l10n_dm_header_pressure" id="pressureHeader" onClick="onClickPressureHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="660px 0px" size="100px 32px" text="$l10n_dm_header_stock" id="stockHeader" onClick="onClickStockHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="760px 0px" size="85px 32px" text="$l10n_dm_header_market" id="marketHeader" onClick="onClickMarketHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="845px 0px" size="190px 32px" text="$l10n_dm_header_difference" id="stockValueHeader" onClick="onClickStockValueHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="1035px 0px" size="210px 32px" text="$l10n_dm_header_station" id="stationHeader" onClick="onClickStationHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="1245px 0px" size="120px 32px" text="$l10n_dm_header_bestmonth" id="monthHeader" onClick="onClickMonthHeader"/>
+            <Button profile="dynamicMarketHeaderCenter" position="1365px 0px" size="115px 32px" text="$l10n_dm_header_yearlyaverage" id="yearlyAverageHeader" onClick="onClickYearlyAverageHeader"/>
             <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px -2dp" />
         </GuiElement>
         <SmoothList profile="dynamicMarketList" id="dynamicMarketTable">
             <ListItem profile="dynamicMarketListItem">
-                <Bitmap profile="dynamicMarketRowCellImage" name="icon" />
-                <Text profile="dynamicMarketRowCellLeftBright" position="40px 0px" size="165px 32px" name="good"/>
-                <Text profile="dynamicMarketRowCellCenter" position="205px 0px" size="150px 32px" name="group"/>
-                <Text profile="dynamicMarketRowCellCenterBright" position="355px 0px" size="165px 32px" name="price" />
-                <Text profile="dynamicMarketRowCellCenter" position="520px 0px" size="110px 32px" name="stock" />
-                <Text profile="dynamicMarketRowCellMarket" position="630px 0px" size="95px 32px" name="market"/>
-                <Text profile="dynamicMarketRowCellCenter" position="725px 0px" size="125px 32px" name="yearlyaverage" />
-                <Text profile="dynamicMarketRowCellCenter" position="850px 0px" size="125px 32px" name="bestmonthprice" />
-                <Text profile="dynamicMarketRowCellStation" position="975px 0px" size="210px 32px" name="station" />
-                <Text profile="dynamicMarketRowCellCenter" position="1185px 0px" size="130px 32px" name="month" />
+                <Text profile="dynamicMarketRowCellCenterBright" position="0px 0px" size="40px 32px" name="favorite" />
+                <Bitmap profile="dynamicMarketRowCellImage" position="48px 0" name="icon" />
+                <Text profile="dynamicMarketRowCellLeftBright" position="80px 0px" size="165px 32px" name="good"/>
+                <Text profile="dynamicMarketRowCellCenter" position="245px 0px" size="150px 32px" name="group"/>
+                <Text profile="dynamicMarketRowCellCenterBright" position="395px 0px" size="165px 32px" name="price" />
+                <Text profile="dynamicMarketRowCellCenter" position="560px 0px" size="100px 32px" name="pressure" />
+                <Text profile="dynamicMarketRowCellCenter" position="660px 0px" size="100px 32px" name="stock" />
+                <Text profile="dynamicMarketRowCellMarket" position="760px 0px" size="85px 32px" name="market"/>
+                <Text profile="dynamicMarketRowCellCenter" position="845px 0px" size="190px 32px" name="stockvalue" />
+                <Text profile="dynamicMarketRowCellStation" position="1035px 0px" size="210px 32px" name="station" />
+                <Text profile="dynamicMarketRowCellCenter" position="1245px 0px" size="120px 32px" name="month" />
+                <Text profile="dynamicMarketRowCellCenter" position="1365px 0px" size="115px 32px" name="yearlyaverage" />
             </ListItem>
         </SmoothList>
         <ThreePartBitmap profile="dynamicMarketListSliderBox">

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+    <GuiElement profile="newLayer" />
+    <Bitmap profile="dialogFullscreenBg" id="dialogBg" />
+    <GuiElement profile="dynamicMarketStockLocationDialogFrame" id="dialogElement">
+        <ThreePartBitmap profile="fs25_dialogBgMiddle" />
+        <ThreePartBitmap profile="fs25_dialogBgTop" />
+        <ThreePartBitmap profile="fs25_dialogBgBottom" />
+        <GuiElement profile="fs25_dialogContentContainer">
+            <Text profile="dialogTitle" text="" id="dialogTitleElement" position="0px -30px" />
+            <GuiElement profile="dynamicMarketStockLocationHeaderBox" id="tableHeaderBox">
+                <Text profile="dynamicMarketStockLocationHeader" position="0px 0px" size="280px 32px" text="$l10n_dm_dialog_location_header"/>
+                <Text profile="dynamicMarketStockLocationHeaderRight" position="280px 0px" size="150px 32px" text="$l10n_dm_dialog_amount_header"/>
+                <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px -2dp" />
+            </GuiElement>
+            <SmoothList profile="dynamicMarketStockLocationList" id="dynamicMarketStockLocationTable">
+                <ListItem profile="dynamicMarketStockLocationListItem">
+                    <Text profile="dynamicMarketStockLocationCellName" position="0px 0px" size="280px 32px" name="name" />
+                    <Text profile="dynamicMarketStockLocationCellAmount" position="280px 0px" size="150px 32px" name="amount" />
+                </ListItem>
+            </SmoothList>
+        </GuiElement>
+        <BoxLayout profile="fs25_dialogButtonBox">
+            <Button profile="buttonOK" id="dialogButtonTag" text="$l10n_dm_action_show_on_map" onClick="onTagLocation" disabled="true" />
+            <Button profile="buttonBack" text="$l10n_dm_dialog_close" onClick="onClickBack" />
+        </BoxLayout>
+    </GuiElement>
+</GUI>
