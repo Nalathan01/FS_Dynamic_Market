@@ -10,6 +10,7 @@ Dynamic Market is a Farming Simulator 25 mod that enhances the base game economy
 - Shows your actual stock per product across storage, trailers/implements and production output
 - In-game notification when a good you have in stock rises notably in price
 - Dedicated market screen with base price, adjusted price, percentage difference, selling location and best selling month
+- Mark goods as favorites, filter/sort the overview by favorite, saved with your savegame
 - Automatically detects sellable goods from any map or mod, no manual setup required
 - All market calculations run server-side, so every player sees the same prices
 
@@ -63,6 +64,7 @@ Dynamischer Markt erweitert die Wirtschaft des Grundspiels von Landwirtschafts-S
 - Zeigt den tatsächlichen Lagerbestand je Ware in Lagerhallen, Anhängern/Anbaugeräten und Produktionsausstoß
 - Ingame-Hinweis, wenn eine gelagerte Ware deutlich im Preis steigt
 - Eigene Marktübersicht mit Grundpreis, angepasstem Preis, prozentualer Abweichung, Verkaufsstelle und bestem Verkaufsmonat
+- Waren als Favorit markieren, Übersicht danach filtern/sortieren, wird mit dem Spielstand gespeichert
 - Erkennt automatisch verkaufbare Waren von jeder Karte oder jedem Mod, ohne manuelle Einrichtung
 - Alle Marktberechnungen laufen serverseitig, damit alle Spieler dieselben Preise sehen
 

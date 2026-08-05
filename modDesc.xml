@@ -25,6 +25,11 @@ Overview
 - Dedicated market screen with base game price, adjusted price, percentage difference, selling location and best selling month
 - Search, storage filter and sortable columns for fast navigation
 
+Favorites
+- Mark goods as favorites directly in the market overview
+- Filter the overview to show only favorites, and sort by favorite
+- Favorites are saved with your savegame
+
 Automatic detection
 - Automatically detects sellable goods from any map or mod, without manual setup
 - Goods that don't fit an existing group but can genuinely be sold end up in their own "Map-specific" group instead of being ignored
@@ -78,6 +83,11 @@ Lagerbestand & Hinweise
 - Eigene Marktseite mit Grundspielpreis, angepasstem Preis, prozentualer Abweichung, Verkaufsstelle und bestem Verkaufsmonat
 - Suche, Lagerfilter und sortierbare Spalten für schnelle Navigation
 
+Favoriten
+- Waren direkt in der Marktübersicht als Favorit markieren
+- Übersicht nach Favoriten filtern und danach sortieren
+- Favoriten werden mit dem Spielstand gespeichert
+
 Automatische Erkennung
 - Erkennt automatisch verkaufbare Waren von jeder Karte oder jedem Mod, auch ohne eigene Anpassung
 - Waren, die keiner festen Gruppe zugeordnet werden können, aber tatsächlich verkauft werden können, landen in der eigenen Gruppe "Kartenspezifisch" statt ignoriert zu werden
@@ -130,6 +140,11 @@ Stock et notifications
 Aperçu
 - Page de marché dédiée avec prix de base, prix ajusté, écart en pourcentage, point de vente et meilleur mois de vente
 - Recherche, filtre de stockage et colonnes triables pour une navigation rapide
+
+Favoris
+- Marquer des produits comme favoris directement dans l'aperçu du marché
+- Filtrer l'aperçu pour n'afficher que les favoris, et trier par favori
+- Les favoris sont enregistrés avec la sauvegarde
 
 Détection automatique
 - Détecte automatiquement les produits vendables de n'importe quelle carte ou mod, sans configuration manuelle
