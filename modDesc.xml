@@ -38,7 +38,7 @@ Automatic detection
 Multiplayer
 - All market calculations run server-side, so every player sees the same prices
 
-Feedback and issues on GitHub: https://github.com/Nalathan01
+Feedback and issues on GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
 Changelog 1.1.9.0:
 - New: get an in-game notification when a good you have in stock rises notably in price
@@ -96,7 +96,7 @@ Automatische Erkennung
 Mehrspieler
 - Alle Marktberechnungen laufen serverseitig, damit alle Spieler dieselben Preise sehen
 
-Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01
+Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
 Changelog 1.1.9.0:
 - Neu: Ingame-Hinweis, wenn eine Ware, die du im Lager hast, deutlich im Preis steigt
@@ -154,7 +154,7 @@ Détection automatique
 Multijoueur
 - Tous les calculs de marché s'effectuent côté serveur, pour que tous les joueurs voient les mêmes prix
 
-Retours et signalement de problèmes sur GitHub: https://github.com/Nalathan01
+Retours et signalement de problèmes sur GitHub : https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
 Changelog 1.1.9.0:
 - Nouveau : notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
