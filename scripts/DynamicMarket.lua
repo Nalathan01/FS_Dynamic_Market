@@ -2644,6 +2644,8 @@ function DynamicMarket:buildMarketOverviewRows()
                                 pressureAmount = 0,
                                 pressureActive = false,
                                 pressureRecovering = false,
+                                pressureStationObject = nil,
+                                pressureStationScale = 1,
                                 bestMonth = self:getBestMonthForFillType(fillType),
                                 bestMonthNumber = 1,
                                 baseCurrentPrice = 0,
@@ -2658,6 +2660,12 @@ function DynamicMarket:buildMarketOverviewRows()
                         end
 
                         row.sellPointCount = row.sellPointCount + 1
+
+                        local candidatePressureScale = self:getStationPressureScale(station, fillTypeIndex)
+                        if candidatePressureScale < row.pressureStationScale then
+                            row.pressureStationScale = candidatePressureScale
+                            row.pressureStationObject = station
+                        end
 
                         local neutralPrice, _, _ = self:getNeutralMarketPrice(fillType, fillTypeIndex, price, station)
                         local yearlyAverage = self:getBaseGameYearlyAveragePrice(fillType, station, fillTypeIndex, price)
@@ -2730,10 +2738,6 @@ function DynamicMarket:buildMarketOverviewRows()
                     priceWithoutPressure = effectivePrice / pressureScale
                 end
 
-                row.pressureAmount = effectivePrice - priceWithoutPressure
-                row.pressureActive = row.pressureAmount < -0.0001
-                row.pressureRecovering = self:isStationPressureRecovering(bestStation, fillTypeIndex)
-
                 local marketFactor = tonumber(row.marketFactor) or 1
                 if marketFactor ~= 0 then
                     row.baseCurrentPrice = priceWithoutPressure / marketFactor
@@ -2747,6 +2751,27 @@ function DynamicMarket:buildMarketOverviewRows()
                     row.bestPrice = displayPrice
                     row.currentBestPrice = displayPrice
                 end
+            end
+
+            local pressureStation = row.pressureStationObject or bestStation
+            local pressureStationEffectivePrice = pressureStation == bestStation and effectivePrice or nil
+            if pressureStationEffectivePrice == nil and pressureStation.getEffectiveFillTypePrice ~= nil then
+                local callOk, result = pcall(pressureStation.getEffectiveFillTypePrice, pressureStation, fillTypeIndex)
+                if callOk and type(result) == "number" and result > 0 then
+                    pressureStationEffectivePrice = result
+                end
+            end
+
+            if pressureStationEffectivePrice ~= nil then
+                local pressureScale = self:getStationPressureScale(pressureStation, fillTypeIndex)
+                local pressureStationPriceWithoutPressure = pressureStationEffectivePrice
+                if pressureScale ~= nil and pressureScale > 0 then
+                    pressureStationPriceWithoutPressure = pressureStationEffectivePrice / pressureScale
+                end
+
+                row.pressureAmount = pressureStationEffectivePrice - pressureStationPriceWithoutPressure
+                row.pressureActive = row.pressureAmount < -0.0001
+                row.pressureRecovering = self:isStationPressureRecovering(pressureStation, fillTypeIndex)
             end
         end
     end

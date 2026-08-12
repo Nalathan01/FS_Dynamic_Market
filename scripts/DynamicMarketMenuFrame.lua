@@ -608,7 +608,7 @@ function DynamicMarketMenuFrame:updateActionButtonStates()
     local row = self.selectedRow
 
     if self.showStockButtonInfo ~= nil then
-        self.showStockButtonInfo.disabled = row == nil
+        self.showStockButtonInfo.disabled = row == nil or row.stockLocations == nil or #row.stockLocations == 0
     end
 
     self.mapHotspot = nil

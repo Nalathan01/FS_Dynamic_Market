@@ -117,7 +117,7 @@
         <absoluteSizeOffset value="0px 80px" />
     </Profile>
     <Profile name="dynamicMarketStockLocationDialogFrame" extends="fs25_dialogBg">
-        <size value="500px 550px" />
+        <size value="500px 350px" />
     </Profile>
     <Profile name="dynamicMarketStockLocationHeaderBox" extends="fs25_statisticsHeaderBox" with="anchorTopStretchingX pivotTopLeft">
         <position value="0px -44px" />
