@@ -10,13 +10,13 @@
             <Text profile="dialogTitle" text="" id="dialogTitleElement" position="0px -30px" />
             <GuiElement profile="dynamicMarketStockLocationHeaderBox" id="tableHeaderBox">
                 <Text profile="dynamicMarketStockLocationHeader" position="0px 0px" size="280px 32px" text="$l10n_dm_dialog_location_header"/>
-                <Text profile="dynamicMarketStockLocationHeaderRight" position="280px 0px" size="150px 32px" text="$l10n_dm_dialog_amount_header"/>
+                <Text profile="dynamicMarketStockLocationHeaderRight" position="-24px 0px" size="150px 32px" text="$l10n_dm_dialog_amount_header"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px -2dp" />
             </GuiElement>
             <SmoothList profile="dynamicMarketStockLocationList" id="dynamicMarketStockLocationTable">
                 <ListItem profile="dynamicMarketStockLocationListItem">
                     <Text profile="dynamicMarketStockLocationCellName" position="0px 0px" size="280px 32px" name="name" />
-                    <Text profile="dynamicMarketStockLocationCellAmount" position="280px 0px" size="150px 32px" name="amount" />
+                    <Text profile="dynamicMarketStockLocationCellAmount" position="-24px 0px" size="150px 32px" name="amount" />
                 </ListItem>
             </SmoothList>
         </GuiElement>

@@ -121,7 +121,7 @@
     </Profile>
     <Profile name="dynamicMarketStockLocationHeaderBox" extends="fs25_statisticsHeaderBox" with="anchorTopStretchingX pivotTopLeft">
         <position value="0px -44px" />
-        <size value="430px 32px" />
+        <height value="32px" />
     </Profile>
     <Profile name="dynamicMarketStockLocationHeader" extends="baseReference" with="anchorMiddleLeft">
         <textBold value="true" />
@@ -129,9 +129,11 @@
         <textColor value="$preset_colorWhite" />
         <textUpperCase value="true" />
         <textAlignment value="left" />
+        <textOffset value="24px 0px" />
     </Profile>
-    <Profile name="dynamicMarketStockLocationHeaderRight" extends="dynamicMarketStockLocationHeader">
+    <Profile name="dynamicMarketStockLocationHeaderRight" extends="dynamicMarketStockLocationHeader" with="anchorMiddleRight">
         <textAlignment value="right" />
+        <textOffset value="0px 0px" />
     </Profile>
     <Profile name="dynamicMarketStockLocationList" extends="emptyPanel" with="anchorStretchingYLeft pivotTopLeft">
         <position value="0px -84px" />
@@ -144,8 +146,11 @@
     </Profile>
     <Profile name="dynamicMarketStockLocationCellName" extends="dynamicMarketRowCellLeft">
         <size value="280px 32px" />
+        <textOffset value="24px 0px" />
     </Profile>
-    <Profile name="dynamicMarketStockLocationCellAmount" extends="dynamicMarketRowCellCenter">
+    <Profile name="dynamicMarketStockLocationCellAmount" extends="dynamicMarketRowCellLeft" with="anchorStretchingYRight">
         <size value="150px 32px" />
+        <textAlignment value="right" />
+        <textOffset value="0px 0px" />
     </Profile>
 </GUIProfiles>
