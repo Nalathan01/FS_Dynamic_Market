@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="111">
     <author>Nalathan</author>
-    <version>1.1.9.0</version>
+    <version>1.2.0.0</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
@@ -40,7 +40,7 @@ Multiplayer
 
 Feedback and issues on GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
-Changelog 1.1.9.0:
+Changelog 1.2.0.0:
 - New: get an in-game notification when a good you have in stock rises notably in price
 - New: show an item's storage locations at the press of a button, including map tagging for the storage location and the best sell point
 - New: the "Sale value" column now shows stock x current price instead of just the price difference to base price
@@ -98,7 +98,7 @@ Mehrspieler
 
 Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
-Changelog 1.1.9.0:
+Changelog 1.2.0.0:
 - Neu: Ingame-Hinweis, wenn eine Ware, die du im Lager hast, deutlich im Preis steigt
 - Neu: Lagerorte einer Ware per Tastendruck anzeigen, inklusive Kartenmarkierung für den Lagerort und die beste Verkaufsstelle
 - Neu: Spalte "Verkaufswert" zeigt jetzt Bestand x aktueller Preis statt reiner Preisdifferenz zum Basispreis
@@ -156,7 +156,7 @@ Multijoueur
 
 Retours et signalement de problèmes sur GitHub : https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
-Changelog 1.1.9.0:
+Changelog 1.2.0.0:
 - Nouveau : notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
 - Nouveau : affichez les lieux de stockage d'un article par simple pression d'une touche, avec marquage sur la carte du lieu de stockage et du meilleur point de vente
 - Nouveau : la colonne « Valeur de vente » affiche désormais stock x prix actuel au lieu du simple écart avec le prix de base
