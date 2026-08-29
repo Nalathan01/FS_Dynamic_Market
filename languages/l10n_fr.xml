@@ -6,8 +6,26 @@
         <text name="dm_stock_alert_title" text="Hausse du stock en réserve"/>
         <text name="dm_notice_updated" text="Nouveaux prix du marché calculés."/>
         <text name="dm_notice_stable" text="Les principaux groupes de produits restent stables."/>
+        <text name="dm_reason_up_1" text="Un grossiste régional a soudainement commandé de grandes quantités de %s."/>
+        <text name="dm_reason_up_2" text="Une sécheresse persistante dans les régions voisines a réduit l'offre de %s."/>
+        <text name="dm_reason_up_3" text="Une fête locale fait grimper la demande de %s."/>
+        <text name="dm_reason_up_4" text="Plusieurs fermes voisines ont eu une récolte faible de %s cette saison."/>
+        <text name="dm_reason_up_5" text="Un nouveau restaurant en ville a passé une grosse commande de %s."/>
+        <text name="dm_reason_up_6" text="Des problèmes de transport chez la concurrence poussent les acheteurs vers nos points de vente pour %s."/>
+        <text name="dm_reason_up_7" text="Une foire régionale stimule temporairement la demande de %s."/>
+        <text name="dm_reason_up_8" text="Les stocks de %s ont baissé dans toute la région."/>
+        <text name="dm_reason_down_1" text="Une récolte particulièrement abondante a inondé le marché de %s."/>
+        <text name="dm_reason_down_2" text="Plusieurs fermes ont mis de grandes quantités de %s sur le marché en même temps."/>
+        <text name="dm_reason_down_3" text="Un gros acheteur de %s a suspendu ses commandes pour le moment."/>
+        <text name="dm_reason_down_4" text="Des importations bon marché font pression sur le prix de %s."/>
+        <text name="dm_reason_down_5" text="La demande saisonnière de %s a chuté."/>
+        <text name="dm_reason_down_6" text="Des entrepôts pleins créent une offre excédentaire de %s dans la région."/>
+        <text name="dm_reason_down_7" text="Un hiver doux a réduit les besoins en %s."/>
+        <text name="dm_reason_down_8" text="Une nouvelle concurrence sur le marché fait baisser les prix de %s."/>
         <text name="dm_notice_station_pressure_falling" text="%s à %s : le prix a chuté à %s (-%d%%)."/>
         <text name="dm_notice_station_pressure_recovered" text="%s à %s : le prix est revenu à %s."/>
+        <text name="dm_notice_pressure_title" text="Mise à jour de la pression de vente"/>
+        <text name="dm_notice_pressure_more" text="... et %d de plus."/>
         <text name="dm_notice_station_pressure_recovering" text="%s à %s : le prix est remonté à %s (encore -%d%%)."/>
         <text name="dm_notice_up_light" text="%s augmente légèrement"/>
         <text name="dm_notice_up_clear" text="%s augmente nettement"/>
@@ -48,6 +66,7 @@
         <text name="dm_dialog_close" text="Fermer"/>
         <text name="dm_footer_visible" text="Marchandises vendables"/>
         <text name="dm_search_label" text="Recherche"/>
+        <text name="dm_clear_button" text="Effacer"/>
         <text name="dm_filter_stored_off" text="Toutes les marchandises"/>
         <text name="dm_filter_stored_on" text="Uniquement en stock"/>
         <text name="dm_filter_favorites_on" text="Favoris uniquement"/>
@@ -60,6 +79,10 @@
         <text name="dm_setting_dailyrecalc_desc" text="Off: recalculate only on month change. On: with multiple days per month, recalculate every day."/>
         <text name="dm_setting_dailyrecalc_off" text="Off"/>
         <text name="dm_setting_dailyrecalc_on" text="On"/>
+        <text name="dm_setting_vanillamode_title" text="GIANTS Prices Only"/>
+        <text name="dm_setting_vanillamode_desc" text="Off: Dynamic Market active. On: Pure original GIANTS prices, the overview becomes a plain price table."/>
+        <text name="dm_setting_vanillamode_off" text="Off"/>
+        <text name="dm_setting_vanillamode_on" text="On"/>
         <text name="dm_setting_stationthreshold_title" text="Seuil de pression de vente"/>
         <text name="dm_setting_stationthreshold_desc" text="Au-delà de cette quantité par point de vente et par article, le prix commence à baisser si vous continuez à vendre."/>
         <text name="dm_setting_stationthreshold_1" text="10 000 l"/>

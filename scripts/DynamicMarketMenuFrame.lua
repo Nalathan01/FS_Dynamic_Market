@@ -133,8 +133,64 @@ function DynamicMarketMenuFrame:onGuiSetupFinished()
     if self.storedOnlyButton ~= nil then
         self.storedOnlyButton:setText(g_i18n:getText("dm_filter_stored_off"))
     end
+    self:installEscOverride()
     self:updateYearlyAverageOptionVisibility()
     self:updateSortIcons()
+end
+
+function DynamicMarketMenuFrame:installEscOverride()
+    local searchInput = self.searchInput
+    if searchInput == nil or searchInput.dmEscOverrideInstalled then
+        return
+    end
+    searchInput.dmEscOverrideInstalled = true
+
+    local frame = self
+
+    local function handleEsc(input)
+        if input.dmEscConsumedForThisPress then
+            return
+        end
+        input.dmEscConsumedForThisPress = true
+
+        if frame.searchText ~= "" then
+            frame:clearSearchText()
+            return
+        end
+        if input.isCapturingInput then
+            input:setCaptureInput(false)
+        end
+        if input.forcePressed then
+            input:setForcePressed(false)
+        end
+        g_gui:showGui("")
+    end
+
+    if searchInput.inputEvent ~= nil then
+        local originalInputEvent = searchInput.inputEvent
+        searchInput.inputEvent = function(input, action, value, eventUsed)
+            if action == InputAction.MENU_BACK or action == InputAction.MENU_CANCEL then
+                handleEsc(input)
+                return true
+            end
+            return originalInputEvent(input, action, value, eventUsed)
+        end
+    end
+
+    if searchInput.keyEvent ~= nil then
+        local originalKeyEvent = searchInput.keyEvent
+        searchInput.keyEvent = function(input, unicode, sym, modifier, isDown, eventUsed)
+            if sym == Input.KEY_esc then
+                if isDown then
+                    input.dmEscConsumedForThisPress = false
+                else
+                    handleEsc(input)
+                    return true
+                end
+            end
+            return originalKeyEvent(input, unicode, sym, modifier, isDown, eventUsed)
+        end
+    end
 end
 
 function DynamicMarketMenuFrame:initialize()
@@ -351,6 +407,14 @@ function DynamicMarketMenuFrame:setSortColumn(column)
 end
 
 function DynamicMarketMenuFrame:onSearchChanged(element, text)
+    self:setSearchText(text)
+end
+
+function DynamicMarketMenuFrame:onSearchEnterPressed(element)
+    self:activateSearchInput()
+end
+
+function DynamicMarketMenuFrame:setSearchText(text)
     self.searchText = tostring(text or "")
     self:applySearchFilter()
     if self.dynamicMarketTable ~= nil then
@@ -358,8 +422,15 @@ function DynamicMarketMenuFrame:onSearchChanged(element, text)
     end
 end
 
-function DynamicMarketMenuFrame:onSearchEnterPressed(element)
-    self:activateSearchInput()
+function DynamicMarketMenuFrame:clearSearchText()
+    if self.searchInput ~= nil and self.searchInput.setText ~= nil then
+        self.searchInput:setText("")
+    end
+    self:setSearchText("")
+end
+
+function DynamicMarketMenuFrame:onClickClearSearch(element)
+    self:clearSearchText()
 end
 
 

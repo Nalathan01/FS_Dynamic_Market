@@ -14,7 +14,13 @@
         </GuiElement>
         <GuiElement profile="dynamicMarketSearchBox">
             <Text profile="dynamicMarketSearchLabel" text="$l10n_dm_search_label"/>
-            <TextInput profile="dynamicMarketSearchInput" id="searchInput" text="" maxCharacters="40" maxInputTextWidth="320px" onTextChanged="onSearchChanged" onEnterPressed="onSearchEnterPressed"/>
+            <TextInput profile="dynamicMarketSearchInput" id="searchInput" text="" maxCharacters="40" maxInputTextWidth="320px" onTextChanged="onSearchChanged" onEnterPressed="onSearchEnterPressed">
+                <ThreePartBitmap profile="fs25_textInputBg"/>
+                <Bitmap profile="fs25_textInputIconBox">
+                    <Bitmap profile="fs25_textInputIcon"/>
+                </Bitmap>
+            </TextInput>
+            <Button profile="dynamicMarketClearButton" id="clearSearchButton" text="$l10n_dm_clear_button" onClick="onClickClearSearch"/>
             <Button profile="dynamicMarketStoredOnlyButton" id="storedOnlyButton" text="$l10n_dm_filter_stored_off" onClick="onClickStoredOnly"/>
         </GuiElement>
         <GuiElement profile="dynamicMarketHeaderBox" position="0px -44px">

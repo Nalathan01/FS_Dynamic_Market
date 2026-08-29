@@ -6,8 +6,26 @@
         <text name="dm_stock_alert_title" text="Stock price rise"/>
         <text name="dm_notice_updated" text="New market prices calculated."/>
         <text name="dm_notice_stable" text="The main product groups remain stable."/>
+        <text name="dm_reason_up_1" text="A regional wholesaler has suddenly ordered large quantities of %s."/>
+        <text name="dm_reason_up_2" text="Ongoing drought in neighboring regions has reduced the supply of %s."/>
+        <text name="dm_reason_up_3" text="A town festival is driving up demand for %s."/>
+        <text name="dm_reason_up_4" text="Several neighboring farms had a weak harvest of %s this season."/>
+        <text name="dm_reason_up_5" text="A new restaurant in town has placed a large order for %s."/>
+        <text name="dm_reason_up_6" text="Transport trouble at competing markets is pushing buyers to our stations for %s."/>
+        <text name="dm_reason_up_7" text="A regional fair is boosting short-term demand for %s."/>
+        <text name="dm_reason_up_8" text="Stockpiles of %s have dropped across the region."/>
+        <text name="dm_reason_down_1" text="An especially good harvest has flooded the market with %s."/>
+        <text name="dm_reason_down_2" text="Several farms brought large amounts of %s to market at once."/>
+        <text name="dm_reason_down_3" text="A major buyer of %s has paused its orders for now."/>
+        <text name="dm_reason_down_4" text="Cheap imports are putting pressure on the price of %s."/>
+        <text name="dm_reason_down_5" text="Seasonal demand for %s has dropped off."/>
+        <text name="dm_reason_down_6" text="Full warehouses have created an oversupply of %s across the region."/>
+        <text name="dm_reason_down_7" text="A mild winter has lowered demand for %s."/>
+        <text name="dm_reason_down_8" text="New competition on the market is pushing down prices for %s."/>
         <text name="dm_notice_station_pressure_falling" text="%s at %s: price dropped to %s (-%d%%)."/>
         <text name="dm_notice_station_pressure_recovered" text="%s at %s: price back to %s."/>
+        <text name="dm_notice_pressure_title" text="Sale Pressure Update"/>
+        <text name="dm_notice_pressure_more" text="... and %d more."/>
         <text name="dm_notice_station_pressure_recovering" text="%s at %s: price rose to %s (still -%d%%)."/>
         <text name="dm_notice_up_light" text="%s rises slightly"/>
         <text name="dm_notice_up_clear" text="%s rises noticeably"/>
@@ -47,6 +65,7 @@
         <text name="dm_dialog_amount_header" text="Amount"/>
         <text name="dm_dialog_close" text="Close"/>
         <text name="dm_search_label" text="Search"/>
+        <text name="dm_clear_button" text="Clear"/>
         <text name="dm_footer_visible" text=""/>
         <text name="dm_filter_stored_off" text="All goods"/>
         <text name="dm_filter_stored_on" text="Only stored"/>
@@ -60,6 +79,10 @@
         <text name="dm_setting_dailyrecalc_desc" text="Off: recalculate only on month change. On: with multiple days per month, recalculate every day."/>
         <text name="dm_setting_dailyrecalc_off" text="Off"/>
         <text name="dm_setting_dailyrecalc_on" text="On"/>
+        <text name="dm_setting_vanillamode_title" text="GIANTS Prices Only"/>
+        <text name="dm_setting_vanillamode_desc" text="Off: Dynamic Market active. On: Pure original GIANTS prices, the overview becomes a plain price table."/>
+        <text name="dm_setting_vanillamode_off" text="Off"/>
+        <text name="dm_setting_vanillamode_on" text="On"/>
         <text name="dm_setting_stationthreshold_title" text="Sale pressure threshold"/>
         <text name="dm_setting_stationthreshold_desc" text="Above this amount per sell point and good, the price starts dropping the more you keep selling."/>
         <text name="dm_setting_stationthreshold_1" text="2,000 l"/>

@@ -7,6 +7,7 @@ function DynamicMarketSettings.new(dynamicMarket, customMt)
     self.installed = false
     self.mode = dynamicMarket ~= nil and dynamicMarket.PRICE_BASE_YEAR_AVERAGE or 2
     self.dailyRecalcMode = dynamicMarket ~= nil and dynamicMarket.DAILY_RECALC_DISABLED or 1
+    self.vanillaModeState = dynamicMarket ~= nil and dynamicMarket.VANILLA_MODE_DISABLED or 1
     self.stationThresholdState = 2
     self.stationPercentState = 2
     self.settingsHeader = nil
@@ -48,6 +49,10 @@ function DynamicMarketSettings:getDailyRecalcSaveKey()
     return "gameSettings.dynamicMarket.dailyRecalc#mode"
 end
 
+function DynamicMarketSettings:getVanillaModeSaveKey()
+    return "gameSettings.dynamicMarket.vanillaMode#mode"
+end
+
 function DynamicMarketSettings:normalizeMode(mode)
     mode = tonumber(mode) or 2
     if mode ~= 1 and mode ~= 2 then
@@ -59,6 +64,16 @@ end
 function DynamicMarketSettings:normalizeDailyRecalcMode(mode)
     local disabled = self.dynamicMarket ~= nil and self.dynamicMarket.DAILY_RECALC_DISABLED or 1
     local enabled = self.dynamicMarket ~= nil and self.dynamicMarket.DAILY_RECALC_ENABLED or 2
+    mode = tonumber(mode) or disabled
+    if mode ~= disabled and mode ~= enabled then
+        mode = disabled
+    end
+    return mode
+end
+
+function DynamicMarketSettings:normalizeVanillaMode(mode)
+    local disabled = self.dynamicMarket ~= nil and self.dynamicMarket.VANILLA_MODE_DISABLED or 1
+    local enabled = self.dynamicMarket ~= nil and self.dynamicMarket.VANILLA_MODE_ENABLED or 2
     mode = tonumber(mode) or disabled
     if mode ~= disabled and mode ~= enabled then
         mode = disabled
@@ -105,6 +120,12 @@ function DynamicMarketSettings:loadSettings()
     end
     self.dailyRecalcMode = self:normalizeDailyRecalcMode(dailyRecalcMode)
 
+    local vanillaModeState = self.vanillaModeState
+    if g_savegameXML ~= nil and getXMLInt ~= nil then
+        vanillaModeState = Utils.getNoNil(getXMLInt(g_savegameXML, self:getVanillaModeSaveKey()), vanillaModeState)
+    end
+    self.vanillaModeState = self:normalizeVanillaMode(vanillaModeState)
+
     local stationThresholdState = self.stationThresholdState
     if g_savegameXML ~= nil and getXMLInt ~= nil then
         stationThresholdState = Utils.getNoNil(getXMLInt(g_savegameXML, self:getStationThresholdSaveKey()), stationThresholdState)
@@ -122,6 +143,7 @@ function DynamicMarketSettings:saveSettings()
     if g_savegameXML ~= nil and setXMLInt ~= nil then
         setXMLInt(g_savegameXML, self:getSaveKey(), self.mode)
         setXMLInt(g_savegameXML, self:getDailyRecalcSaveKey(), self.dailyRecalcMode)
+        setXMLInt(g_savegameXML, self:getVanillaModeSaveKey(), self.vanillaModeState)
         setXMLInt(g_savegameXML, self:getStationThresholdSaveKey(), self.stationThresholdState)
         setXMLInt(g_savegameXML, self:getStationPercentSaveKey(), self.stationPercentState)
     end
@@ -130,6 +152,7 @@ end
 function DynamicMarketSettings:applyToModule(save)
     self.mode = self:normalizeMode(self.mode)
     self.dailyRecalcMode = self:normalizeDailyRecalcMode(self.dailyRecalcMode)
+    self.vanillaModeState = self:normalizeVanillaMode(self.vanillaModeState)
     self.stationThresholdState = self:normalizeStationThresholdMode(self.stationThresholdState)
     self.stationPercentState = self:normalizeStationPercentMode(self.stationPercentState)
     if self.dynamicMarket ~= nil and self.dynamicMarket.setPriceBaseMode ~= nil then
@@ -137,6 +160,9 @@ function DynamicMarketSettings:applyToModule(save)
     end
     if self.dynamicMarket ~= nil and self.dynamicMarket.setDailyRecalcMode ~= nil then
         self.dynamicMarket:setDailyRecalcMode(self.dailyRecalcMode, "gameSetting")
+    end
+    if self.dynamicMarket ~= nil and self.dynamicMarket.setVanillaMode ~= nil then
+        self.dynamicMarket:setVanillaMode(self.vanillaModeState, "gameSetting")
     end
     if self.dynamicMarket ~= nil then
         self.dynamicMarket.STATION_PRESSURE_THRESHOLD_LITERS = self.STATION_THRESHOLD_VALUES[self.stationThresholdState]
@@ -266,6 +292,18 @@ DynamicMarketSettings.OPTION_DEFS = {
         normalizeFn = "normalizeDailyRecalcMode",
         onClickFn = "onClickDailyRecalc"
     },
+    vanillaMode = {
+        rowName = "dmVanillaModeRow",
+        optionId = "dmVanillaMode",
+        modeField = "vanillaModeState",
+        titleKey = "dm_setting_vanillamode_title",
+        descKey = "dm_setting_vanillamode_desc",
+        textKeys = {"dm_setting_vanillamode_off", "dm_setting_vanillamode_on"},
+        optionField = "vanillaModeOption",
+        rowField = "vanillaModeRow",
+        normalizeFn = "normalizeVanillaMode",
+        onClickFn = "onClickVanillaMode"
+    },
     stationThreshold = {
         rowName = "dmStationThresholdRow",
         optionId = "dmStationThreshold",
@@ -292,7 +330,7 @@ DynamicMarketSettings.OPTION_DEFS = {
     }
 }
 
-DynamicMarketSettings.OPTION_ORDER = {"priceBase", "dailyRecalc", "stationThreshold", "stationPercent"}
+DynamicMarketSettings.OPTION_ORDER = {"priceBase", "dailyRecalc", "vanillaMode", "stationThreshold", "stationPercent"}
 
 function DynamicMarketSettings:getDescriptionText(kind)
     local def = self.OPTION_DEFS[kind or "priceBase"]
@@ -465,6 +503,13 @@ function DynamicMarketSettings:onClickDailyRecalc(a, b, c)
     self:applyToModule(true)
     self:setOptionTexts("dailyRecalc")
     self:onDailyRecalcFocus()
+end
+
+function DynamicMarketSettings:onClickVanillaMode(a, b, c)
+    self.vanillaModeState = self:normalizeVanillaMode(self:getStateFromCallback("vanillaMode", a, b, c))
+    self:applyToModule(true)
+    self:setOptionTexts("vanillaMode")
+    self:onOptionFocus("vanillaMode")
 end
 
 function DynamicMarketSettings:onClickStationThreshold(a, b, c)

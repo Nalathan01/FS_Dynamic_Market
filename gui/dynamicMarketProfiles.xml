@@ -7,7 +7,7 @@
     </Profile>
     <Profile name="dynamicMarketSearchBox" extends="baseReference" with="anchorTopLeft">
         <position value="0px -6px" />
-        <size value="760px 34px" />
+        <size value="900px 34px" />
     </Profile>
     <Profile name="dynamicMarketSearchLabel" extends="baseReference" with="anchorMiddleLeft">
         <position value="0px 0px" />
@@ -18,21 +18,20 @@
         <textColor value="$preset_colorWhite_50" />
         <textAlignment value="left" />
     </Profile>
-    <Profile name="dynamicMarketSearchInput" extends="baseReference" with="anchorMiddleLeft">
+    <Profile name="dynamicMarketSearchInput" extends="fs25_textInput" with="anchorMiddleLeft">
         <position value="90px 0px" />
         <size value="360px 30px" />
-        <imageColor value="$preset_fs25_colorGreyDark" />
-        <imageFocusedColor value="$preset_fs25_colorGreyDark" />
-        <imageSelectedColor value="$preset_fs25_colorGreyDark" />
         <textSize value="16px" />
-        <textColor value="$preset_colorWhite" />
-        <textSelectedColor value="$preset_colorWhite" />
-        <textDisabledColor value="$preset_colorDisabled" />
-        <textOffset value="8px 0px" />
+        <textBold value="true" />
         <maxInputTextWidth value="330px" />
     </Profile>
+    <Profile name="dynamicMarketClearButton" extends="buttonBack" with="anchorMiddleLeft">
+        <position value="510px 0px" />
+        <size value="90px 30px" />
+        <textSize value="14px" />
+    </Profile>
     <Profile name="dynamicMarketStoredOnlyButton" extends="wideButton" with="anchorMiddleLeft">
-        <position value="470px 0px" />
+        <position value="620px 0px" />
         <size value="230px 30px" />
         <textSize value="15px" />
         <textUpperCase value="true" />

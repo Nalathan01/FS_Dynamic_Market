@@ -6,8 +6,26 @@
         <text name="dm_stock_alert_title" text="Preisanstieg im Lager"/>
         <text name="dm_notice_updated" text="Neue Marktpreise berechnet."/>
         <text name="dm_notice_stable" text="Die wichtigsten Warengruppen bleiben stabil."/>
+        <text name="dm_reason_up_1" text="Ein überregionaler Großhändler hat kurzfristig große Mengen an %s nachgefragt."/>
+        <text name="dm_reason_up_2" text="Anhaltende Trockenheit in Nachbarregionen hat das Angebot an %s verknappt."/>
+        <text name="dm_reason_up_3" text="Ein Feiertag in der Stadt sorgt für erhöhte Nachfrage nach %s."/>
+        <text name="dm_reason_up_4" text="Mehrere Nachbarhöfe hatten diese Saison eine schwache Ernte bei %s."/>
+        <text name="dm_reason_up_5" text="Ein neues Restaurant in der Kreisstadt hat große Mengen %s bestellt."/>
+        <text name="dm_reason_up_6" text="Transportprobleme bei der Konkurrenz treiben Kunden zu unseren Verkaufsstellen für %s."/>
+        <text name="dm_reason_up_7" text="Ein regionales Volksfest steigert kurzfristig die Nachfrage nach %s."/>
+        <text name="dm_reason_up_8" text="Die Lagerbestände an %s sind europaweit gesunken."/>
+        <text name="dm_reason_down_1" text="Eine besonders ergiebige Ernte in der Region hat das Angebot an %s stark erhöht."/>
+        <text name="dm_reason_down_2" text="Mehrere Höfe haben gleichzeitig große Mengen %s auf den Markt gebracht."/>
+        <text name="dm_reason_down_3" text="Ein Großabnehmer für %s hat seine Bestellungen vorübergehend gestoppt."/>
+        <text name="dm_reason_down_4" text="Günstige Importe haben den Preis für %s unter Druck gesetzt."/>
+        <text name="dm_reason_down_5" text="Die Nachfrage nach %s ist saisonal bedingt eingebrochen."/>
+        <text name="dm_reason_down_6" text="Volle Lagerhäuser sorgen europaweit für ein Überangebot an %s."/>
+        <text name="dm_reason_down_7" text="Ein milder Winter hat den Bedarf an %s verringert."/>
+        <text name="dm_reason_down_8" text="Neue Konkurrenz auf dem Markt drückt die Preise für %s."/>
         <text name="dm_notice_station_pressure_falling" text="%s bei %s: Preis auf %s gefallen (-%d%%)."/>
         <text name="dm_notice_station_pressure_recovered" text="%s bei %s: Preis wieder bei %s."/>
+        <text name="dm_notice_pressure_title" text="Preisdruck-Update"/>
+        <text name="dm_notice_pressure_more" text="... und %d weitere."/>
         <text name="dm_notice_station_pressure_recovering" text="%s bei %s: Preis auf %s gestiegen (noch -%d%%)."/>
         <text name="dm_notice_up_light" text="%s steigt leicht"/>
         <text name="dm_notice_up_clear" text="%s steigt deutlich"/>
@@ -47,6 +65,7 @@
         <text name="dm_dialog_amount_header" text="Menge"/>
         <text name="dm_dialog_close" text="Schließen"/>
         <text name="dm_search_label" text="Suche"/>
+        <text name="dm_clear_button" text="Leeren"/>
         <text name="dm_footer_visible" text=""/>
         <text name="dm_filter_stored_off" text="Alle Waren"/>
         <text name="dm_filter_stored_on" text="Nur Lagerbestand"/>
@@ -60,6 +79,10 @@
         <text name="dm_setting_dailyrecalc_desc" text="Aus: Neuberechnung nur bei Monatswechsel. An: bei mehreren Tagen pro Monat jeden Tag neu berechnen."/>
         <text name="dm_setting_dailyrecalc_off" text="Aus"/>
         <text name="dm_setting_dailyrecalc_on" text="An"/>
+        <text name="dm_setting_vanillamode_title" text="Nur GIANTS-Preise"/>
+        <text name="dm_setting_vanillamode_desc" text="Aus: Dynamischer Markt aktiv. An: Nur Original-GIANTS-Preise, die Uebersicht dient nur noch als reine Preistabelle."/>
+        <text name="dm_setting_vanillamode_off" text="Aus"/>
+        <text name="dm_setting_vanillamode_on" text="An"/>
         <text name="dm_setting_stationthreshold_title" text="Schwelle Verkaufsdruck"/>
         <text name="dm_setting_stationthreshold_desc" text="Ab dieser Menge pro Verkaufsstelle und Ware beginnt der Preis zu fallen, wenn weiter verkauft wird."/>
         <text name="dm_setting_stationthreshold_1" text="10.000 l"/>

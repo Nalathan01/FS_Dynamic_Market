@@ -6,8 +6,26 @@
         <text name="dm_stock_alert_title" text="Stock price rise"/>
         <text name="dm_notice_updated" text="Nuovi Prezzi di Mercato Calcolati."/>
         <text name="dm_notice_stable" text="I Principali Gruppi di Prodotti Rimangono Stabili."/>
+        <text name="dm_reason_up_1" text="Un grossista regionale ha improvvisamente ordinato grandi quantità di %s."/>
+        <text name="dm_reason_up_2" text="La siccità persistente nelle regioni vicine ha ridotto l'offerta di %s."/>
+        <text name="dm_reason_up_3" text="Una festa locale sta facendo aumentare la domanda di %s."/>
+        <text name="dm_reason_up_4" text="Diverse fattorie vicine hanno avuto un raccolto scarso di %s questa stagione."/>
+        <text name="dm_reason_up_5" text="Un nuovo ristorante in città ha effettuato un grande ordine di %s."/>
+        <text name="dm_reason_up_6" text="Problemi di trasporto della concorrenza spingono gli acquirenti verso i nostri punti vendita di %s."/>
+        <text name="dm_reason_up_7" text="Una fiera regionale aumenta temporaneamente la domanda di %s."/>
+        <text name="dm_reason_up_8" text="Le scorte di %s sono diminuite in tutta la regione."/>
+        <text name="dm_reason_down_1" text="Un raccolto particolarmente abbondante ha inondato il mercato di %s."/>
+        <text name="dm_reason_down_2" text="Diverse fattorie hanno portato grandi quantità di %s sul mercato contemporaneamente."/>
+        <text name="dm_reason_down_3" text="Un grande acquirente di %s ha sospeso temporaneamente i suoi ordini."/>
+        <text name="dm_reason_down_4" text="Importazioni economiche stanno mettendo sotto pressione il prezzo di %s."/>
+        <text name="dm_reason_down_5" text="La domanda stagionale di %s è crollata."/>
+        <text name="dm_reason_down_6" text="Magazzini pieni creano un'eccedenza di %s nella regione."/>
+        <text name="dm_reason_down_7" text="Un inverno mite ha ridotto il fabbisogno di %s."/>
+        <text name="dm_reason_down_8" text="Nuova concorrenza sul mercato abbassa i prezzi di %s."/>
         <text name="dm_notice_station_pressure_falling" text="%s at %s: price dropped to %s (-%d%%)."/>
         <text name="dm_notice_station_pressure_recovered" text="%s at %s: price back to %s."/>
+        <text name="dm_notice_pressure_title" text="Aggiornamento pressione di vendita"/>
+        <text name="dm_notice_pressure_more" text="... e altri %d."/>
         <text name="dm_notice_station_pressure_recovering" text="%s at %s: price rose to %s (still -%d%%)."/>
         <text name="dm_notice_up_light" text="%s Sale Leggermente"/>
         <text name="dm_notice_up_clear" text="%s Sale Notevolmente"/>
@@ -47,6 +65,7 @@
         <text name="dm_dialog_amount_header" text="Amount"/>
         <text name="dm_dialog_close" text="Close"/>
         <text name="dm_search_label" text="Cerca"/>
+        <text name="dm_clear_button" text="Cancella"/>
         <text name="dm_footer_visible" text=""/>
         <text name="dm_filter_stored_off" text="Tutti i Prodotti"/>
         <text name="dm_filter_stored_on" text="Solo Prodotti a Magazzino"/>
@@ -60,6 +79,10 @@
         <text name="dm_setting_dailyrecalc_desc" text="Off: recalculate only on month change. On: with multiple days per month, recalculate every day."/>
         <text name="dm_setting_dailyrecalc_off" text="Off"/>
         <text name="dm_setting_dailyrecalc_on" text="On"/>
+        <text name="dm_setting_vanillamode_title" text="GIANTS Prices Only"/>
+        <text name="dm_setting_vanillamode_desc" text="Off: Dynamic Market active. On: Pure original GIANTS prices, the overview becomes a plain price table."/>
+        <text name="dm_setting_vanillamode_off" text="Off"/>
+        <text name="dm_setting_vanillamode_on" text="On"/>
         <text name="dm_setting_stationthreshold_title" text="Sale pressure threshold"/>
         <text name="dm_setting_stationthreshold_desc" text="Above this amount per sell point and good, the price starts dropping the more you keep selling."/>
         <text name="dm_setting_stationthreshold_1" text="2,000 l"/>

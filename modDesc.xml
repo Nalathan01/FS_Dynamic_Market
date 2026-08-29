@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="111">
     <author>Nalathan</author>
-    <version>1.2.0.0</version>
+    <version>1.2.9.0</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
@@ -39,6 +39,14 @@ Multiplayer
 - All market calculations run server-side, so every player sees the same prices
 
 Feedback and issues on GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+
+Changelog 1.2.9.0:
+- New: market notices now show an event that explains the price change (e.g. "A wholesaler bought large quantities") - just for flavor, does not change the actual prices
+- New: "GIANTS Prices Only" setting - fully turns off Dynamic Market's own prices, you just get the game's original prices, overview and search still work
+- Hotfix: search field in the market overview reworked - more consistent look, own Clear button, Esc now clears the search first and only closes the menu on a second press
+- Hotfix: "Best selling station" could show a station that isn't actually paying the best price right now
+- Hotfix: several notices used to appear at once on a period/day change - now you get one bundled notice
+- Hotfix: with daily recalculation on, the notice no longer appears every day, only on a real month change
 
 Changelog 1.2.0.0:
 - New: get an in-game notification when a good you have in stock rises notably in price
@@ -98,6 +106,14 @@ Mehrspieler
 
 Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
+Changelog 1.2.9.0:
+- Neu: Markt-Hinweise zeigen jetzt ein Ereignis, das die Preisänderung erklärt (z. B. "Ein Großhändler hat viel Ware gekauft") - nur zur Stimmung, ändert nichts an den tatsächlichen Preisen
+- Neu: Einstellung "Nur GIANTS-Preise" - schaltet die eigenen Marktpreise komplett ab, du siehst dann nur noch die Original-Preise vom Spiel, Übersicht und Suche bleiben trotzdem nutzbar
+- Hotfix: Suchfeld in der Marktübersicht überarbeitet - einheitlicheres Aussehen, eigener Leeren-Button, Esc leert erst die Suche und schließt erst beim zweiten Drücken das Menü
+- Hotfix: Die "beste Verkaufsstelle" konnte eine Station anzeigen, die gerade gar nicht den besten Preis zahlt
+- Hotfix: Bei Perioden-/Tageswechsel kamen oft mehrere Hinweise auf einmal - jetzt kommt eine gebündelte Meldung
+- Hotfix: Bei täglicher Neuberechnung kommt die Hinweis-Meldung nicht mehr jeden Tag, sondern nur noch bei echtem Monatswechsel
+
 Changelog 1.2.0.0:
 - Neu: Ingame-Hinweis, wenn eine Ware, die du im Lager hast, deutlich im Preis steigt
 - Neu: Lagerorte einer Ware per Tastendruck anzeigen, inklusive Kartenmarkierung für den Lagerort und die beste Verkaufsstelle
@@ -155,6 +171,14 @@ Multijoueur
 - Tous les calculs de marché s'effectuent côté serveur, pour que tous les joueurs voient les mêmes prix
 
 Retours et signalement de problèmes sur GitHub : https://github.com/Nalathan01/FS_Dynamic_Market/issues
+
+Changelog 1.2.9.0:
+- Nouveau : les notifications de marché montrent maintenant un événement qui explique le changement de prix (par ex. « Un grossiste a acheté de grandes quantités ») - juste pour l'ambiance, ça ne change rien aux prix réels
+- Nouveau : réglage « Prix GIANTS uniquement » - désactive complètement les prix propres à Dynamic Market, tu ne vois plus que les prix d'origine du jeu, l'aperçu et la recherche restent utilisables
+- Hotfix : champ de recherche de l'aperçu du marché revu - apparence plus cohérente, bouton Effacer dédié, Échap efface d'abord la recherche et ne ferme le menu qu'à la deuxième pression
+- Hotfix : la « meilleure station de vente » pouvait afficher une station qui ne paie pas vraiment le meilleur prix en ce moment
+- Hotfix : plusieurs notifications arrivaient souvent en même temps lors d'un changement de période/jour - maintenant tu reçois une seule notification groupée
+- Hotfix : avec le recalcul quotidien activé, la notification n'apparaît plus chaque jour, seulement lors d'un vrai changement de mois
 
 Changelog 1.2.0.0:
 - Nouveau : notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
