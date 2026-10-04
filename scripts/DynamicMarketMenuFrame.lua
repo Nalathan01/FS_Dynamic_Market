@@ -105,7 +105,16 @@ function DynamicMarketMenuFrame.new(i18n, messageCenter)
             self:onClickToggleFavorite()
         end
     }
-    self:setMenuButtonInfo({self.backButtonInfo, self.showStockButtonInfo, self.mapHotspotButtonInfo, self.toggleFavoriteButtonInfo})
+    self.marketNewsButtonInfo = {
+        text = self.i18n:getText("dm_news_title"),
+        inputAction = InputAction.MENU_EXTRA_2,
+        callback = function()
+            if DynamicMarket ~= nil and DynamicMarket.openMarketNewsDialog ~= nil then
+                DynamicMarket:openMarketNewsDialog()
+            end
+        end
+    }
+    self:setMenuButtonInfo({self.backButtonInfo, self.showStockButtonInfo, self.mapHotspotButtonInfo, self.toggleFavoriteButtonInfo, self.marketNewsButtonInfo})
     return self
 end
 

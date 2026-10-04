@@ -64,6 +64,12 @@
         <text name="dm_dialog_location_header" text="Location"/>
         <text name="dm_dialog_amount_header" text="Amount"/>
         <text name="dm_dialog_close" text="Close"/>
+        <text name="dm_news_title" text="Market News"/>
+        <text name="dm_news_header_group" text="Product group"/>
+        <text name="dm_news_header_change" text="Change"/>
+        <text name="dm_news_header_reason" text="Reason"/>
+        <text name="dm_news_header_stock" text="In your storage"/>
+        <text name="dm_news_stable" text="Minor fluctuation"/>
         <text name="dm_search_label" text="Cerca"/>
         <text name="dm_clear_button" text="Cancella"/>
         <text name="dm_footer_visible" text=""/>

@@ -65,6 +65,7 @@ DynamicMarket.PERIODS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
 source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketMenuFrame.lua")
 source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketStockLocationDialog.lua")
+source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketNewsDialog.lua")
 source(DynamicMarket.MOD_DIR .. "scripts/DynamicMarketSettings.lua")
 
 DynamicMarket.CURVES = {
@@ -2080,6 +2081,111 @@ function DynamicMarket:pollStationSales(dt)
     self:flushPressureNotices()
 end
 
+function DynamicMarket:canShowMarketNewsDialog()
+    local mission = g_currentMission
+    if self.__marketNewsDialogLoaded ~= true or g_gui == nil or g_gui.showDialog == nil or mission == nil then
+        return false
+    end
+    if mission.getIsClient ~= nil and not mission:getIsClient() then
+        return false
+    end
+    return true
+end
+
+function DynamicMarket:getStockTitlesByGroup()
+    local titlesByGroup = {}
+    local mission = g_currentMission
+    local farmId = mission ~= nil and mission.getFarmId ~= nil and mission:getFarmId() or nil
+    local spectatorFarmId = FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID or 0
+    if farmId == nil or farmId == spectatorFarmId then
+        return titlesByGroup
+    end
+
+    for fillTypeIndex, stockLevel in pairs(self:getStockLevelsByFillType()) do
+        if tonumber(stockLevel) ~= nil and stockLevel > 0 then
+            local fillType = self:getFillTypeByIndex(fillTypeIndex)
+            if fillType ~= nil then
+                local groupName = self:getGroup(fillType)
+                if self:getSkipReason(fillType, groupName) == nil then
+                    titlesByGroup[groupName] = titlesByGroup[groupName] or {}
+                    table.insert(titlesByGroup[groupName], tostring(fillType.title or fillType.name or fillTypeIndex))
+                end
+            end
+        end
+    end
+
+    for _, titles in pairs(titlesByGroup) do
+        table.sort(titles)
+    end
+    return titlesByGroup
+end
+
+function DynamicMarket:buildMarketNewsEntries(marketKey)
+    self:buildMarketFactors()
+    marketKey = marketKey or self.__lastSalesMarketKey or self:getMarketKey()
+
+    local minMovement = tonumber(self.MARKET_NOTICE_MIN_MOVEMENT) or 0.015
+    local stockTitlesByGroup = self:getStockTitlesByGroup()
+    local entries = {}
+
+    for groupName, _ in pairs(self.MARKET_GROUPS) do
+        local factor = self:getMarketFactor(groupName)
+        local direction = "stable"
+        local reason = self:getLocalizedText("dm_news_stable", "Leichte Schwankung")
+        if math.abs(factor-1) >= minMovement then
+            direction = factor > 1 and "up" or "down"
+            reason = self:getMarketReason(groupName, factor, marketKey)
+        end
+
+        local stockTitles = stockTitlesByGroup[groupName]
+        table.insert(entries, {
+            groupName = groupName,
+            groupTitle = self:getMarketGroupDisplayName(groupName),
+            factor = factor,
+            changeText = self:formatMarketPercent(factor),
+            direction = direction,
+            reason = reason,
+            stockText = stockTitles ~= nil and table.concat(stockTitles, ", ") or ""
+        })
+    end
+
+    table.sort(entries, function(a, b)
+        if a.factor ~= b.factor then
+            return a.factor > b.factor
+        end
+        return a.groupTitle < b.groupTitle
+    end)
+
+    return entries
+end
+
+function DynamicMarket:openMarketNewsDialog(marketKey)
+    if not self:canShowMarketNewsDialog() then
+        return false
+    end
+
+    local dialog = g_gui:showDialog("DynamicMarketNewsDialog")
+    if dialog == nil or dialog.target == nil or dialog.target.setNewsData == nil then
+        return false
+    end
+
+    dialog.target:setNewsData(self:getLocalizedText("dm_news_title", "Marktnachrichten"), self:buildMarketNewsEntries(marketKey))
+    return true
+end
+
+function DynamicMarket:tryOpenPendingMarketNews()
+    if self.__marketNewsPendingKey == nil or g_gui == nil then
+        return
+    end
+    if g_gui.getIsGuiVisible ~= nil and g_gui:getIsGuiVisible() then
+        return
+    end
+
+    local marketKey = self.__marketNewsPendingKey
+    self.__marketNewsPendingKey = nil
+    self:openMarketNewsDialog(marketKey)
+end
+
 function DynamicMarket:showMarketNotice(passName)
     if self.PLAYER_MARKET_NOTICES ~= true or tostring(passName or "") ~= "periodUpdate" then
         return
@@ -2121,6 +2227,11 @@ function DynamicMarket:showMarketNotice(passName)
         if stockText ~= nil then
             table.insert(parts, stockText)
         end
+    end
+
+    if self:canShowMarketNewsDialog() then
+        self.__marketNewsPendingKey = marketKey
+        return
     end
 
     local title = self:getLocalizedText("dm_notice_title", "Dynamischer Markt")
@@ -2251,6 +2362,10 @@ function DynamicMarket:registerMenuPage()
 
     if DynamicMarketStockLocationDialog ~= nil then
         g_gui:loadGui(self.MOD_DIR .. "gui/DynamicMarketStockLocationDialog.xml", "DynamicMarketStockLocationDialog", DynamicMarketStockLocationDialog.new())
+    end
+    if DynamicMarketNewsDialog ~= nil then
+        g_gui:loadGui(self.MOD_DIR .. "gui/DynamicMarketNewsDialog.xml", "DynamicMarketNewsDialog", DynamicMarketNewsDialog.new())
+        self.__marketNewsDialogLoaded = true
     end
 
     local frame = DynamicMarketMenuFrame.new(g_i18n)
@@ -2881,6 +2996,7 @@ function DynamicMarket:update(dt)
 
     self:decayStationPressure(delta)
     self:pollStationSales(delta)
+    self:tryOpenPendingMarketNews()
 
     if self.__finalApplied then
         self.__periodCheckMs = (self.__periodCheckMs or 0) + delta

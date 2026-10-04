@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+    <GuiElement profile="newLayer" />
+    <Bitmap profile="dialogFullscreenBg" id="dialogBg" />
+    <GuiElement profile="dynamicMarketNewsDialogFrame" id="dialogElement">
+        <ThreePartBitmap profile="fs25_dialogBgMiddle" />
+        <ThreePartBitmap profile="fs25_dialogBgTop" />
+        <ThreePartBitmap profile="fs25_dialogBgBottom" />
+        <GuiElement profile="fs25_dialogContentContainer">
+            <Text profile="dialogTitle" text="$l10n_dm_news_title" id="dialogTitleElement" position="0px -30px" />
+            <GuiElement profile="dynamicMarketNewsHeaderBox" id="tableHeaderBox">
+                <Text profile="dynamicMarketStockLocationHeader" position="0px 0px" size="220px 32px" text="$l10n_dm_news_header_group"/>
+                <Text profile="dynamicMarketStockLocationHeader" position="220px 0px" size="130px 32px" text="$l10n_dm_news_header_change"/>
+                <Text profile="dynamicMarketStockLocationHeader" position="350px 0px" size="760px 32px" text="$l10n_dm_news_header_reason"/>
+                <Text profile="dynamicMarketStockLocationHeader" position="1110px 0px" size="290px 32px" text="$l10n_dm_news_header_stock"/>
+                <ThreePartBitmap profile="fs25_lineSeparatorBottom" position="0px -2dp" />
+            </GuiElement>
+            <SmoothList profile="dynamicMarketNewsList" id="dynamicMarketNewsTable">
+                <ListItem profile="dynamicMarketStockLocationListItem">
+                    <Text profile="dynamicMarketNewsCell" position="0px 0px" size="220px 32px" name="group" />
+                    <Text profile="dynamicMarketNewsCell" position="220px 0px" size="130px 32px" name="change" />
+                    <Text profile="dynamicMarketNewsCell" position="350px 0px" size="760px 32px" name="reason" />
+                    <Text profile="dynamicMarketNewsCell" position="1110px 0px" size="290px 32px" name="stock" />
+                </ListItem>
+            </SmoothList>
+        </GuiElement>
+        <BoxLayout profile="fs25_dialogButtonBox">
+            <Button profile="buttonBack" text="$l10n_dm_dialog_close" onClick="onClickBack" />
+        </BoxLayout>
+    </GuiElement>
+</GUI>

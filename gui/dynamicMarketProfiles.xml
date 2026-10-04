@@ -152,4 +152,19 @@
         <textAlignment value="right" />
         <textOffset value="0px 0px" />
     </Profile>
+    <Profile name="dynamicMarketNewsDialogFrame" extends="fs25_dialogBg">
+        <size value="1440px 520px" />
+    </Profile>
+    <Profile name="dynamicMarketNewsHeaderBox" extends="dynamicMarketStockLocationHeaderBox">
+        <position value="0px -90px" />
+    </Profile>
+    <Profile name="dynamicMarketNewsList" extends="dynamicMarketStockLocationList">
+        <position value="0px -130px" />
+        <absoluteSizeOffset value="0px 176px" />
+    </Profile>
+    <Profile name="dynamicMarketNewsCell" extends="dynamicMarketRowCellLeft">
+        <textOffset value="24px 0px" />
+        <textLayoutMode value="clip" />
+        <textSelectedColor value="$preset_fs25_colorMainLight" />
+    </Profile>
 </GUIProfiles>
