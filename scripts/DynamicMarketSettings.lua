@@ -385,11 +385,8 @@ function DynamicMarketSettings:getIsOptionFocused(kind)
     if option == nil then
         return false
     end
-    if option.getIsFocused ~= nil then
-        local ok, focused = pcall(option.getIsFocused, option)
-        if ok and focused == true then
-            return true
-        end
+    if option.getIsFocused ~= nil and option:getIsFocused() == true then
+        return true
     end
     if option.focused == true or option.focusActive == true then
         return true

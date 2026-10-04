@@ -14,8 +14,8 @@ end
 local function dmFormatStock(value)
     local liters = tonumber(value) or 0
     if g_i18n ~= nil and g_i18n.formatVolume ~= nil then
-        local ok, text = pcall(g_i18n.formatVolume, g_i18n, liters, 0)
-        if ok and text ~= nil then
+        local text = g_i18n:formatVolume(liters, 0)
+        if text ~= nil then
             return text
         end
     end

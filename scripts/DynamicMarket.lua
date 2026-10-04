@@ -3,7 +3,7 @@ DynamicMarket = {}
 DynamicMarket.MOD_NAME = g_currentModName or "FS25_DynamicMarket"
 DynamicMarket.MOD_DIR = g_currentModDirectory or ""
 DynamicMarket.LOG_PREFIX = "[DynamicMarket]"
-DynamicMarket.VERSION = "1.2.9.0"
+DynamicMarket.VERSION = "1.3.1.0"
 
 DynamicMarket.APPLY_CURVES = true
 
@@ -27,6 +27,10 @@ DynamicMarket.dailyRecalcMode = DynamicMarket.DAILY_RECALC_DISABLED
 DynamicMarket.VANILLA_MODE_DISABLED = 1
 DynamicMarket.VANILLA_MODE_ENABLED = 2
 DynamicMarket.vanillaMode = DynamicMarket.VANILLA_MODE_DISABLED
+
+DynamicMarket.PRODUCTION_PRICE_LINK_ENABLED = true
+DynamicMarket.PRODUCTION_PRICE_LINK_WEIGHT = 0.6
+DynamicMarket.PRODUCTION_PRICE_FLOOR_MARGIN = 1.05
 
 DynamicMarket.MARKET_REASON_COUNT = 8
 
@@ -56,23 +60,6 @@ DynamicMarket.STABLE_DELAY_MS = 500
 DynamicMarket.MIN_APPLY_DELAY_MS = 1000
 DynamicMarket.EXISTING_CURVE_WEIGHT = 0.25
 DynamicMarket.GROUP_CURVE_WEIGHT = 0.75
-
-DynamicMarket.DIAGNOSTICS = {
-    debugLog = false,
-    everyFillType = false,
-    changedNames = false,
-    market = false,
-    unsafeNames = false,
-    skippedDetails = false,
-    saleMarket = false,
-    finalStatus = false,
-    saleMarketNames = false,
-    marketModel = false,
-    maxSkippedDetailNames = 80,
-    maxSaleMarketNames = 0,
-    maxChangedNames = 80,
-    maxUnsafeNames = 120
-}
 
 DynamicMarket.PERIODS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
@@ -245,23 +232,9 @@ DynamicMarket.__lastFillTypeCount = -1
 DynamicMarket.__stableMs = 0
 DynamicMarket.__finalApplied = false
 DynamicMarket.__loadMapSeen = false
-DynamicMarket.__applyPass = 0
 DynamicMarket.__runtimeMs = 0
-DynamicMarket.__armedLogged = false
 DynamicMarket.__favorites = {}
 
-function DynamicMarket:formatCurve(curve)
-    if curve == nil then
-        return ""
-    end
-
-    local parts = {}
-    for _, period in ipairs(self.PERIODS) do
-        table.insert(parts, string.format("%.2f", tonumber(curve[period]) or 1))
-    end
-
-    return table.concat(parts, ",")
-end
 
 function DynamicMarket:getFillTypeName(fillType)
     if fillType == nil or type(fillType) ~= "table" then
@@ -367,6 +340,10 @@ function DynamicMarket:getSkipReason(fillType, groupName)
         return "noValidBasePrice"
     end
 
+    if fillType.showOnPriceTable == false then
+        return "hiddenFromPriceTable"
+    end
+
     if groupName == nil then
         return "noSafeCategory"
     end
@@ -374,13 +351,6 @@ function DynamicMarket:getSkipReason(fillType, groupName)
     return nil
 end
 
-function DynamicMarket:copyCurve(curve)
-    local copied = {}
-    for _, period in ipairs(self.PERIODS) do
-        copied[period] = tonumber(curve ~= nil and curve[period] or nil) or 1
-    end
-    return copied
-end
 
 function DynamicMarket:buildDynamicCurve(fillType, groupName)
     local groupCurve = self.CURVES[groupName]
@@ -982,8 +952,8 @@ function DynamicMarket:getStationUniqueId(station)
     if placeable.getUniqueId == nil then
         return nil
     end
-    local callOk, uniqueId = pcall(placeable.getUniqueId, placeable)
-    if not callOk or uniqueId == nil or uniqueId == "" then
+    local uniqueId = placeable:getUniqueId()
+    if uniqueId == nil or uniqueId == "" then
         return nil
     end
     return uniqueId
@@ -1157,9 +1127,9 @@ function DynamicMarket:showStationPressureNotice(station, fillTypeIndex, isFalli
     local percentValue = math.floor((tonumber(currentPercent) or 0) + 0.5)
 
     local currentPrice = nil
-    if station ~= nil and station.getEffectiveFillTypePrice ~= nil then
-        local callOk, result = pcall(station.getEffectiveFillTypePrice, station, fillTypeIndex)
-        if callOk and type(result) == "number" and result > 0 then
+    if station ~= nil and station.getEffectiveFillTypePrice ~= nil and station.acceptedFillTypes ~= nil and station.acceptedFillTypes[fillTypeIndex] then
+        local result = station:getEffectiveFillTypePrice(fillTypeIndex)
+        if type(result) == "number" and result > 0 then
             currentPrice = result
         end
     end
@@ -1311,7 +1281,7 @@ function DynamicMarket:getNeutralMarketPrice(fillType, fillTypeIndex, currentBas
         return nil, groupName, skipReason
     end
 
-    local factor = self:getMarketFactor(groupName)
+    local factor = self:getFillTypeMarketFactor(fillType, groupName)
     local saleBasePrice = self:getSaleBasePrice(station, fillTypeIndex, fillType, currentBasePrice)
     if saleBasePrice == nil or factor == nil then
         return nil, groupName, "noNeutralPrice"
@@ -1485,20 +1455,17 @@ function DynamicMarket:buildRestoredBaseGameCurve(fillType)
     return curve
 end
 
-function DynamicMarket:buildMarketFactors(stats)
+function DynamicMarket:buildMarketFactors()
     local key, period, year, mapName = self:getMarketKey()
     if self.__marketKey == key and self.__marketFactors ~= nil then
         return self.__marketFactors, key, period, year, mapName
     end
     
     local factors = {}
-    local marketParts = {}
     for groupName, _ in pairs(self.MARKET_GROUPS) do
-        local factor, data = self:buildMarketFactorForGroup(groupName, period, year, mapName)
+        local _, data = self:buildMarketFactorForGroup(groupName, period, year, mapName)
         factors[groupName] = data
-        table.insert(marketParts, string.format("%s=%+.1f%%", groupName, (factor - 1) * 100))
     end
-    table.sort(marketParts)
     self.__marketFactors = factors
     self.__marketKey = key
 
@@ -1526,26 +1493,6 @@ function DynamicMarket:buildMarketFactors(stats)
         strongestNegativeFactor = #negativeGroups > 0 and negativeGroups[1].factor or 1
     }
     
-    if self.DIAGNOSTICS.marketModel then
-        Logging.info("%s marketModel version=%s type=regionalSupplyDemand seasonalSupply=yes storageRead=no yieldChange=no priceOnly=yes positiveCount=%d negativeCount=%d",
-            self.LOG_PREFIX,
-            self.VERSION,
-            #positiveGroups,
-            #negativeGroups
-        )
-    end
-    
-    if self.DIAGNOSTICS.market then
-        Logging.info("%s market version=%s period=%d year=%d map=%s mode=stationPriceTables saleHook=priceTable model=regionalSupplyDemand factors=%s",
-            self.LOG_PREFIX,
-            self.VERSION,
-            period,
-            year,
-            tostring(mapName),
-            table.concat(marketParts, ",")
-        )
-    end
-    
     return factors, key, period, year, mapName
 end
 
@@ -1558,6 +1505,252 @@ function DynamicMarket:getMarketFactor(groupName)
         return 1
     end
     return tonumber(factors[groupName].factor) or 1
+end
+
+function DynamicMarket:addRecipeEntry(list, fillTypeIndex, amount)
+    fillTypeIndex = tonumber(fillTypeIndex)
+    amount = tonumber(amount) or 1
+    if fillTypeIndex ~= nil and amount > 0 then
+        table.insert(list, {index = fillTypeIndex, amount = amount})
+    end
+end
+
+function DynamicMarket:addProductionRecipe(recipeSet, inputs, outputs)
+    if #inputs == 0 or #outputs == 0 then
+        return
+    end
+
+    local parts = {}
+    for _, entry in ipairs(inputs) do
+        table.insert(parts, "i" .. entry.index .. ":" .. entry.amount)
+    end
+    for _, entry in ipairs(outputs) do
+        table.insert(parts, "o" .. entry.index .. ":" .. entry.amount)
+    end
+    table.sort(parts)
+    local key = table.concat(parts, ";")
+    if recipeSet.seen[key] then
+        return
+    end
+    recipeSet.seen[key] = true
+
+    local recipe = {inputs = inputs, outputs = outputs}
+    table.insert(recipeSet.list, recipe)
+    for _, output in ipairs(outputs) do
+        recipeSet.byOutput[output.index] = recipeSet.byOutput[output.index] or {}
+        table.insert(recipeSet.byOutput[output.index], recipe)
+    end
+end
+
+function DynamicMarket:addRecipesFromProductions(recipeSet, productions)
+    if type(productions) ~= "table" then
+        return
+    end
+    for _, production in pairs(productions) do
+        if type(production) == "table" and type(production.inputs) == "table" and type(production.outputs) == "table" then
+            local inputs = {}
+            local outputs = {}
+            for _, input in ipairs(production.inputs) do
+                self:addRecipeEntry(inputs, input.type, input.amount)
+            end
+            for _, output in ipairs(production.outputs) do
+                self:addRecipeEntry(outputs, output.type, output.amount)
+            end
+            self:addProductionRecipe(recipeSet, inputs, outputs)
+        end
+    end
+end
+
+function DynamicMarket:getFillTypeIndexFromName(name)
+    if name == nil or name == "" or g_fillTypeManager == nil then
+        return nil
+    end
+    return g_fillTypeManager:getFillTypeIndexByName(name)
+end
+
+function DynamicMarket:addRecipesFromProductionXML(recipeSet, xmlFile, productionsKey)
+    xmlFile:iterate(productionsKey .. ".production", function(_, productionKey)
+        local inputs = {}
+        local outputs = {}
+        xmlFile:iterate(productionKey .. ".inputs.input", function(_, inputKey)
+            self:addRecipeEntry(inputs, self:getFillTypeIndexFromName(xmlFile:getString(inputKey .. "#fillType")), xmlFile:getFloat(inputKey .. "#amount"))
+        end)
+        xmlFile:iterate(productionKey .. ".outputs.output", function(_, outputKey)
+            self:addRecipeEntry(outputs, self:getFillTypeIndexFromName(xmlFile:getString(outputKey .. "#fillType")), xmlFile:getFloat(outputKey .. "#amount"))
+        end)
+        self:addProductionRecipe(recipeSet, inputs, outputs)
+    end)
+end
+
+function DynamicMarket:addRecipesFromStoreItemXML(recipeSet, xmlFile)
+    if xmlFile:hasProperty("placeable.productionPoint") then
+        self:addRecipesFromProductionXML(recipeSet, xmlFile, "placeable.productionPoint.productions")
+        xmlFile:iterate("placeable.productionPoint.productionPointConfigurations.productionPointConfiguration", function(_, configKey)
+            self:addRecipesFromProductionXML(recipeSet, xmlFile, configKey .. ".productionPoint.productions")
+        end)
+    end
+
+    if xmlFile:hasProperty("placeable.factory.production") then
+        local inputs = {}
+        local outputs = {}
+        xmlFile:iterate("placeable.factory.production.input", function(_, inputKey)
+            self:addRecipeEntry(inputs, self:getFillTypeIndexFromName(xmlFile:getString(inputKey .. "#fillType")), xmlFile:getFloat(inputKey .. "#amount"))
+        end)
+        self:addRecipeEntry(outputs, self:getFillTypeIndexFromName(xmlFile:getString("placeable.factory.production.output#fillType")), 1)
+        self:addProductionRecipe(recipeSet, inputs, outputs)
+    end
+end
+
+function DynamicMarket:getStoreProductionRecipes()
+    if self.__storeProductionRecipes ~= nil then
+        return self.__storeProductionRecipes
+    end
+
+    local recipeSet = {list = {}, byOutput = {}, seen = {}}
+    if g_storeManager ~= nil and g_storeManager.getItems ~= nil and StoreSpecies ~= nil and XMLFile ~= nil then
+        for _, storeItem in pairs(g_storeManager:getItems()) do
+            if storeItem ~= nil and storeItem.species == StoreSpecies.PLACEABLE and storeItem.xmlFilename ~= nil then
+                local xmlFile = XMLFile.loadIfExists("DynamicMarketRecipes", storeItem.xmlFilename)
+                if xmlFile ~= nil then
+                    self:addRecipesFromStoreItemXML(recipeSet, xmlFile)
+                    xmlFile:delete()
+                end
+            end
+        end
+    end
+
+    self.__storeProductionRecipes = recipeSet
+    return recipeSet
+end
+
+function DynamicMarket:getProductionRecipes()
+    local mission = g_currentMission
+    local manager = mission ~= nil and mission.productionChainManager or nil
+    local productionPoints = manager ~= nil and type(manager.productionPoints) == "table" and manager.productionPoints or {}
+    local factories = manager ~= nil and type(manager.factories) == "table" and manager.factories or {}
+    local signature = #productionPoints .. ":" .. #factories
+
+    if self.__productionRecipes ~= nil and self.__productionRecipeSignature == signature then
+        return self.__productionRecipes
+    end
+
+    local recipeSet = {list = {}, byOutput = {}, seen = {}}
+    for _, recipe in ipairs(self:getStoreProductionRecipes().list) do
+        self:addProductionRecipe(recipeSet, recipe.inputs, recipe.outputs)
+    end
+    for _, productionPoint in ipairs(productionPoints) do
+        self:addRecipesFromProductions(recipeSet, productionPoint.productions)
+    end
+    for _, factory in ipairs(factories) do
+        self:addRecipesFromProductions(recipeSet, factory.productions)
+    end
+
+    self.__productionRecipes = recipeSet
+    self.__productionRecipeSignature = signature
+    self.__productionRecipeVersion = (self.__productionRecipeVersion or 0) + 1
+    return recipeSet
+end
+
+function DynamicMarket:getRecipeBasePrice(fillType)
+    if fillType == nil or self:getSkipReason(fillType, self:getGroup(fillType)) ~= nil then
+        return 0
+    end
+    return tonumber(self:getBaseGameYearlyAverageRawPrice(fillType)) or 0
+end
+
+function DynamicMarket:resolveFillTypeMarketFactor(fillTypeIndex, visiting)
+    local cached = self.__fillTypeMarketFactors[fillTypeIndex]
+    if cached ~= nil then
+        return cached
+    end
+
+    local fillType = self:getFillTypeByIndex(fillTypeIndex)
+    if fillType == nil then
+        return 1
+    end
+
+    local ownFactor = self:getMarketFactor(self:getGroup(fillType))
+    local recipes = self.__productionRecipes ~= nil and self.__productionRecipes.byOutput[fillTypeIndex] or nil
+    if recipes == nil then
+        self.__fillTypeMarketFactors[fillTypeIndex] = ownFactor
+        return ownFactor
+    end
+    if visiting[fillTypeIndex] then
+        return ownFactor
+    end
+    visiting[fillTypeIndex] = true
+
+    local linkSum = 0
+    local linkCount = 0
+    local floorFactor = nil
+    local outputBase = self:getRecipeBasePrice(fillType)
+    local floorMargin = tonumber(self.PRODUCTION_PRICE_FLOOR_MARGIN) or 1
+
+    if outputBase > 0 then
+        for _, recipe in ipairs(recipes) do
+            local costBase = 0
+            local costNow = 0
+            for _, input in ipairs(recipe.inputs) do
+                local inputBase = self:getRecipeBasePrice(self:getFillTypeByIndex(input.index))
+                if inputBase > 0 then
+                    local inputFactor = self:resolveFillTypeMarketFactor(input.index, visiting)
+                    costBase = costBase + input.amount * inputBase
+                    costNow = costNow + input.amount * inputBase * inputFactor
+                end
+            end
+
+            local outputValueTotal = 0
+            local ownAmount = 0
+            for _, output in ipairs(recipe.outputs) do
+                outputValueTotal = outputValueTotal + output.amount * self:getRecipeBasePrice(self:getFillTypeByIndex(output.index))
+                if output.index == fillTypeIndex then
+                    ownAmount = ownAmount + output.amount
+                end
+            end
+
+            local ownValue = ownAmount * outputBase
+            if costBase > 0 and ownValue > 0 and outputValueTotal > 0 then
+                local share = ownValue / outputValueTotal
+                local vanillaRatio = outputValueTotal / costBase
+                local recipeFloor = costNow * share * math.min(floorMargin, vanillaRatio) / ownValue
+                linkSum = linkSum + costNow / costBase
+                linkCount = linkCount + 1
+                if floorFactor == nil or recipeFloor < floorFactor then
+                    floorFactor = recipeFloor
+                end
+            end
+        end
+    end
+
+    visiting[fillTypeIndex] = nil
+
+    local factor = ownFactor
+    if linkCount > 0 then
+        local inputFactor = linkSum / linkCount
+        factor = ownFactor + (inputFactor-1) * (tonumber(self.PRODUCTION_PRICE_LINK_WEIGHT) or 0)
+    end
+    if floorFactor ~= nil and factor < floorFactor then
+        factor = floorFactor
+    end
+
+    self.__fillTypeMarketFactors[fillTypeIndex] = factor
+    return factor
+end
+
+function DynamicMarket:getFillTypeMarketFactor(fillType, groupName)
+    groupName = groupName or self:getGroup(fillType)
+    if fillType == nil or self.PRODUCTION_PRICE_LINK_ENABLED ~= true or fillType.index == nil then
+        return self:getMarketFactor(groupName)
+    end
+
+    self:getProductionRecipes()
+    local cacheKey = tostring(self.__marketFactors) .. ":" .. tostring(self.__marketKey) .. ":" .. tostring(self.__productionRecipeVersion)
+    if self.__fillTypeMarketFactorKey ~= cacheKey or self.__fillTypeMarketFactors == nil then
+        self.__fillTypeMarketFactors = {}
+        self.__fillTypeMarketFactorKey = cacheKey
+    end
+
+    return self:resolveFillTypeMarketFactor(fillType.index, {})
 end
 
 
@@ -1623,64 +1816,24 @@ function DynamicMarket:getSellingStationCount()
     return #self:getSellingStationsForPriceWrite()
 end
 
-function DynamicMarket:addUniqueName(list, seen, name, maxCount)
-    if list == nil or seen == nil or name == nil then
-        return
-    end
-    local key = tostring(name)
-    if key == "" or seen[key] == true then
-        return
-    end
-    seen[key] = true
-    if #list < maxCount then
-        table.insert(list, key)
-    end
-end
 
 function DynamicMarket:applyMonthlyMarketToSellingStations(passName)
-    local marketKey, period, year, mapName = self:getMarketKey()
-    self:buildMarketFactors(nil)
+    local marketKey = self:getMarketKey()
+    self:buildMarketFactors()
 
     self.__lastSaleMarketReport = {
-        passName = tostring(passName or "unknown"),
-        enabled = self.APPLY_MONTHLY_MARKET_TO_SALES == true,
-        period = tonumber(period) or 1,
-        year = tonumber(year) or 1,
-        stations = 0,
-        adjusted = 0,
-        uniqueFillTypes = 0,
-        skipped = 0,
-        minFactor = 1,
-        maxFactor = 1,
-        success = false,
-        reason = "notApplied"
+        success = false
     }
 
     local sellingStations = self:getSellingStationsForPriceWrite()
     self:prepareStationBasePriceCache(sellingStations)
 
     if sellingStations == nil or type(sellingStations) ~= "table" or #sellingStations == 0 then
-        self.__lastSaleMarketReport.reason = "noSellingStations"
-        if self.DIAGNOSTICS.saleMarket then
-            Logging.info("%s saleMarketApplied version=%s pass=%s mode=stationPriceTables enabled=%s stations=0 adjusted=0 skipped=0 reason=noSellingStations",
-                self.LOG_PREFIX,
-                self.VERSION,
-                tostring(passName or "unknown"),
-                tostring(self.APPLY_MONTHLY_MARKET_TO_SALES)
-            )
-        end
         return
     end
 
     local stationCount = 0
     local adjusted = 0
-    local skipped = 0
-    local groupCounts = {}
-    local changedNames = {}
-    local changedNameSeen = {}
-    local uniqueAdjustedFillTypes = 0
-    local minFactor = 999
-    local maxFactor = -999
 
     for _, station in pairs(sellingStations) do
         if station ~= nil and type(station) == "table" and station.fillTypePrices ~= nil and type(station.fillTypePrices) == "table" then
@@ -1690,47 +1843,19 @@ function DynamicMarket:applyMonthlyMarketToSellingStations(passName)
                 local groupName = self:getGroup(fillType)
                 local skipReason = self:getSkipReason(fillType, groupName)
                 local basePrice = tonumber(price)
-                local finalPrice, targetGroupName, targetSkipReason = self:getTargetSalePrice(station, key, fillType, basePrice)
-                if targetGroupName ~= nil then
-                    groupName = targetGroupName
-                end
-                local factor = self:getMarketFactor(groupName)
+                local finalPrice, _, targetSkipReason = self:getTargetSalePrice(station, key, fillType, basePrice)
 
-                if fillType ~= nil and skipReason == nil and targetSkipReason == nil and basePrice ~= nil and finalPrice ~= nil and factor ~= nil then
+                if fillType ~= nil and skipReason == nil and targetSkipReason == nil and basePrice ~= nil and finalPrice ~= nil then
                     if self.APPLY_MONTHLY_MARKET_TO_SALES then
                         self:writeTargetSalePrice(station, key, finalPrice)
                     end
                     adjusted = adjusted + 1
-                    groupCounts[groupName] = (groupCounts[groupName] or 0) + 1
-                    minFactor = math.min(minFactor, factor)
-                    maxFactor = math.max(maxFactor, factor)
-                    local fillTypeName = self:getFillTypeName(fillType)
-                    if changedNameSeen[fillTypeName] ~= true then
-                        uniqueAdjustedFillTypes = uniqueAdjustedFillTypes + 1
-                    end
-                    self:addUniqueName(changedNames, changedNameSeen, fillTypeName, self.DIAGNOSTICS.maxSaleMarketNames)
-                else
-                    skipped = skipped + 1
                 end
             end
         end
     end
 
-    if minFactor == 999 then
-        minFactor = 1
-    end
-    if maxFactor == -999 then
-        maxFactor = 1
-    end
-
-    self.__lastSaleMarketReport.stations = stationCount
-    self.__lastSaleMarketReport.adjusted = adjusted
-    self.__lastSaleMarketReport.uniqueFillTypes = uniqueAdjustedFillTypes
-    self.__lastSaleMarketReport.skipped = skipped
-    self.__lastSaleMarketReport.minFactor = minFactor
-    self.__lastSaleMarketReport.maxFactor = maxFactor
     self.__lastSaleMarketReport.success = adjusted > 0
-    self.__lastSaleMarketReport.reason = adjusted > 0 and "applied" or "noAdjustedPrices"
     self.__lastSellingStationCount = stationCount
     if adjusted > 0 then
         self.__uiPriceRefreshToken = (tonumber(self.__uiPriceRefreshToken) or 0) + 1
@@ -1743,40 +1868,6 @@ function DynamicMarket:applyMonthlyMarketToSellingStations(passName)
     if previousMarketKey ~= nil and previousMarketKey ~= marketKey then
         self:resetAllStationPressure()
     end
-
-    if self.DIAGNOSTICS.saleMarket then
-        table.sort(changedNames)
-        if self.DIAGNOSTICS.saleMarketNames then
-            Logging.info("%s saleMarketApplied version=%s pass=%s mode=stationPriceTables enabled=%s period=%d year=%d stations=%d adjusted=%d uniqueFillTypes=%d skipped=%d factorRange=%s names=%s",
-                self.LOG_PREFIX,
-                self.VERSION,
-                tostring(passName or "unknown"),
-                tostring(self.APPLY_MONTHLY_MARKET_TO_SALES),
-                tonumber(period) or 1,
-                tonumber(year) or 1,
-                stationCount,
-                adjusted,
-                uniqueAdjustedFillTypes,
-                skipped,
-                self:formatFactorRange(minFactor, maxFactor),
-                self:formatLimitedList(changedNames, self.DIAGNOSTICS.maxSaleMarketNames)
-            )
-        else
-            Logging.info("%s saleMarketApplied version=%s pass=%s mode=stationPriceTables enabled=%s period=%d year=%d stations=%d adjusted=%d uniqueFillTypes=%d skipped=%d factorRange=%s names=disabled",
-                self.LOG_PREFIX,
-                self.VERSION,
-                tostring(passName or "unknown"),
-                tostring(self.APPLY_MONTHLY_MARKET_TO_SALES),
-                tonumber(period) or 1,
-                tonumber(year) or 1,
-                stationCount,
-                adjusted,
-                uniqueAdjustedFillTypes,
-                skipped,
-                self:formatFactorRange(minFactor, maxFactor)
-            )
-        end
-    end
 end
 
 
@@ -1785,36 +1876,6 @@ function DynamicMarket:formatSignedPercent(value)
     return string.format("%+.1f%%", (value - 1) * 100)
 end
 
-function DynamicMarket:formatFactorRange(minFactor, maxFactor)
-    return string.format("%s to %s", self:formatSignedPercent(minFactor), self:formatSignedPercent(maxFactor))
-end
-
-function DynamicMarket:formatDriver(value)
-    value = tonumber(value) or 0
-    return string.format("%+.2f", value)
-end
-
-function DynamicMarket:formatMarketDriverShort(groupName, data)
-    if data == nil then
-        return tostring(groupName or "none") .. "=none"
-    end
-    return string.format("%s=%s", tostring(groupName or "unknown"), self:formatSignedPercent(data.factor or 1))
-end
-
-function DynamicMarket:formatMarketDriver(groupName, data)
-    if data == nil then
-        return tostring(groupName or "none") .. "=none"
-    end
-
-    return string.format("%s=%s(weather=%s,supply=%s,demand=%s,volatility=%.2f)",
-        tostring(groupName or "none"),
-        self:formatSignedPercent(data.factor),
-        self:formatDriver(data.weather),
-        self:formatDriver(data.supply),
-        self:formatDriver(data.demand),
-        tonumber(data.volatility) or 0
-    )
-end
 
 function DynamicMarket:getGameLanguage()
     local lang = nil
@@ -1891,9 +1952,10 @@ function DynamicMarket:getMarketReason(groupName, factor, marketKey)
 
     local template = self:getLocalizedText(string.format("dm_reason_%s_%d", direction, index), "%s")
     local groupTitle = self:getMarketGroupDisplayName(groupName)
-    local ok, text = pcall(string.format, template, groupTitle)
-    if ok and text ~= nil then
-        return text
+    local _, placeholderCount = string.gsub(template, "%%", "")
+    local _, stringPlaceholderCount = string.gsub(template, "%%s", "")
+    if placeholderCount == 1 and stringPlaceholderCount == 1 then
+        return string.format(template, tostring(groupTitle))
     end
     return groupTitle
 end
@@ -1920,7 +1982,7 @@ function DynamicMarket:getStockPriceAlerts()
             local fillType = self:getFillTypeByIndex(fillTypeIndex)
             if fillType ~= nil then
                 local groupName = self:getGroup(fillType)
-                local factor = self:getMarketFactor(groupName)
+                local factor = self:getFillTypeMarketFactor(fillType, groupName)
                 if factor - 1 >= threshold then
                     table.insert(alerts, {
                         title = tostring(fillType.title or fillType.name or fillTypeIndex),
@@ -1990,8 +2052,8 @@ function DynamicMarket:pollStationSales(dt)
 
             for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
                 if isAccepted == true then
-                    local callOk, result = pcall(station.getTotalReceived, station, fillTypeIndex)
-                    if callOk and type(result) == "number" then
+                    local result = station:getTotalReceived(fillTypeIndex)
+                    if type(result) == "number" then
                         self.__lastReceivedByStationFillType[station] = self.__lastReceivedByStationFillType[station] or {}
                         local byFillType = self.__lastReceivedByStationFillType[station]
                         local lastReceived = byFillType[fillTypeIndex]
@@ -2068,91 +2130,12 @@ function DynamicMarket:showMarketNotice(passName)
     mission:addIngameNotification(notificationType, text)
 end
 
-function DynamicMarket:addSkippedName(stats, reason, fillType)
-    if stats == nil or reason == nil then
-        return
-    end
 
-    stats.skippedDetails = stats.skippedDetails or {}
-    stats.skippedDetails[reason] = stats.skippedDetails[reason] or {}
-    table.insert(stats.skippedDetails[reason], self:getFillTypeName(fillType))
-end
-
-function DynamicMarket:reportSkippedDetails(passName, stats)
-    if not self.DIAGNOSTICS.skippedDetails or stats == nil or stats.skippedDetails == nil then
-        return
-    end
-
-    local trackedReasons = {"noValidBasePrice", "unknownName", "excludedUtilityOrInternal"}
-    for _, reason in ipairs(trackedReasons) do
-        local names = stats.skippedDetails[reason]
-        if names ~= nil and #names > 0 then
-            table.sort(names)
-            local maxNames = math.min(#names, self.DIAGNOSTICS.maxSkippedDetailNames)
-            local out = {}
-            for i = 1, maxNames do
-                table.insert(out, names[i])
-            end
-            local suffix = #names > maxNames and string.format(",...(+%d more)", #names - maxNames) or ""
-            Logging.info("%s skippedNames version=%s pass=%s reason=%s count=%d names=%s%s",
-                self.LOG_PREFIX,
-                self.VERSION,
-                tostring(passName or "unknown"),
-                tostring(reason),
-                #names,
-                table.concat(out, ","),
-                suffix
-            )
-        end
-    end
-end
-
-
-function DynamicMarket:reportFillType(action, fillType, groupName, groupReason, skipReason, oldCurve, newCurve)
-    if not self.DIAGNOSTICS.everyFillType then
-        return
-    end
-
-    local validFillType = fillType ~= nil and type(fillType) == "table"
-    local name = self:getFillTypeName(fillType)
-    local index = tostring(validFillType and fillType.index or "nil")
-    local price = tonumber(validFillType and fillType.pricePerLiter or nil)
-    local priceText = price ~= nil and string.format("%.6f", price) or "nil"
-    local show = tostring(validFillType and fillType.showOnPriceTable == true or false)
-    local existing = self:hasMeaningfulCurve(fillType) and "yes" or "no"
-
-    Logging.info("%s report action=%s name=%s index=%s pricePerLiter=%s showOnPriceTable=%s group=%s groupSource=%s hadOwnCurve=%s oldCurve=%s newCurve=%s reason=%s",
-        self.LOG_PREFIX,
-        tostring(action),
-        name,
-        index,
-        priceText,
-        show,
-        tostring(groupName or "none"),
-        tostring(groupReason or "none"),
-        existing,
-        self:formatCurve(oldCurve) ~= "" and self:formatCurve(oldCurve) or "none",
-        self:formatCurve(newCurve) ~= "" and self:formatCurve(newCurve) or "none",
-        tostring(skipReason or "none")
-    )
-end
-
-function DynamicMarket:applyToFillType(fillType, passName, stats)
-    stats.total = stats.total + 1
-
-    local groupName, groupReason = self:getGroup(fillType)
+function DynamicMarket:applyToFillType(fillType)
+    local groupName = self:getGroup(fillType)
     local skipReason = self:getSkipReason(fillType, groupName)
-    local oldCurve = self:copyCurve(self:getExistingCurve(fillType))
-    local hadOwnCurve = self:hasMeaningfulCurve(fillType)
 
     if skipReason ~= nil then
-        stats.skipped = stats.skipped + 1
-        stats.skipCounts[skipReason] = (stats.skipCounts[skipReason] or 0) + 1
-        self:addSkippedName(stats, skipReason, fillType)
-        if skipReason == "noSafeCategory" then
-            table.insert(stats.noSafeCategoryNames, self:getFillTypeName(fillType))
-        end
-        self:reportFillType("skipped", fillType, groupName, groupReason, skipReason, oldCurve, nil)
         return
     end
 
@@ -2164,122 +2147,30 @@ function DynamicMarket:applyToFillType(fillType, passName, stats)
     end
 
     if newCurve == nil then
-        stats.skipped = stats.skipped + 1
-        stats.skipCounts.applyFailed = (stats.skipCounts.applyFailed or 0) + 1
-        self:reportFillType("skipped", fillType, groupName, groupReason, "applyFailed", oldCurve, nil)
         return
     end
 
-    stats.eligible = stats.eligible + 1
-
     if self.APPLY_CURVES and self:applyCurve(fillType, newCurve) then
-        stats.applied = stats.applied + 1
-        stats.groupCounts[groupName] = (stats.groupCounts[groupName] or 0) + 1
-        if hadOwnCurve then
-            stats.adjustedExisting = stats.adjustedExisting + 1
-        else
-            stats.createdNew = stats.createdNew + 1
-        end
         fillType.dynamicMarketGroup = groupName
-        fillType.dynamicMarketFactor = self:getMarketFactor(groupName)
-        stats.marketCounts[groupName] = (stats.marketCounts[groupName] or 0) + 1
-        table.insert(stats.changedNames, self:getFillTypeName(fillType))
-        self:reportFillType("applied", fillType, groupName, groupReason, nil, oldCurve, newCurve)
-    else
-        stats.skipped = stats.skipped + 1
-        stats.skipCounts.reportOnly = (stats.skipCounts.reportOnly or 0) + 1
-        self:reportFillType("skipped", fillType, groupName, groupReason, "reportOnly", oldCurve, newCurve)
+        fillType.dynamicMarketFactor = self:getFillTypeMarketFactor(fillType, groupName)
     end
 end
 
-function DynamicMarket:formatCounts(counts)
-    local parts = {}
-    for name, count in pairs(counts) do
-        table.insert(parts, string.format("%s=%d", name, count))
-    end
-    table.sort(parts)
-    return #parts > 0 and table.concat(parts, ",") or "none"
-end
 
 function DynamicMarket:applyAll(manager, passName)
     local fillTypes = self:getFillTypes(manager)
     if fillTypes == nil then
-        if self.DIAGNOSTICS.debugLog then
-            Logging.info("%s summary version=%s pass=%s total=0 eligible=0 applied=0 skipped=0 reason=noFillTypeTable", self.LOG_PREFIX, self.VERSION, tostring(passName or "unknown"))
-        end
         return
     end
 
-    self.__applyPass = self.__applyPass + 1
-
-    local stats = {
-        total = 0,
-        eligible = 0,
-        applied = 0,
-        skipped = 0,
-        adjustedExisting = 0,
-        createdNew = 0,
-        groupCounts = {},
-        marketCounts = {},
-        skipCounts = {},
-        changedNames = {},
-        noSafeCategoryNames = {},
-        skippedDetails = {}
-    }
-
-    self:buildMarketFactors(stats)
+    self:buildMarketFactors()
 
     for _, fillType in ipairs(fillTypes) do
-        self:applyToFillType(fillType, passName, stats)
+        self:applyToFillType(fillType)
     end
 
-    if self.DIAGNOSTICS.debugLog then
-        Logging.info("%s summary version=%s pass=%s passIndex=%d total=%d eligible=%d applied=%d adjustedExisting=%d createdNew=%d skipped=%d",
-            self.LOG_PREFIX,
-            self.VERSION,
-            tostring(passName or "unknown"),
-            self.__applyPass,
-            stats.total,
-            stats.eligible,
-            stats.applied,
-            stats.adjustedExisting,
-            stats.createdNew,
-            stats.skipped
-        )
-    end
-
-    if self.DIAGNOSTICS.market then
-        Logging.info("%s marketAffected pass=%s groups=%s mode=stationPriceTables saleHook=priceTable", self.LOG_PREFIX, tostring(passName or "unknown"), self:formatCounts(stats.marketCounts))
-    end
-
-
-    if self.DIAGNOSTICS.unsafeNames and #stats.noSafeCategoryNames > 0 then
-        table.sort(stats.noSafeCategoryNames)
-        local maxUnsafeNames = math.min(#stats.noSafeCategoryNames, self.DIAGNOSTICS.maxUnsafeNames)
-        local names = {}
-        for i = 1, maxUnsafeNames do
-            table.insert(names, stats.noSafeCategoryNames[i])
-        end
-        local suffix = #stats.noSafeCategoryNames > maxUnsafeNames and string.format(",...(+%d more)", #stats.noSafeCategoryNames - maxUnsafeNames) or ""
-        Logging.info("%s noSafeCategoryNames pass=%s count=%d names=%s%s", self.LOG_PREFIX, tostring(passName or "unknown"), #stats.noSafeCategoryNames, table.concat(names, ","), suffix)
-    end
-
-    self:reportSkippedDetails(passName, stats)
     self:applyMonthlyMarketToSellingStations(passName)
-
-    if self.DIAGNOSTICS.changedNames and #stats.changedNames > 0 then
-        table.sort(stats.changedNames)
-        local maxNames = math.min(#stats.changedNames, self.DIAGNOSTICS.maxChangedNames)
-        local names = {}
-        for i = 1, maxNames do
-            table.insert(names, stats.changedNames[i])
-        end
-        local suffix = #stats.changedNames > maxNames and string.format(",...(+%d more)", #stats.changedNames - maxNames) or ""
-        Logging.info("%s changedFillTypes pass=%s names=%s%s", self.LOG_PREFIX, tostring(passName or "unknown"), table.concat(names, ","), suffix)
-    end
-
-    self:reportFinalStatus(passName)
-    self:reportMarketWatch(passName)
+    self:reportMarketWatch()
 end
 
 function DynamicMarket:ensurePricesReadyForUi(passName)
@@ -2304,49 +2195,9 @@ function DynamicMarket:ensurePricesReadyForUi(passName)
     return true
 end
 
-function DynamicMarket:reportMarketWatch(passName)
-    local marketKey, period, year, _ = self:getMarketKey()
-    if self.DIAGNOSTICS.debugLog then
-        Logging.info("%s marketWatch version=%s pass=%s status=armed period=%d year=%d stationCount=%d checkIntervalMs=%d",
-            self.LOG_PREFIX,
-            self.VERSION,
-            tostring(passName or "unknown"),
-            tonumber(period) or 1,
-            tonumber(year) or 1,
-            tonumber(self.__lastSellingStationCount) or 0,
-            tonumber(self.PERIOD_CHECK_INTERVAL_MS) or 0
-        )
-    end
-    self.__lastObservedMarketKey = marketKey
+function DynamicMarket:reportMarketWatch()
+    self.__lastObservedMarketKey = self:getMarketKey()
 end
-
-function DynamicMarket:reportNameCandidates()
-end
-
-function DynamicMarket:reportFinalStatus(passName)
-    if not self.DIAGNOSTICS.finalStatus then
-        return
-    end
-
-    local report = self.__lastSaleMarketReport or {}
-    Logging.info("%s FINAL status version=%s pass=%s saleMarketApplied=%s period=%d year=%d stations=%d adjusted=%d uniqueFillTypes=%d skipped=%d factorRange=%s reason=%s stationWatch=on model=regionalSupplyDemand seasonalSupply=yes",
-        self.LOG_PREFIX,
-        self.VERSION,
-        tostring(passName or report.passName or "unknown"),
-        report.success == true and "yes" or "no",
-        tonumber(report.period) or self:getMissionPeriod(),
-        tonumber(report.year) or self:getMissionYear(),
-        tonumber(report.stations) or 0,
-        tonumber(report.adjusted) or 0,
-        tonumber(report.uniqueFillTypes) or 0,
-        tonumber(report.skipped) or 0,
-        self:formatFactorRange(report.minFactor or 1, report.maxFactor or 1),
-        tostring(report.reason or "unknown")
-    )
-end
-
-
-
 
 
 function DynamicMarket:fixInGameMenuPage(frame, pageName, uvs, predicateFunc)
@@ -2464,13 +2315,13 @@ function DynamicMarket:getBestMonthForFillType(fillType)
     return bestMonth
 end
 
-function DynamicMarket:getMarketTrendText(groupName)
-    local factor = self:getMarketFactor(groupName)
+function DynamicMarket:getMarketTrendText(groupName, factor)
+    factor = factor or self:getMarketFactor(groupName)
     return self:formatMarketPercent(factor)
 end
 
-function DynamicMarket:getTrendDirection(groupName)
-    local factor = self:getMarketFactor(groupName)
+function DynamicMarket:getTrendDirection(groupName, factor)
+    factor = factor or self:getMarketFactor(groupName)
     if factor > 1.005 then
         return "up"
     elseif factor < 0.995 then
@@ -2485,8 +2336,8 @@ function DynamicMarket:getPlaceableDisplayName(placeable)
         return "?"
     end
     if placeable.getName ~= nil then
-        local ok, name = pcall(placeable.getName, placeable)
-        if ok and name ~= nil and tostring(name) ~= "" then
+        local name = placeable:getName()
+        if name ~= nil and tostring(name) ~= "" then
             return tostring(name)
         end
     end
@@ -2682,7 +2533,7 @@ function DynamicMarket:getStockLevelsByFillType(collectLocations)
 end
 
 function DynamicMarket:buildMarketOverviewRows()
-    self:buildMarketFactors(nil)
+    self:buildMarketFactors()
 
     local rowsByFillType = {}
     local stockLevelsByFillType, stockLocationsByFillType = self:getStockLevelsByFillType(true)
@@ -2714,6 +2565,7 @@ function DynamicMarket:buildMarketOverviewRows()
 
                         local row = rowsByFillType[fillTypeIndex]
                         if row == nil then
+                            local rowMarketFactor = self:getFillTypeMarketFactor(fillType, groupName)
                             row = {
                                 index = fillTypeIndex,
                                 title = tostring(fillType.title or fillType.name or fillTypeIndex),
@@ -2721,9 +2573,9 @@ function DynamicMarket:buildMarketOverviewRows()
                                 hudOverlayFilename = fillType.hudOverlayFilename,
                                 groupName = groupName,
                                 groupTitle = self:getMarketGroupDisplayName(groupName),
-                                marketFactor = self:getMarketFactor(groupName),
-                                marketText = self:getMarketTrendText(groupName),
-                                trendDirection = self:getTrendDirection(groupName),
+                                marketFactor = rowMarketFactor,
+                                marketText = self:getMarketTrendText(groupName, rowMarketFactor),
+                                trendDirection = self:getTrendDirection(groupName, rowMarketFactor),
                                 bestPrice = 0,
                                 currentBestPrice = 0,
                                 stationBestPrice = 0,
@@ -2777,9 +2629,9 @@ function DynamicMarket:buildMarketOverviewRows()
                         end
 
                         local stationLivePrice = nil
-                        if station.getEffectiveFillTypePrice ~= nil then
-                            local callOk, result = pcall(station.getEffectiveFillTypePrice, station, fillTypeIndex)
-                            if callOk and type(result) == "number" and result > 0 then
+                        if station.getEffectiveFillTypePrice ~= nil and station.acceptedFillTypes ~= nil and station.acceptedFillTypes[fillTypeIndex] then
+                            local result = station:getEffectiveFillTypePrice(fillTypeIndex)
+                            if type(result) == "number" and result > 0 then
                                 stationLivePrice = result
                             end
                         end
@@ -2813,9 +2665,9 @@ function DynamicMarket:buildMarketOverviewRows()
         if row.bestStationObject ~= nil then
             local bestStation = row.bestStationObject
             local effectivePrice = nil
-            if bestStation.getEffectiveFillTypePrice ~= nil then
-                local callOk, result = pcall(bestStation.getEffectiveFillTypePrice, bestStation, fillTypeIndex)
-                if callOk and type(result) == "number" and result > 0 then
+            if bestStation.getEffectiveFillTypePrice ~= nil and bestStation.acceptedFillTypes ~= nil and bestStation.acceptedFillTypes[fillTypeIndex] then
+                local result = bestStation:getEffectiveFillTypePrice(fillTypeIndex)
+                if type(result) == "number" and result > 0 then
                     effectivePrice = result
                 end
             end
@@ -2847,9 +2699,9 @@ function DynamicMarket:buildMarketOverviewRows()
 
             local pressureStation = row.pressureStationObject or bestStation
             local pressureStationEffectivePrice = pressureStation == bestStation and effectivePrice or nil
-            if pressureStationEffectivePrice == nil and pressureStation.getEffectiveFillTypePrice ~= nil then
-                local callOk, result = pcall(pressureStation.getEffectiveFillTypePrice, pressureStation, fillTypeIndex)
-                if callOk and type(result) == "number" and result > 0 then
+            if pressureStationEffectivePrice == nil and pressureStation.getEffectiveFillTypePrice ~= nil and pressureStation.acceptedFillTypes ~= nil and pressureStation.acceptedFillTypes[fillTypeIndex] then
+                local result = pressureStation:getEffectiveFillTypePrice(fillTypeIndex)
+                if type(result) == "number" and result > 0 then
                     pressureStationEffectivePrice = result
                 end
             end
@@ -2906,7 +2758,6 @@ function DynamicMarket:setDailyRecalcMode(mode, passName)
     if changed then
         self.__finalApplied = false
         self.__stableMs = 0
-        self.__armedLogged = false
         self.__periodCheckMs = 0
         self.__marketKey = nil
         self.__marketFactors = {}
@@ -2936,7 +2787,6 @@ function DynamicMarket:setPriceBaseMode(mode, passName)
     if changed then
         self.__finalApplied = false
         self.__stableMs = 0
-        self.__armedLogged = false
         self.__marketKey = nil
         self.__marketFactors = {}
         self.__lastSalesMarketKey = nil
@@ -2976,7 +2826,6 @@ function DynamicMarket:setVanillaMode(mode, passName)
         else
             self.__finalApplied = false
             self.__stableMs = 0
-            self.__armedLogged = false
             self.__marketKey = nil
             self.__marketFactors = {}
             self.__lastSalesMarketKey = nil
@@ -2999,7 +2848,6 @@ function DynamicMarket:loadMap(name)
     self.__finalApplied = false
     self.__stableMs = 0
     self.__runtimeMs = 0
-    self.__armedLogged = false
     self.__lastFillTypeCount = self:getFillTypeCount(g_fillTypeManager)
     self.__marketKey = nil
     self.__marketFactors = {}
@@ -3023,9 +2871,6 @@ function DynamicMarket:loadMap(name)
         end
     end
     self:registerMenuPage()
-    if self.DIAGNOSTICS.debugLog then
-        Logging.info("%s armed version=%s initialFillTypes=%d mode=stableFinal", self.LOG_PREFIX, self.VERSION, self.__lastFillTypeCount)
-    end
 end
 
 function DynamicMarket:update(dt)
@@ -3038,41 +2883,18 @@ function DynamicMarket:update(dt)
         self.__periodCheckMs = (self.__periodCheckMs or 0) + delta
         if self.__periodCheckMs >= self.PERIOD_CHECK_INTERVAL_MS then
             self.__periodCheckMs = 0
-            local marketKey, period, year, mapName = self:getMarketKey()
+            local marketKey = self:getMarketKey()
             if marketKey ~= nil and marketKey ~= self.__lastSalesMarketKey then
-                if self.DIAGNOSTICS.debugLog then
-                    Logging.info("%s periodChange version=%s oldKey=%s newKey=%s period=%d year=%d map=%s action=recalculateSalesMarket",
-                        self.LOG_PREFIX,
-                        self.VERSION,
-                        tostring(self.__lastSalesMarketKey or self.__lastObservedMarketKey or "none"),
-                        tostring(marketKey),
-                        tonumber(period) or 1,
-                        tonumber(year) or 1,
-                        tostring(mapName or "unknownMap")
-                    )
-                end
                 self.__marketKey = nil
                 self.__marketFactors = {}
                 self:applyMonthlyMarketToSellingStations("periodUpdate")
-                self:reportFinalStatus("periodUpdate")
-                self:reportMarketWatch("periodUpdate")
+                self:reportMarketWatch()
                 self:showMarketNotice("periodUpdate")
             elseif self.RECHECK_SALES_ON_STATION_COUNT_CHANGE == true then
                 local stationCount = self:getSellingStationCount()
                 if stationCount > 0 and stationCount ~= (tonumber(self.__lastSellingStationCount) or 0) then
-                    if self.DIAGNOSTICS.debugLog then
-                        Logging.info("%s stationChange version=%s oldStations=%d newStations=%d period=%d year=%d action=recalculateSalesMarket",
-                            self.LOG_PREFIX,
-                            self.VERSION,
-                            tonumber(self.__lastSellingStationCount) or 0,
-                            stationCount,
-                            tonumber(period) or 1,
-                            tonumber(year) or 1
-                        )
-                    end
                     self:applyMonthlyMarketToSellingStations("stationUpdate")
-                    self:reportFinalStatus("stationUpdate")
-                    self:reportMarketWatch("stationUpdate")
+                    self:reportMarketWatch()
                 end
             end
         end
@@ -3096,10 +2918,7 @@ function DynamicMarket:update(dt)
         self.__lastSaleMarketReport = nil
         self.__lastSellingStationCount = 0
         self.__periodCheckMs = 0
-            self.__lastPlayerNoticeKey = nil
-        if self.DIAGNOSTICS.debugLog then
-            Logging.info("%s armedFallback version=%s initialFillTypes=%d mode=stableFinal", self.LOG_PREFIX, self.VERSION, self.__lastFillTypeCount)
-        end
+        self.__lastPlayerNoticeKey = nil
         return
     end
 
@@ -3108,18 +2927,10 @@ function DynamicMarket:update(dt)
     if currentCount ~= self.__lastFillTypeCount or stationCount <= 0 then
         self.__lastFillTypeCount = currentCount
         self.__stableMs = 0
-        self.__armedLogged = false
         return
     end
 
     self.__stableMs = self.__stableMs + delta
-
-    if not self.__armedLogged and currentCount > 0 and stationCount > 0 and self.__runtimeMs >= self.MIN_APPLY_DELAY_MS then
-        self.__armedLogged = true
-        if self.DIAGNOSTICS.debugLog then
-            Logging.info("%s waitingReady version=%s fillTypes=%d stations=%d stableMs=%d requiredMs=%d", self.LOG_PREFIX, self.VERSION, currentCount, stationCount, self.__stableMs, self.STABLE_DELAY_MS)
-        end
-    end
 
     if self.__runtimeMs >= self.MIN_APPLY_DELAY_MS and self.__stableMs >= self.STABLE_DELAY_MS then
         self:applyAll(g_fillTypeManager, "initialReady")
@@ -3128,7 +2939,6 @@ function DynamicMarket:update(dt)
             self:showLoadNoticesOnce()
         else
             self.__stableMs = 0
-            self.__armedLogged = false
         end
     end
 end
@@ -3147,7 +2957,6 @@ function DynamicMarket:deleteMap()
     self.__lastSellingStationCount = 0
     self.__periodCheckMs = 0
     self.__lastPlayerNoticeKey = nil
-    self.__armedLogged = false
     self.__bestStationRawPriceByFillType = nil
     self.__bestStationNameByFillType = nil
     self.__bestStationObjectByFillType = nil
