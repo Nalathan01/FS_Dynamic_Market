@@ -45,8 +45,6 @@ Changelog 1.3.1.0:
 - New: processed goods now follow the prices of their raw materials and never drop below the value of the raw materials used, also for map and mod productions
 - Fix: goods that a map hides from the price table (e.g. animal sale workarounds) no longer show up with absurd prices
 - Compatibility with the current game version
-- Error handling reworked: possible problems are now checked in advance instead of being silently suppressed
-- Removed unused internal diagnostic code
 
 Changelog 1.3.0.0:
 - New: market notices now show an event that explains the price change (e.g. "A wholesaler bought large quantities") - just for flavor, does not change the actual prices
@@ -119,8 +117,6 @@ Changelog 1.3.1.0:
 - Neu: veredelte Produkte folgen jetzt den Preisen ihrer Rohstoffe und fallen nie unter den Wert der verbrauchten Rohstoffe, auch bei Karten- und Mod-Produktionen
 - Fix: Waren, die eine Karte aus der Preistabelle ausblendet (z. B. Tierverkauf-Workarounds), erscheinen nicht mehr mit absurden Preisen
 - Kompatibilität mit der aktuellen Spielversion
-- Fehlerbehandlung überarbeitet: mögliche Probleme werden jetzt vorab geprüft, statt still unterdrückt zu werden
-- Ungenutzten internen Diagnosecode entfernt
 
 Changelog 1.3.0.0:
 - Neu: Markt-Hinweise zeigen jetzt ein Ereignis, das die Preisänderung erklärt (z. B. "Ein Großhändler hat viel Ware gekauft") - nur zur Stimmung, ändert nichts an den tatsächlichen Preisen
@@ -193,8 +189,6 @@ Changelog 1.3.1.0:
 - Nouveau : les produits transformés suivent désormais les prix de leurs matières premières et ne descendent jamais sous la valeur des matières premières utilisées, y compris pour les productions de cartes et de mods
 - Correction : les marchandises qu'une carte masque du tableau des prix (par ex. astuces de vente d'animaux) n'apparaissent plus avec des prix absurdes
 - Compatibilité avec la version actuelle du jeu
-- Gestion des erreurs revue : les problèmes possibles sont désormais vérifiés à l'avance au lieu d'être ignorés silencieusement
-- Suppression du code de diagnostic interne inutilisé
 
 Changelog 1.3.0.0:
 - Nouveau : les notifications de marché montrent maintenant un événement qui explique le changement de prix (par ex. « Un grossiste a acheté de grandes quantités ») - juste pour l'ambiance, ça ne change rien aux prix réels
