@@ -1676,7 +1676,7 @@ function DynamicMarket:resolveFillTypeMarketFactor(fillTypeIndex, visiting)
         return ownFactor
     end
     if visiting[fillTypeIndex] then
-        return ownFactor
+        return nil
     end
     visiting[fillTypeIndex] = true
 
@@ -1692,8 +1692,11 @@ function DynamicMarket:resolveFillTypeMarketFactor(fillTypeIndex, visiting)
             local costNow = 0
             for _, input in ipairs(recipe.inputs) do
                 local inputBase = self:getRecipeBasePrice(self:getFillTypeByIndex(input.index))
+                local inputFactor = nil
                 if inputBase > 0 then
-                    local inputFactor = self:resolveFillTypeMarketFactor(input.index, visiting)
+                    inputFactor = self:resolveFillTypeMarketFactor(input.index, visiting)
+                end
+                if inputFactor ~= nil then
                     costBase = costBase + input.amount * inputBase
                     costNow = costNow + input.amount * inputBase * inputFactor
                 end
