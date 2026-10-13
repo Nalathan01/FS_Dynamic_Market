@@ -3,7 +3,7 @@ DynamicMarket = {}
 DynamicMarket.MOD_NAME = g_currentModName or "FS25_DynamicMarket"
 DynamicMarket.MOD_DIR = g_currentModDirectory or ""
 DynamicMarket.LOG_PREFIX = "[DynamicMarket]"
-DynamicMarket.VERSION = "1.3.1.0"
+DynamicMarket.VERSION = "1.3.1.1"
 
 DynamicMarket.APPLY_CURVES = true
 
@@ -31,6 +31,8 @@ DynamicMarket.vanillaMode = DynamicMarket.VANILLA_MODE_DISABLED
 DynamicMarket.PRODUCTION_PRICE_LINK_ENABLED = true
 DynamicMarket.PRODUCTION_PRICE_LINK_WEIGHT = 0.6
 DynamicMarket.PRODUCTION_PRICE_FLOOR_MARGIN = 1.05
+
+DynamicMarket.MARKET_NEWS_OPEN_DELAY_MS = 3000
 
 DynamicMarket.MARKET_REASON_COUNT = 8
 
@@ -2173,13 +2175,27 @@ function DynamicMarket:openMarketNewsDialog(marketKey)
     return true
 end
 
-function DynamicMarket:tryOpenPendingMarketNews()
-    if self.__marketNewsPendingKey == nil or g_gui == nil then
+function DynamicMarket:isMarketNewsBlocked()
+    if g_gui == nil or (g_gui.getIsGuiVisible ~= nil and g_gui:getIsGuiVisible()) then
+        return true
+    end
+    if g_sleepManager ~= nil and g_sleepManager.getIsSleeping ~= nil and g_sleepManager:getIsSleeping() then
+        return true
+    end
+    return false
+end
+
+function DynamicMarket:tryOpenPendingMarketNews(dt)
+    if self.__marketNewsPendingKey == nil or self:isMarketNewsBlocked() then
+        self.__marketNewsFreeMs = 0
         return
     end
-    if g_gui.getIsGuiVisible ~= nil and g_gui:getIsGuiVisible() then
+
+    self.__marketNewsFreeMs = (self.__marketNewsFreeMs or 0) + (tonumber(dt) or 0)
+    if self.__marketNewsFreeMs < (tonumber(self.MARKET_NEWS_OPEN_DELAY_MS) or 0) then
         return
     end
+    self.__marketNewsFreeMs = 0
 
     local marketKey = self.__marketNewsPendingKey
     self.__marketNewsPendingKey = nil
@@ -2996,7 +3012,7 @@ function DynamicMarket:update(dt)
 
     self:decayStationPressure(delta)
     self:pollStationSales(delta)
-    self:tryOpenPendingMarketNews()
+    self:tryOpenPendingMarketNews(delta)
 
     if self.__finalApplied then
         self.__periodCheckMs = (self.__periodCheckMs or 0) + delta

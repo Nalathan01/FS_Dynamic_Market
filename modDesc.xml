@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="113">
     <author>Nalathan</author>
-    <version>1.3.1.0</version>
+    <version>1.3.1.1</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
@@ -39,6 +39,9 @@ Multiplayer
 - All market calculations run server-side, so every player sees the same prices
 
 Feedback and issues on GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+
+Changelog 1.3.1.1:
+- Hotfix: the game no longer stops responding to input when a new month starts while sleeping. The Market News window now waits until you are awake and no menu is open
 
 Changelog 1.3.1.0:
 - New: "Market News" window opens automatically at the start of each month and lists all product groups sorted, with change, reason and the affected goods in your storage. Can also be opened anytime from the market tab
@@ -112,6 +115,9 @@ Mehrspieler
 
 Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 
+Changelog 1.3.1.1:
+- Hotfix: die Steuerung wird nicht mehr blockiert, wenn ein neuer Monat während des Schlafens beginnt. Das Fenster Marktnachrichten wartet jetzt, bis du wach bist und kein Menü offen ist
+
 Changelog 1.3.1.0:
 - Neu: Fenster "Marktnachrichten" öffnet sich zu jedem Monatsbeginn automatisch und zeigt alle Warengruppen sortiert mit Veränderung, Grund und den betroffenen Waren in deinem Lager. Lässt sich auch jederzeit im Markt-Tab öffnen
 - Neu: veredelte Produkte folgen jetzt den Preisen ihrer Rohstoffe und fallen nie unter den Wert der verbrauchten Rohstoffe, auch bei Karten- und Mod-Produktionen
@@ -183,6 +189,9 @@ Multijoueur
 - Tous les calculs de marché s'effectuent côté serveur, pour que tous les joueurs voient les mêmes prix
 
 Retours et signalement de problèmes sur GitHub : https://github.com/Nalathan01/FS_Dynamic_Market/issues
+
+Changelog 1.3.1.1:
+- Hotfix : le jeu ne bloque plus les commandes quand un nouveau mois commence pendant le sommeil. La fenêtre Actualités du marché attend maintenant que tu sois réveillé et qu'aucun menu ne soit ouvert
 
 Changelog 1.3.1.0:
 - Nouveau : la fenêtre « Actualités du marché » s'ouvre automatiquement au début de chaque mois et affiche tous les groupes de produits triés, avec la variation, la raison et les marchandises concernées dans ton stock. Elle peut aussi être ouverte à tout moment depuis l'onglet du marché
