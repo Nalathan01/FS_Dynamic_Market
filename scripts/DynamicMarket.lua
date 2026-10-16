@@ -2028,7 +2028,7 @@ function DynamicMarket:showLoadNoticesOnce()
         return
     end
     self.__hasShownLoadNotice = true
-    self:showMarketNotice("periodUpdate")
+    self:showMarketNotice("periodUpdate", true)
 end
 
 function DynamicMarket:pollStationSales(dt)
@@ -2202,7 +2202,7 @@ function DynamicMarket:tryOpenPendingMarketNews(dt)
     self:openMarketNewsDialog(marketKey)
 end
 
-function DynamicMarket:showMarketNotice(passName)
+function DynamicMarket:showMarketNotice(passName, isInitialLoad)
     if self.PLAYER_MARKET_NOTICES ~= true or tostring(passName or "") ~= "periodUpdate" then
         return
     end
@@ -2246,7 +2246,9 @@ function DynamicMarket:showMarketNotice(passName)
     end
 
     if self:canShowMarketNewsDialog() then
-        self.__marketNewsPendingKey = marketKey
+        if isInitialLoad == true then
+            self.__marketNewsPendingKey = marketKey
+        end
         return
     end
 

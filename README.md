@@ -9,7 +9,7 @@ Dynamic Market is a Farming Simulator 25 mod that enhances the base game economy
 - Sales pressure at selling stations: selling large quantities at once temporarily lowers the price there, which then recovers over time (threshold and strength adjustable)
 - Shows your actual stock per product across storage, trailers/implements and production output
 - Processed goods follow the prices of their raw materials and never drop below the value of the raw materials used, including map and mod productions
-- "Market News" window at the start of each month: all product groups sorted by change, with a reason and the affected goods in your storage, can be reopened anytime from the market screen
+- "Market News" window after loading a savegame: all product groups sorted by change, with a reason and the affected goods in your storage, can be reopened anytime from the market screen
 - "GIANTS Prices Only" setting to switch off the mod's own prices while keeping the overview and search
 - Dedicated market screen with base price, adjusted price, percentage difference, selling location and best selling month
 - Mark goods as favorites, filter/sort the overview by favorite, saved with your savegame
