@@ -2,117 +2,117 @@
 <l10n>
     <translationContributors/>
     <texts>
-        <text name="dm_notice_title" text="Dynamic Market"/>
-        <text name="dm_stock_alert_title" text="Stock price rise"/>
-        <text name="dm_notice_updated" text="New market prices calculated."/>
-        <text name="dm_notice_stable" text="The main product groups remain stable."/>
-        <text name="dm_reason_up_1" text="A regional wholesaler has suddenly ordered large quantities of %s."/>
-        <text name="dm_reason_up_2" text="Ongoing drought in neighboring regions has reduced the supply of %s."/>
-        <text name="dm_reason_up_3" text="A town festival is driving up demand for %s."/>
-        <text name="dm_reason_up_4" text="Several neighboring farms had a weak harvest of %s this season."/>
-        <text name="dm_reason_up_5" text="A new restaurant in town has placed a large order for %s."/>
-        <text name="dm_reason_up_6" text="Transport trouble at competing markets is pushing buyers to our stations for %s."/>
-        <text name="dm_reason_up_7" text="A regional fair is boosting short-term demand for %s."/>
-        <text name="dm_reason_up_8" text="Stockpiles of %s have dropped across the region."/>
-        <text name="dm_reason_down_1" text="An especially good harvest has flooded the market with %s."/>
-        <text name="dm_reason_down_2" text="Several farms brought large amounts of %s to market at once."/>
-        <text name="dm_reason_down_3" text="A major buyer of %s has paused its orders for now."/>
-        <text name="dm_reason_down_4" text="Cheap imports are putting pressure on the price of %s."/>
-        <text name="dm_reason_down_5" text="Seasonal demand for %s has dropped off."/>
-        <text name="dm_reason_down_6" text="Full warehouses have created an oversupply of %s across the region."/>
-        <text name="dm_reason_down_7" text="A mild winter has lowered demand for %s."/>
-        <text name="dm_reason_down_8" text="New competition on the market is pushing down prices for %s."/>
-        <text name="dm_notice_station_pressure_falling" text="%s at %s: price dropped to %s (-%d%%)."/>
-        <text name="dm_notice_station_pressure_recovered" text="%s at %s: price back to %s."/>
-        <text name="dm_notice_pressure_title" text="Sale Pressure Update"/>
-        <text name="dm_notice_pressure_more" text="... and %d more."/>
-        <text name="dm_notice_station_pressure_recovering" text="%s at %s: price rose to %s (still -%d%%)."/>
-        <text name="dm_notice_up_light" text="%s rises slightly"/>
-        <text name="dm_notice_up_clear" text="%s rises noticeably"/>
-        <text name="dm_notice_up_strong" text="%s rises strongly"/>
-        <text name="dm_notice_down_light" text="%s falls slightly"/>
-        <text name="dm_notice_down_clear" text="%s falls noticeably"/>
-        <text name="dm_notice_down_strong" text="%s falls strongly"/>
-        <text name="dm_group_cropFarming" text="cereals"/>
-        <text name="dm_group_forage" text="forage crops"/>
-        <text name="dm_group_animalProduct" text="animal products"/>
-        <text name="dm_group_livestock" text="animals"/>
-        <text name="dm_group_processedGoods" text="processed goods"/>
-        <text name="dm_group_buildingMaterial" text="construction materials"/>
-        <text name="dm_group_mapOwn" text="map-specific"/>
-        <text name="dm_menu_title" text="Dynamic Market"/>
+        <text name="dm_notice_title" text="Динамический рынок"/>
+        <text name="dm_stock_alert_title" text="Рост рыночных цен"/>
+        <text name="dm_notice_updated" text="Рассчитаны новые рыночные цены."/>
+        <text name="dm_notice_stable" text="Основные группы товаров остаются стабильными."/>
+        <text name="dm_reason_up_1" text="Региональный оптовик внезапно заказал большое количество товаров группы «%s»."/>
+        <text name="dm_reason_up_2" text="Засуха у соседей привела к дефициту товаров группы «%s» на рынке."/>
+        <text name="dm_reason_up_3" text="Городской фестиваль повышает спрос на товары группы «%s»."/>
+        <text name="dm_reason_up_4" text="В этом сезоне на нескольких соседних фермах был слабый урожай в группе «%s»."/>
+        <text name="dm_reason_up_5" text="Новый ресторан в городе разместил крупный заказ на товары группы «%s»."/>
+        <text name="dm_reason_up_6" text="Проблемы с транспортировкой на конкурирующих рынках направляют покупателей товаров группы «%s» к нашим точкам продажи."/>
+        <text name="dm_reason_up_7" text="Региональная ярмарка способствует росту краткосрочного спроса на товары группы «%s»."/>
+        <text name="dm_reason_up_8" text="Запасы товаров группы «%s» по всему региону снизились."/>
+        <text name="dm_reason_down_1" text="Благодаря особенно хорошему урожаю рынок оказался переполнен товарами группы «%s»."/>
+        <text name="dm_reason_down_2" text="Несколько ферм одновременно привезли на рынок большое количество товаров группы «%s»."/>
+        <text name="dm_reason_down_3" text="Крупный покупатель товаров группы «%s» временно приостановил свои заказы."/>
+        <text name="dm_reason_down_4" text="Дешевый импорт оказывает давление на цены товаров группы «%s»."/>
+        <text name="dm_reason_down_5" text="Сезонный спрос на товары группы «%s» снизился."/>
+        <text name="dm_reason_down_6" text="Заполненные склады привели к избыточному предложению товаров группы «%s» по всему региону."/>
+        <text name="dm_reason_down_7" text="Мягкая зима снизила спрос на товары группы «%s»."/>
+        <text name="dm_reason_down_8" text="Появление новых конкурентов на рынке приводит к снижению цен на товары группы «%s»."/>
+        <text name="dm_notice_station_pressure_falling" text="%s на станции %s: цена упала до %s (-%d%%)."/>
+        <text name="dm_notice_station_pressure_recovered" text="%s на станции %s: цена вернулась к %s."/>
+        <text name="dm_notice_pressure_title" text="Перенасыщение точек продаж"/>
+        <text name="dm_notice_pressure_more" text="... и еще %d."/>
+        <text name="dm_notice_station_pressure_recovering" text="%s на станции %s: цена выросла до %s (все еще -%d%%)."/>
+        <text name="dm_notice_up_light" text="%s: незначительный рост"/>
+        <text name="dm_notice_up_clear" text="%s: заметный рост"/>
+        <text name="dm_notice_up_strong" text="%s: сильный рост"/>
+        <text name="dm_notice_down_light" text="%s: незначительное падение"/>
+        <text name="dm_notice_down_clear" text="%s: заметное падение"/>
+        <text name="dm_notice_down_strong" text="%s: сильное падение"/>
+        <text name="dm_group_cropFarming" text="Зерновые"/>
+        <text name="dm_group_forage" text="Кормовые культуры"/>
+        <text name="dm_group_animalProduct" text="Продукты животноводства"/>
+        <text name="dm_group_livestock" text="Животные"/>
+        <text name="dm_group_processedGoods" text="Произведенная продукция"/>
+        <text name="dm_group_buildingMaterial" text="Строительные материалы"/>
+        <text name="dm_group_mapOwn" text="Особые товары карты"/>
+        <text name="dm_menu_title" text="Динамический рынок"/>
         <text name="dm_header_icon" text=""/>
-        <text name="dm_header_good" text="Good"/>
-        <text name="dm_header_group" text="Group"/>
-        <text name="dm_header_market" text="Market"/>
+        <text name="dm_header_good" text="Товар"/>
+        <text name="dm_header_group" text="Группа"/>
+        <text name="dm_header_market" text="Рынок"/>
         <text name="dm_header_trend" text=""/>
-        <text name="dm_header_price" text="Current price"/>
-        <text name="dm_header_pressure" text="Pressure"/>
+        <text name="dm_header_price" text="Текущая цена"/>
+        <text name="dm_header_pressure" text="Давление"/>
         <text name="dm_header_baseprice" text="Базовая цена"/>
-        <text name="dm_header_yearlyaverage" text="Year base"/>
-        <text name="dm_header_station" text="Best sell point"/>
-        <text name="dm_header_difference" text="Разница"/>
-        <text name="dm_header_bestmonthprice" text="Base price"/>
-        <text name="dm_header_bestmonth" text="Best month"/>
-        <text name="dm_header_stock" text="Stock"/>
-        <text name="dm_location_bale" text="Bale"/>
-        <text name="dm_action_show_stock_locations" text="Show storage locations"/>
-        <text name="dm_action_show_on_map" text="Show on map"/>
-        <text name="dm_action_hide_from_map" text="Remove from map"/>
-        <text name="dm_action_add_favorite" text="Add to favorites"/>
-        <text name="dm_action_remove_favorite" text="Remove from favorites"/>
-        <text name="dm_dialog_location_header" text="Location"/>
-        <text name="dm_dialog_amount_header" text="Amount"/>
-        <text name="dm_dialog_close" text="Close"/>
-        <text name="dm_news_title" text="Market News"/>
-        <text name="dm_news_header_group" text="Product group"/>
-        <text name="dm_news_header_change" text="Change"/>
-        <text name="dm_news_header_reason" text="Reason"/>
-        <text name="dm_news_header_stock" text="In your storage"/>
-        <text name="dm_news_stable" text="Minor fluctuation"/>
-        <text name="dm_search_label" text="Search"/>
-        <text name="dm_clear_button" text="Clear"/>
+        <text name="dm_header_yearlyaverage" text="Среднегодовая"/>
+        <text name="dm_header_station" text="Лучшая точка продажи"/>
+        <text name="dm_header_difference" text="Стоимость продажи"/>
+        <text name="dm_header_bestmonthprice" text="Базовая цена"/>
+        <text name="dm_header_bestmonth" text="Лучший месяц"/>
+        <text name="dm_header_stock" text="На складе"/>
+        <text name="dm_location_bale" text="Тюк"/>
+        <text name="dm_action_show_stock_locations" text="Показать места хранения"/>
+        <text name="dm_action_show_on_map" text="Показать на карте"/>
+        <text name="dm_action_hide_from_map" text="Снять отметку"/>
+        <text name="dm_action_add_favorite" text="Добавить в избранное"/>
+        <text name="dm_action_remove_favorite" text="Удалить из избранного"/>
+        <text name="dm_dialog_location_header" text="Местоположение"/>
+        <text name="dm_dialog_amount_header" text="Количество"/>
+        <text name="dm_dialog_close" text="Закрыть"/>
+        <text name="dm_news_title" text="Новости рынка"/>
+        <text name="dm_news_header_group" text="Группа товаров"/>
+        <text name="dm_news_header_change" text="Изменение"/>
+        <text name="dm_news_header_reason" text="Причина"/>
+        <text name="dm_news_header_stock" text="У вас на складе"/>
+        <text name="dm_news_stable" text="Незначительные колебания"/>
+        <text name="dm_search_label" text="Поиск"/>
+        <text name="dm_clear_button" text="Очистить"/>
         <text name="dm_footer_visible" text=""/>
-        <text name="dm_filter_stored_off" text="All goods"/>
-        <text name="dm_filter_stored_on" text="Only stored"/>
-        <text name="dm_filter_favorites_on" text="Favorites only"/>
-        <text name="dm_settings_header" text="Dynamic Market"/>
-        <text name="dm_setting_pricebase_title" text="Price base"/>
-        <text name="dm_setting_pricebase_desc" text="Normal: current GIANTS seasonal prices. Year Ø: stable yearly base."/>
-        <text name="dm_setting_pricebase_normal" text="Normal"/>
-        <text name="dm_setting_pricebase_year" text="Year Ø"/>
-        <text name="dm_setting_dailyrecalc_title" text="Daily recalculation"/>
-        <text name="dm_setting_dailyrecalc_desc" text="Off: recalculate only on month change. On: with multiple days per month, recalculate every day."/>
-        <text name="dm_setting_dailyrecalc_off" text="Off"/>
-        <text name="dm_setting_dailyrecalc_on" text="On"/>
-        <text name="dm_setting_vanillamode_title" text="GIANTS Prices Only"/>
-        <text name="dm_setting_vanillamode_desc" text="Off: Dynamic Market active. On: Pure original GIANTS prices, the overview becomes a plain price table."/>
-        <text name="dm_setting_vanillamode_off" text="Off"/>
-        <text name="dm_setting_vanillamode_on" text="On"/>
-        <text name="dm_setting_stationthreshold_title" text="Sale pressure threshold"/>
-        <text name="dm_setting_stationthreshold_desc" text="Above this amount per sell point and good, the price starts dropping the more you keep selling."/>
-        <text name="dm_setting_stationthreshold_1" text="2,000 l"/>
-        <text name="dm_setting_stationthreshold_2" text="5,000 l"/>
-        <text name="dm_setting_stationthreshold_3" text="10,000 l"/>
-        <text name="dm_setting_stationthreshold_4" text="20,000 l"/>
-        <text name="dm_setting_stationthreshold_5" text="50,000 l"/>
-        <text name="dm_setting_stationpercent_title" text="Price penalty per step"/>
-        <text name="dm_setting_stationpercent_desc" text="How much the price additionally drops per further threshold reached at that sell point."/>
+        <text name="dm_filter_stored_off" text="Все товары"/>
+        <text name="dm_filter_stored_on" text="Только со склада"/>
+        <text name="dm_filter_favorites_on" text="Только избранное"/>
+        <text name="dm_settings_header" text="Динамический рынок"/>
+        <text name="dm_setting_pricebase_title" text="Базовая цена"/>
+        <text name="dm_setting_pricebase_desc" text="Обычная: текущие сезонные цены от GIANTS. Среднегодовая (Ø): стабильная годовая база цен."/>
+        <text name="dm_setting_pricebase_normal" text="Обычная"/>
+        <text name="dm_setting_pricebase_year" text="Среднегодовая (Ø)"/>
+        <text name="dm_setting_dailyrecalc_title" text="Ежедневный перерасчет"/>
+        <text name="dm_setting_dailyrecalc_desc" text="Выкл: перерасчет цен происходит только при смене месяца. Вкл: если в месяце несколько дней, цены пересчитываются каждый день."/>
+        <text name="dm_setting_dailyrecalc_off" text="Выкл"/>
+        <text name="dm_setting_dailyrecalc_on" text="Вкл"/>
+        <text name="dm_setting_vanillamode_title" text="Только цены GIANTS"/>
+        <text name="dm_setting_vanillamode_desc" text="Выкл: мод Динамический рынок активен. Вкл: используются только оригинальные цены GIANTS, а интерфейс превращается в обычную таблицу цен."/>
+        <text name="dm_setting_vanillamode_off" text="Выкл"/>
+        <text name="dm_setting_vanillamode_on" text="Вкл"/>
+        <text name="dm_setting_stationthreshold_title" text="Порог давления продаж"/>
+        <text name="dm_setting_stationthreshold_desc" text="При превышении этого объёма (в расчёте на одну точку продажи и один вид товара) цена начинает снижаться по мере того, как вы продолжаете продавать."/>
+        <text name="dm_setting_stationthreshold_1" text="10 000 л"/>
+        <text name="dm_setting_stationthreshold_2" text="25 000 л"/>
+        <text name="dm_setting_stationthreshold_3" text="50 000 л"/>
+        <text name="dm_setting_stationthreshold_4" text="100 000 л"/>
+        <text name="dm_setting_stationthreshold_5" text="200 000 л"/>
+        <text name="dm_setting_stationpercent_title" text="Штраф к цене за шаг"/>
+        <text name="dm_setting_stationpercent_desc" text="На сколько процентов дополнительно падает цена при достижении каждого последующего порога объема в этой точке продажи."/>
         <text name="dm_setting_stationpercent_1" text="1%"/>
         <text name="dm_setting_stationpercent_2" text="2%"/>
         <text name="dm_setting_stationpercent_3" text="3%"/>
         <text name="dm_setting_stationpercent_4" text="5%"/>
-        <text name="dm_month_jan" text="Jan"/>
-        <text name="dm_month_feb" text="Feb"/>
-        <text name="dm_month_mar" text="Mar"/>
-        <text name="dm_month_apr" text="Apr"/>
-        <text name="dm_month_may" text="May"/>
-        <text name="dm_month_jun" text="Jun"/>
-        <text name="dm_month_jul" text="Jul"/>
-        <text name="dm_month_aug" text="Aug"/>
-        <text name="dm_month_sep" text="Sep"/>
-        <text name="dm_month_oct" text="Oct"/>
-        <text name="dm_month_nov" text="Nov"/>
-        <text name="dm_month_dec" text="Dec"/>
+        <text name="dm_month_jan" text="Янв"/>
+        <text name="dm_month_feb" text="Фев"/>
+        <text name="dm_month_mar" text="Мар"/>
+        <text name="dm_month_apr" text="Апр"/>
+        <text name="dm_month_may" text="Май"/>
+        <text name="dm_month_jun" text="Июн"/>
+        <text name="dm_month_jul" text="Июл"/>
+        <text name="dm_month_aug" text="Авг"/>
+        <text name="dm_month_sep" text="Сен"/>
+        <text name="dm_month_oct" text="Окт"/>
+        <text name="dm_month_nov" text="Ноя"/>
+        <text name="dm_month_dec" text="Дек"/>
     </texts>
 </l10n>
