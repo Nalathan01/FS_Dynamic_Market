@@ -3,43 +3,43 @@
     <translationContributors/>
     <texts>
         <text name="dm_notice_title" text="Динамічний ринок"/>
-        <text name="dm_stock_alert_title" text="Ціни на ваші запаси зростають"/>
-        <text name="dm_notice_updated" text="Розраховано нові ринкові ціни."/>
-        <text name="dm_notice_stable" text="Основні товарні групи залишаються стабільними."/>
-        <text name="dm_reason_up_1" text="Регіональний оптовик раптово замовив великі обсяги товарів групи «%s»."/>
-        <text name="dm_reason_up_2" text="Тривала посуха в сусідніх регіонах скоротила пропозицію товарів групи «%s»."/>
-        <text name="dm_reason_up_3" text="Міське свято підвищує попит на товари групи «%s»."/>
-        <text name="dm_reason_up_4" text="Кілька сусідніх господарств цього сезону зібрали слабкий урожай товарів групи «%s»."/>
-        <text name="dm_reason_up_5" text="Новий ресторан у місті зробив велике замовлення товарів групи «%s»."/>
-        <text name="dm_reason_up_6" text="Через транспортні проблеми на конкурентних ринках покупці товарів групи «%s» звертаються до наших пунктів продажу."/>
-        <text name="dm_reason_up_7" text="Регіональний ярмарок короткочасно підвищує попит на товари групи «%s»."/>
-        <text name="dm_reason_up_8" text="Запаси товарів групи «%s» у регіоні скоротилися."/>
-        <text name="dm_reason_down_1" text="Особливо добрий урожай наповнив ринок товарами групи «%s»."/>
-        <text name="dm_reason_down_2" text="Кілька господарств одночасно вивезли на ринок великі обсяги товарів групи «%s»."/>
-        <text name="dm_reason_down_3" text="Великий покупець товарів групи «%s» тимчасово призупинив замовлення."/>
-        <text name="dm_reason_down_4" text="Дешевий імпорт тисне на ціни товарів групи «%s»."/>
-        <text name="dm_reason_down_5" text="Сезонний попит на товари групи «%s» знизився."/>
-        <text name="dm_reason_down_6" text="Переповнені склади спричинили надлишок товарів групи «%s» у регіоні."/>
-        <text name="dm_reason_down_7" text="М'яка зима знизила попит на товари групи «%s»."/>
-        <text name="dm_reason_down_8" text="Нові конкуренти на ринку знижують ціни на товари групи «%s»."/>
+        <text name="dm_stock_alert_title" text="Подорожчання товарів у запасах"/>
+        <text name="dm_notice_updated" text="Ринкові ціни перераховано."/>
+        <text name="dm_notice_stable" text="Ціни на основні групи товарів залишаються стабільними."/>
+        <text name="dm_reason_up_1" text="Регіональний гуртовий покупець несподівано замовив велику партію товарів категорії «%s»."/>
+        <text name="dm_reason_up_2" text="Через тривалу посуху в сусідніх регіонах зменшилася пропозиція товарів категорії «%s»."/>
+        <text name="dm_reason_up_3" text="Міське свято підвищує попит на товари категорії «%s»."/>
+        <text name="dm_reason_up_4" text="Цього сезону кілька сусідніх господарств зібрали невеликий урожай продукції категорії «%s»."/>
+        <text name="dm_reason_up_5" text="Новий ресторан у місті замовив велику партію товарів категорії «%s»."/>
+        <text name="dm_reason_up_6" text="Через проблеми з перевезеннями на конкурентних ринках покупці шукають товари категорії «%s» у наших пунктах продажу."/>
+        <text name="dm_reason_up_7" text="Регіональний ярмарок тимчасово підвищує попит на товари категорії «%s»."/>
+        <text name="dm_reason_up_8" text="Запаси товарів категорії «%s» по всьому регіону скоротилися."/>
+        <text name="dm_reason_down_1" text="Завдяки особливо щедрому врожаю на ринку виник надлишок товарів категорії «%s»."/>
+        <text name="dm_reason_down_2" text="Кілька господарств одночасно привезли на ринок великі партії товарів категорії «%s»."/>
+        <text name="dm_reason_down_3" text="Великий покупець товарів категорії «%s» тимчасово припинив робити замовлення."/>
+        <text name="dm_reason_down_4" text="Дешевий імпорт сприяє зниженню цін на товари категорії «%s»."/>
+        <text name="dm_reason_down_5" text="Сезонний попит на товари категорії «%s» знизився."/>
+        <text name="dm_reason_down_6" text="Через переповнені склади в регіоні виник надлишок товарів категорії «%s»."/>
+        <text name="dm_reason_down_7" text="Через м’яку зиму знизився попит на товари категорії «%s»."/>
+        <text name="dm_reason_down_8" text="Нові конкуренти на ринку знижують ціни на товари категорії «%s»."/>
         <text name="dm_notice_station_pressure_falling" text="%s (%s): ціна знизилася до %s (-%d%%)."/>
         <text name="dm_notice_station_pressure_recovered" text="%s (%s): ціна повернулася до %s."/>
-        <text name="dm_notice_pressure_title" text="Оновлення тиску продажів"/>
+        <text name="dm_notice_pressure_title" text="Зміни цін через обсяги продажів"/>
         <text name="dm_notice_pressure_more" text="... і ще %d."/>
-        <text name="dm_notice_station_pressure_recovering" text="%s (%s): ціна зросла до %s (досі -%d%%)."/>
-        <text name="dm_notice_up_light" text="%s: незначне зростання"/>
-        <text name="dm_notice_up_clear" text="%s: помітне зростання"/>
-        <text name="dm_notice_up_strong" text="%s: сильне зростання"/>
-        <text name="dm_notice_down_light" text="%s: незначне падіння"/>
-        <text name="dm_notice_down_clear" text="%s: помітне падіння"/>
-        <text name="dm_notice_down_strong" text="%s: сильне падіння"/>
+        <text name="dm_notice_station_pressure_recovering" text="%s (%s): ціна зросла до %s (усе ще на %d%% нижче)."/>
+        <text name="dm_notice_up_light" text="%s: ціни трохи зросли"/>
+        <text name="dm_notice_up_clear" text="%s: ціни помітно зросли"/>
+        <text name="dm_notice_up_strong" text="%s: ціни суттєво зросли"/>
+        <text name="dm_notice_down_light" text="%s: ціни трохи знизилися"/>
+        <text name="dm_notice_down_clear" text="%s: ціни помітно знизилися"/>
+        <text name="dm_notice_down_strong" text="%s: ціни суттєво знизилися"/>
         <text name="dm_group_cropFarming" text="Рослинництво"/>
         <text name="dm_group_forage" text="Кормові культури"/>
         <text name="dm_group_animalProduct" text="Тваринницька продукція"/>
         <text name="dm_group_livestock" text="Худоба"/>
-        <text name="dm_group_processedGoods" text="Перероблені товари"/>
+        <text name="dm_group_processedGoods" text="Перероблена продукція"/>
         <text name="dm_group_buildingMaterial" text="Будівельні матеріали"/>
-        <text name="dm_group_mapOwn" text="Товари карти"/>
+        <text name="dm_group_mapOwn" text="Товари цієї карти"/>
         <text name="dm_menu_title" text="Динамічний ринок"/>
         <text name="dm_header_icon" text=""/>
         <text name="dm_header_good" text="Товар"/>
@@ -49,8 +49,8 @@
         <text name="dm_header_price" text="Поточна ціна"/>
         <text name="dm_header_pressure" text="Тиск"/>
         <text name="dm_header_baseprice" text="Базова ціна"/>
-        <text name="dm_header_yearlyaverage" text="Річна база"/>
-        <text name="dm_header_station" text="Найкращий пункт продажу"/>
+        <text name="dm_header_yearlyaverage" text="Середньорічна ціна"/>
+        <text name="dm_header_station" text="Найвигідніший пункт продажу"/>
         <text name="dm_header_difference" text="Вартість продажу"/>
         <text name="dm_header_bestmonthprice" text="Базова ціна"/>
         <text name="dm_header_bestmonth" text="Найкращий місяць"/>
@@ -68,36 +68,36 @@
         <text name="dm_news_header_group" text="Товарна група"/>
         <text name="dm_news_header_change" text="Зміна"/>
         <text name="dm_news_header_reason" text="Причина"/>
-        <text name="dm_news_header_stock" text="На вашому складі"/>
+        <text name="dm_news_header_stock" text="У ваших запасах"/>
         <text name="dm_news_stable" text="Незначне коливання"/>
         <text name="dm_search_label" text="Пошук"/>
         <text name="dm_clear_button" text="Очистити"/>
         <text name="dm_footer_visible" text=""/>
         <text name="dm_filter_stored_off" text="Усі товари"/>
-        <text name="dm_filter_stored_on" text="Лише на складі"/>
+        <text name="dm_filter_stored_on" text="Лише в запасах"/>
         <text name="dm_filter_favorites_on" text="Лише обране"/>
         <text name="dm_settings_header" text="Динамічний ринок"/>
-        <text name="dm_setting_pricebase_title" text="Основа ціни"/>
-        <text name="dm_setting_pricebase_desc" text="Звичайна: поточні сезонні ціни GIANTS. Рік Ø: стабільна річна база."/>
+        <text name="dm_setting_pricebase_title" text="Основа розрахунку ціни"/>
+        <text name="dm_setting_pricebase_desc" text="Звичайна — поточні сезонні ціни GIANTS. Середня за рік — базова ціна без сезонних коливань."/>
         <text name="dm_setting_pricebase_normal" text="Звичайна"/>
-        <text name="dm_setting_pricebase_year" text="Рік Ø"/>
+        <text name="dm_setting_pricebase_year" text="Середня за рік"/>
         <text name="dm_setting_dailyrecalc_title" text="Щоденний перерахунок"/>
-        <text name="dm_setting_dailyrecalc_desc" text="Вимк.: перерахунок лише при зміні місяця. Увімк.: якщо в місяці кілька днів, перерахунок щодня."/>
+        <text name="dm_setting_dailyrecalc_desc" text="Вимк.: перерахунок лише під час зміни місяця. Увімк.: щоденний перерахунок, якщо ігровий місяць триває кілька днів."/>
         <text name="dm_setting_dailyrecalc_off" text="Вимк."/>
         <text name="dm_setting_dailyrecalc_on" text="Увімк."/>
         <text name="dm_setting_vanillamode_title" text="Лише ціни GIANTS"/>
-        <text name="dm_setting_vanillamode_desc" text="Вимк.: Динамічний ринок активний. Увімк.: лише оригінальні ціни GIANTS, огляд стає звичайною таблицею цін."/>
+        <text name="dm_setting_vanillamode_desc" text="Вимк.: динамічний ринок активний. Увімк.: діють лише стандартні ціни GIANTS, а огляд стає звичайною таблицею цін."/>
         <text name="dm_setting_vanillamode_off" text="Вимк."/>
         <text name="dm_setting_vanillamode_on" text="Увімк."/>
-        <text name="dm_setting_stationthreshold_title" text="Поріг тиску продажів"/>
-        <text name="dm_setting_stationthreshold_desc" text="Якщо продати більше цієї кількості одного товару в одному пункті продажу, ціна там почне знижуватися з кожним наступним продажем."/>
+        <text name="dm_setting_stationthreshold_title" text="Поріг впливу продажів на ціну"/>
+        <text name="dm_setting_stationthreshold_desc" text="Якщо обсяг продажу одного товару в певному пункті перевищує цей поріг, подальші продажі поступово знижуватимуть ціну."/>
         <text name="dm_setting_stationthreshold_1" text="10 000 л"/>
         <text name="dm_setting_stationthreshold_2" text="25 000 л"/>
         <text name="dm_setting_stationthreshold_3" text="50 000 л"/>
         <text name="dm_setting_stationthreshold_4" text="100 000 л"/>
         <text name="dm_setting_stationthreshold_5" text="200 000 л"/>
-        <text name="dm_setting_stationpercent_title" text="Зниження ціни за крок"/>
-        <text name="dm_setting_stationpercent_desc" text="Наскільки додатково знижується ціна за кожен наступний досягнутий поріг у цьому пункті продажу."/>
+        <text name="dm_setting_stationpercent_title" text="Зниження ціни за кожен поріг"/>
+        <text name="dm_setting_stationpercent_desc" text="На скільки відсотків додатково знижується ціна щоразу, коли обсяг продажів у цьому пункті досягає наступного порогу."/>
         <text name="dm_setting_stationpercent_1" text="1%"/>
         <text name="dm_setting_stationpercent_2" text="2%"/>
         <text name="dm_setting_stationpercent_3" text="3%"/>
