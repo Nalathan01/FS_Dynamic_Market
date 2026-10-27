@@ -48,7 +48,7 @@
         <text name="dm_header_trend" text=""/>
         <text name="dm_header_price" text="Current price"/>
         <text name="dm_header_pressure" text="Pressure"/>
-        <text name="dm_header_baseprice" text="Preço base"/>
+        <text name="dm_header_baseprice" text="Preço de base"/>
         <text name="dm_header_yearlyaverage" text="Year base"/>
         <text name="dm_header_station" text="Best sell point"/>
         <text name="dm_header_difference" text="Diferença"/>

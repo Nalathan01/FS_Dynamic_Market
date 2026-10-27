@@ -48,10 +48,10 @@
         <text name="dm_header_trend" text=""/>
         <text name="dm_header_price" text="Current price"/>
         <text name="dm_header_pressure" text="Pressure"/>
-        <text name="dm_header_baseprice" text="Základní cena"/>
+        <text name="dm_header_baseprice" text="基准价格"/>
         <text name="dm_header_yearlyaverage" text="Year base"/>
         <text name="dm_header_station" text="Best sell point"/>
-        <text name="dm_header_difference" text="Rozdíl"/>
+        <text name="dm_header_difference" text="差额"/>
         <text name="dm_header_bestmonthprice" text="Base price"/>
         <text name="dm_header_bestmonth" text="Best month"/>
         <text name="dm_header_stock" text="Stock"/>
