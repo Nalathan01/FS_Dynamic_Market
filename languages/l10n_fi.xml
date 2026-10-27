@@ -91,11 +91,11 @@
         <text name="dm_setting_vanillamode_on" text="On"/>
         <text name="dm_setting_stationthreshold_title" text="Sale pressure threshold"/>
         <text name="dm_setting_stationthreshold_desc" text="Above this amount per sell point and good, the price starts dropping the more you keep selling."/>
-        <text name="dm_setting_stationthreshold_1" text="2,000 l"/>
-        <text name="dm_setting_stationthreshold_2" text="5,000 l"/>
-        <text name="dm_setting_stationthreshold_3" text="10,000 l"/>
-        <text name="dm_setting_stationthreshold_4" text="20,000 l"/>
-        <text name="dm_setting_stationthreshold_5" text="50,000 l"/>
+        <text name="dm_setting_stationthreshold_1" text="10,000 l"/>
+        <text name="dm_setting_stationthreshold_2" text="25,000 l"/>
+        <text name="dm_setting_stationthreshold_3" text="50,000 l"/>
+        <text name="dm_setting_stationthreshold_4" text="100,000 l"/>
+        <text name="dm_setting_stationthreshold_5" text="200,000 l"/>
         <text name="dm_setting_stationpercent_title" text="Price penalty per step"/>
         <text name="dm_setting_stationpercent_desc" text="How much the price additionally drops per further threshold reached at that sell point."/>
         <text name="dm_setting_stationpercent_1" text="1%"/>

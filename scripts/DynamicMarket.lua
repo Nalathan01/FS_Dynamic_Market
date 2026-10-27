@@ -153,7 +153,8 @@ DynamicMarket.GROUPS = {
         GREENBEAN = true, PEA = true, SPINACH = true, GRAPE = true, LETTUCE = true, TOMATO = true,
         STRAWBERRY = true, APPLE = true, CABBAGE = true, CUCUMBER = true, PUMPKIN = true,
         CHILLI = true, GARLIC = true, ENOKI = true, OYSTER = true, MUSTARD = true, SPRING_ONION = true,
-        COTTON = true, ROUNDBALE_COTTON = true, SQUAREBALE_COTTON = true
+        COTTON = true, ROUNDBALE_COTTON = true, SQUAREBALE_COTTON = true,
+        COFFEECHERRIES = true, BANANA = true
     },
     forage = {
         GRASS = true, GRASS_WINDROW = true, DRYGRASS = true, DRYGRASS_WINDROW = true, HAY = true,
@@ -168,12 +169,17 @@ DynamicMarket.GROUPS = {
     },
     animalProduct = {
         MILK = true, GOATMILK = true, BUFFALOMILK = true, EGG = true, WOOL = true, HONEY = true,
-        MANURE = true, LIQUIDMANURE = true, DIGESTATE = true
+        MANURE = true, LIQUIDMANURE = true, DIGESTATE = true,
+        ALPACAWOOL = true, ALPACAFLEECE = true, SALMON = true, TROUT = true
     },
     livestock = {
         COW_ANGUS = true, COW_HIGHLAND_CATTLE = true, COW_HOLSTEIN = true, COW_LIMOUSIN = true,
         COW_SWISS_BROWN = true, PIG_BERKSHIRE = true, PIG_BLACK_PIED = true, PIG_LANDRACE = true,
-        SHEEP_BLACK_WELSH = true, SHEEP_LANDRACE = true, SHEEP_STEINSCHAF = true, SHEEP_SWISS_MOUNTAIN = true
+        SHEEP_BLACK_WELSH = true, SHEEP_LANDRACE = true, SHEEP_STEINSCHAF = true, SHEEP_SWISS_MOUNTAIN = true,
+        COW_BRAHMAN = true, GOAT = true, CHICKEN = true, CHICKEN_ROOSTER = true,
+        HORSE_BAY = true, HORSE_BLACK = true, HORSE_CHESTNUT = true, HORSE_DUN = true,
+        HORSE_GRAY = true, HORSE_PALOMINO = true, HORSE_PINTO = true, HORSE_SEAL_BROWN = true,
+        ALPACA_WHITE = true, ALPACA_BROWN = true, ALPACA_GREY = true, ALPACA_FAWN = true
     },
     processedGoods = {
         FLOUR = true, RICEFLOUR = true, BREAD = true, CAKE = true, BUTTER = true, CHEESE = true, GOATCHEESE = true,
@@ -189,13 +195,18 @@ DynamicMarket.GROUPS = {
         SOUPCANSPOTATO = true, CANNED_PEAS = true, JARRED_GREENBEAN = true, SPINACH_BAGS = true,
         RICE_BAGS = true, RICE_BOXES = true, BAGGED = true, BOXED = true, PALLET = true,
         BARREL = true, BUCKET = true, BATHTUB = true, EMPTYPALLET = true, EMPTYPALLETBOX = true,
-        EMPTYBARREL = true, EMPTYBUCKET = true, EMPTYBOX = true, EMPTYPACKAGE = true
+        EMPTYBARREL = true, EMPTYBUCKET = true, EMPTYBOX = true, EMPTYPACKAGE = true,
+        COFFEECAPSULES = true, COFFEEYOGURT = true, COFFEEBEVERAGE = true, TIRAMISU = true,
+        BANANAMILK = true, BANANAJAM = true, ALPACAARMCHAIR = true, ALPACACHAIR = true,
+        ALPACAPILLOW = true, ALPACAPLUSH = true, ALPACASOCKS = true,
+        FRIEDONION = true, ONIONSALT = true, PIGMENTS = true, PAINTBUCKETS = true, RESIN = true
     },
     buildingMaterial = {
         CEMENT = true, CEMENTBRICKS = true, CONCRETE = true, STONE = true, GRAVEL = true, SAND = true,
         ROOFPLATES = true, PREFABWALL = true,
         WOOD = true, WOODCHIPS = true, PLANKS = true, FURNITURE = true, BOARDS = true, TIMBER = true,
-        WOODBEAM = true, TREE = true, ROUNDBALE_WOOD = true, SQUAREBALE_WOOD = true
+        WOODBEAM = true, TREE = true, ROUNDBALE_WOOD = true, SQUAREBALE_WOOD = true,
+        IRONORE = true, COPPERORE = true, COAL = true, STONEBIG = true, CASTLEROCK = true
     },
     mapOwn = {}
 }
@@ -214,7 +225,8 @@ DynamicMarket.EXCLUDED_EXACT = {
     FERTILIZER = true, LIQUIDFERTILIZER = true, HERBICIDE = true, LIME = true, SEEDS = true,
     SILAGE_ADDITIVE = true, MINERAL_FEED = true, PIGFOOD = true, ROAD_SALT = true, SNOW = true,
     OILSEEDRADISH = true, FLOWERINGCATCHCROP = true, HUMUSACTIVE = true, MEADOW = true,
-    BALE_NET = true, BALE_TWINE = true, BALE_WRAP = true
+    BALE_NET = true, BALE_TWINE = true, BALE_WRAP = true,
+    ROADSALT = true, FUNGICIDE = true, FISHFOOD = true, SALMONYOUNG = true, TROUTYOUNG = true
 }
 
 DynamicMarket.EXCLUDED_PATTERNS = {

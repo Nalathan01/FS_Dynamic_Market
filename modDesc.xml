@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<modDesc descVersion="113">
+<modDesc descVersion="115">
     <author>Nalathan</author>
-    <version>1.3.1.2</version>
+    <version>1.3.3.0</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
@@ -38,7 +38,15 @@ Automatic detection
 Multiplayer
 - All market calculations run server-side, so every player sees the same prices
 
-Feedback and issues on GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+Bug reports please only via GitHub or Forbidden Mods. Comments on other download sites cannot be read or answered.
+
+Changelog 1.3.3.0:
+- Russian language added (thanks to Frezer89)
+- Ukrainian language added (thanks to MarkusVII)
+- Goods from the "Beans and Alpacas" DLC (coffee, bananas, alpaca products) as well as fish, ores and other previously unknown goods are now sorted into the matching product groups instead of "map-specific"
+- Fixed: road salt wrongly appeared as a tradable good
+- Fixed: some languages showed wrong amounts for the sale pressure threshold
 
 Changelog 1.3.1.2:
 - Hotfix: the Market News window now only opens automatically after loading a savegame and no longer at the start of a new month. Afterwards you can open it anytime from the market tab in the pause menu
@@ -50,42 +58,7 @@ Changelog 1.3.1.0:
 - New: "Market News" window opens automatically at the start of each month and lists all product groups sorted, with change, reason and the affected goods in your storage. Can also be opened anytime from the market tab
 - New: processed goods now follow the prices of their raw materials and never drop below the value of the raw materials used, also for map and mod productions
 - Fix: goods that a map hides from the price table (e.g. animal sale workarounds) no longer show up with absurd prices
-- Compatibility with the current game version
-
-Changelog 1.3.0.0:
-- New: market notices now show an event that explains the price change (e.g. "A wholesaler bought large quantities") - just for flavor, does not change the actual prices
-- New: "GIANTS Prices Only" setting - fully turns off Dynamic Market's own prices, you just get the game's original prices, overview and search still work
-- Hotfix: search field in the market overview reworked - more consistent look, own Clear button, Esc now clears the search first and only closes the menu on a second press
-- Hotfix: "Best selling station" could show a station that isn't actually paying the best price right now
-- Hotfix: several notices used to appear at once on a period/day change - now you get one bundled notice
-- Hotfix: with daily recalculation on, the notice no longer appears every day, only on a real month change
-
-Changelog 1.2.0.0:
-- New: get an in-game notification when a good you have in stock rises notably in price
-- New: show an item's storage locations at the press of a button, including map tagging for the storage location and the best sell point
-- New: the "Sale value" column now shows stock x current price instead of just the price difference to base price
-- New: goods in trailers/implements and production building outputs now count towards the shown stock
-- New: manure, liquid manure and digestate are now tracked as sellable animal products
-- New: unclassified but genuinely sellable goods now get their own "Map-specific" price group instead of being ignored
-- Fixed: market prices were recalculated every 5 seconds even when the period had not changed
-- Fixed: "Normal" price-base mode now keeps the original seasonal curve instead of flattening it
-- Fixed: group names and market notices now consistently use the shipped translations
-- Fixed: crop farming and other merged categories had lost their seasonal price influence
-- Only actually unloadable and sellable products are now shown for production buildings, animal barns and attached implements
-- New: sales pressure at selling stations: selling large quantities at once temporarily lowers the price there, which then recovers over time. Two new settings control the threshold and the price drop per step
-- Simplified how the mod's menu tab registers itself, to be more robust for gamepad/controller navigation
-
-Changelog 1.1.0.0:
-- New option: daily market recalculation, for savegames with multiple days per month
-- Product groups simplified from 14 to 6 more realistic categories, for more frequent market swings
-- Market overview reworked: added group and stock columns, sortable column headers
-
-Changelog 1.0.2.0:
-- added italian language (thx to FirenzeIT)
-
-Changelog 1.0.1.0:
-- UI adjustments for better text readability
-- Revised French translations]]></en>
+- Compatibility with the current game version]]></en>
         <de><![CDATA[Dynamischer Markt sorgt dafür, dass sich Verkaufspreise über die Zeit verändern, zusätzlich zu den normalen saisonalen Schwankungen des Grundspiels. Jede Warengruppe entwickelt sich unterschiedlich, sodass sich der beste Verkaufszeitpunkt laufend ändert.
 
 Preise
@@ -116,7 +89,15 @@ Automatische Erkennung
 Mehrspieler
 - Alle Marktberechnungen laufen serverseitig, damit alle Spieler dieselben Preise sehen
 
-Feedback und Fehlerberichte auf GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+Fehlermeldungen bitte nur über GitHub oder Forbidden Mods. Kommentare auf anderen Download-Seiten können nicht gelesen oder beantwortet werden.
+
+Changelog 1.3.3.0:
+- Russische Sprache hinzugefügt (Dank an Frezer89)
+- Ukrainische Sprache hinzugefügt (Dank an MarkusVII)
+- Waren aus dem DLC "Beans and Alpacas" (Kaffee, Bananen, Alpaka-Produkte) sowie Fische, Erze und weitere bisher unbekannte Waren werden jetzt den passenden Warengruppen zugeordnet statt "Kartenspezifisch"
+- Behoben: Streusalz erschien fälschlich als handelbare Ware
+- Behoben: In einigen Sprachen standen bei der Schwelle für den Verkaufsdruck falsche Mengen
 
 Changelog 1.3.1.2:
 - Hotfix: das Fenster Marktnachrichten öffnet sich jetzt nur noch automatisch nach dem Laden eines Spielstands und nicht mehr zu Monatsbeginn. Danach lässt es sich jederzeit über den Markt-Tab im Pausemenü öffnen
@@ -128,42 +109,7 @@ Changelog 1.3.1.0:
 - Neu: Fenster "Marktnachrichten" öffnet sich zu jedem Monatsbeginn automatisch und zeigt alle Warengruppen sortiert mit Veränderung, Grund und den betroffenen Waren in deinem Lager. Lässt sich auch jederzeit im Markt-Tab öffnen
 - Neu: veredelte Produkte folgen jetzt den Preisen ihrer Rohstoffe und fallen nie unter den Wert der verbrauchten Rohstoffe, auch bei Karten- und Mod-Produktionen
 - Fix: Waren, die eine Karte aus der Preistabelle ausblendet (z. B. Tierverkauf-Workarounds), erscheinen nicht mehr mit absurden Preisen
-- Kompatibilität mit der aktuellen Spielversion
-
-Changelog 1.3.0.0:
-- Neu: Markt-Hinweise zeigen jetzt ein Ereignis, das die Preisänderung erklärt (z. B. "Ein Großhändler hat viel Ware gekauft") - nur zur Stimmung, ändert nichts an den tatsächlichen Preisen
-- Neu: Einstellung "Nur GIANTS-Preise" - schaltet die eigenen Marktpreise komplett ab, du siehst dann nur noch die Original-Preise vom Spiel, Übersicht und Suche bleiben trotzdem nutzbar
-- Hotfix: Suchfeld in der Marktübersicht überarbeitet - einheitlicheres Aussehen, eigener Leeren-Button, Esc leert erst die Suche und schließt erst beim zweiten Drücken das Menü
-- Hotfix: Die "beste Verkaufsstelle" konnte eine Station anzeigen, die gerade gar nicht den besten Preis zahlt
-- Hotfix: Bei Perioden-/Tageswechsel kamen oft mehrere Hinweise auf einmal - jetzt kommt eine gebündelte Meldung
-- Hotfix: Bei täglicher Neuberechnung kommt die Hinweis-Meldung nicht mehr jeden Tag, sondern nur noch bei echtem Monatswechsel
-
-Changelog 1.2.0.0:
-- Neu: Ingame-Hinweis, wenn eine Ware, die du im Lager hast, deutlich im Preis steigt
-- Neu: Lagerorte einer Ware per Tastendruck anzeigen, inklusive Kartenmarkierung für den Lagerort und die beste Verkaufsstelle
-- Neu: Spalte "Verkaufswert" zeigt jetzt Bestand x aktueller Preis statt reiner Preisdifferenz zum Basispreis
-- Neu: Waren in Anhängern/Anbaugeräten sowie Produktionsausstoß zählen jetzt zum angezeigten Lagerbestand
-- Neu: Mist, Gülle und Gärrest werden jetzt als verkaufbare Tierprodukte erfasst
-- Neu: nicht klassifizierte, aber tatsächlich verkaufbare Waren erhalten jetzt eine eigene Warengruppe "Kartenspezifisch", statt ignoriert zu werden
-- Behoben: Marktpreise wurden alle 5 Sekunden neu berechnet, auch ohne Zeitraumwechsel
-- Behoben: Preismodus "Normal" behält jetzt die originale Saisonkurve, statt sie zu glätten
-- Behoben: Warengruppen-Namen und Markt-Hinweise nutzen jetzt durchgängig die mitgelieferten Übersetzungen
-- Behoben: Ackerfrüchte und andere zusammengelegte Warengruppen hatten keinen saisonalen Preiseinfluss mehr
-- In Produktionen, Tierställen und Anbaugeräten werden nur tatsächlich auslagerbare und verkaufbare Produkte angezeigt
-- Neu: Verkaufsdruck an Verkaufsstellen: wer sehr viel auf einmal an einer Station verkauft, drückt dort kurzzeitig den Preis, der sich danach wieder erholt. Zwei neue Einstellungen legen Schwelle und Preisabschlag pro Stufe fest
-- Registrierung des Mod-Menü-Tabs vereinfacht, um die Controller-Navigation robuster zu machen
-
-Changelog 1.1.0.0:
-- Neue Option: tägliche Marktneuberechnung, für Savegames mit mehreren Tagen pro Monat
-- Warengruppen von 14 auf 6 realistischere Kategorien vereinfacht, für häufigere Marktschwankungen
-- Marktübersicht überarbeitet: Gruppen- und Bestandsspalte ergänzt, sortierbare Spaltenköpfe
-
-Changelog 1.0.2.0:
-- Italienische Sprache hinzugefügt (Dank an FirenzeIT)
-
-Changelog 1.0.1.0:
-- UI-Anpassungen für bessere Textlesbarkeit
-- Überarbeitete französische Übersetzungen]]></de>
+- Kompatibilität mit der aktuellen Spielversion]]></de>
         <fr><![CDATA[Marché Dynamique fait évoluer les prix de vente au fil du temps, en plus des variations saisonnières normales du jeu de base. Chaque groupe de produits évolue différemment, si bien que le meilleur moment pour vendre change constamment.
 
 Prix
@@ -194,7 +140,15 @@ Détection automatique
 Multijoueur
 - Tous les calculs de marché s'effectuent côté serveur, pour que tous les joueurs voient les mêmes prix
 
-Retours et signalement de problèmes sur GitHub : https://github.com/Nalathan01/FS_Dynamic_Market/issues
+GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
+Merci de signaler les bugs uniquement via GitHub ou Forbidden Mods. Les commentaires sur les autres sites de téléchargement ne peuvent pas être lus ni traités.
+
+Changelog 1.3.3.0 :
+- Langue russe ajoutée (merci à Frezer89)
+- Langue ukrainienne ajoutée (merci à MarkusVII)
+- Les marchandises du DLC « Beans and Alpacas » (café, bananes, produits d'alpaga) ainsi que les poissons, minerais et autres marchandises jusqu'ici inconnues sont désormais classées dans les groupes de produits correspondants au lieu de « spécifique à la carte »
+- Correction : le sel de déneigement apparaissait à tort comme marchandise négociable
+- Correction : dans certaines langues, les quantités du seuil de pression de vente étaient incorrectes
 
 Changelog 1.3.1.2:
 - Hotfix : la fenêtre Actualités du marché ne s'ouvre plus automatiquement qu'après le chargement d'une partie et plus au début d'un nouveau mois. Ensuite tu peux l'ouvrir à tout moment depuis l'onglet du marché dans le menu pause
@@ -206,42 +160,7 @@ Changelog 1.3.1.0:
 - Nouveau : la fenêtre « Actualités du marché » s'ouvre automatiquement au début de chaque mois et affiche tous les groupes de produits triés, avec la variation, la raison et les marchandises concernées dans ton stock. Elle peut aussi être ouverte à tout moment depuis l'onglet du marché
 - Nouveau : les produits transformés suivent désormais les prix de leurs matières premières et ne descendent jamais sous la valeur des matières premières utilisées, y compris pour les productions de cartes et de mods
 - Correction : les marchandises qu'une carte masque du tableau des prix (par ex. astuces de vente d'animaux) n'apparaissent plus avec des prix absurdes
-- Compatibilité avec la version actuelle du jeu
-
-Changelog 1.3.0.0:
-- Nouveau : les notifications de marché montrent maintenant un événement qui explique le changement de prix (par ex. « Un grossiste a acheté de grandes quantités ») - juste pour l'ambiance, ça ne change rien aux prix réels
-- Nouveau : réglage « Prix GIANTS uniquement » - désactive complètement les prix propres à Dynamic Market, tu ne vois plus que les prix d'origine du jeu, l'aperçu et la recherche restent utilisables
-- Hotfix : champ de recherche de l'aperçu du marché revu - apparence plus cohérente, bouton Effacer dédié, Échap efface d'abord la recherche et ne ferme le menu qu'à la deuxième pression
-- Hotfix : la « meilleure station de vente » pouvait afficher une station qui ne paie pas vraiment le meilleur prix en ce moment
-- Hotfix : plusieurs notifications arrivaient souvent en même temps lors d'un changement de période/jour - maintenant tu reçois une seule notification groupée
-- Hotfix : avec le recalcul quotidien activé, la notification n'apparaît plus chaque jour, seulement lors d'un vrai changement de mois
-
-Changelog 1.2.0.0:
-- Nouveau : notification en jeu lorsqu'un article que vous avez en stock augmente nettement de prix
-- Nouveau : affichez les lieux de stockage d'un article par simple pression d'une touche, avec marquage sur la carte du lieu de stockage et du meilleur point de vente
-- Nouveau : la colonne « Valeur de vente » affiche désormais stock x prix actuel au lieu du simple écart avec le prix de base
-- Nouveau : les marchandises dans les remorques/outils attelés ainsi que la production des bâtiments comptent désormais dans le stock affiché
-- Nouveau : le fumier, le lisier et le digestat sont désormais suivis comme produits animaux vendables
-- Nouveau : les produits non classés mais réellement vendables obtiennent désormais leur propre groupe de prix « Spécifique à la carte » au lieu d'être ignorés
-- Corrigé : les prix du marché étaient recalculés toutes les 5 secondes même sans changement de période
-- Corrigé : le mode de prix « Normal » conserve désormais la courbe saisonnière d'origine au lieu de l'aplatir
-- Corrigé : les noms de groupes et les notifications de marché utilisent désormais systématiquement les traductions fournies
-- Corrigé : les cultures et les autres groupes fusionnés avaient perdu leur influence saisonnière sur les prix
-- Dans les bâtiments de production, les étables et les outils attelés, seuls les produits réellement déchargeables et vendables sont désormais affichés
-- Nouveau : pression de vente sur les points de vente : vendre de grandes quantités d'un coup fait baisser temporairement le prix à cet endroit, qui se rétablit ensuite. Deux nouveaux réglages permettent de définir le seuil et la baisse de prix par palier
-- Simplification de l'enregistrement de l'onglet du mod, pour une navigation à la manette plus fiable
-
-Changelog 1.1.0.0:
-- Nouvelle option: recalcul quotidien du marché, pour les parties avec plusieurs jours par mois
-- Groupes de produits simplifiés de 14 à 6 catégories plus réalistes, pour des fluctuations de marché plus fréquentes
-- Aperçu du marché actualisé: colonnes Groupe et Stock ajoutées, en-têtes de colonnes triables
-
-Changelog 1.0.2.0:
-- Ajout de la langue italienne (merci à FirenzeIT)
-
-Changelog 1.0.1.0:
-- Ajustements de l'interface utilisateur pour une meilleure lisibilité
-- Traductions FR révisées]]></fr>
+- Compatibilité avec la version actuelle du jeu]]></fr>
     </description>
     <l10n filenamePrefix="languages/l10n" />
     <iconFilename>icon_DynamicMarket.dds</iconFilename>
