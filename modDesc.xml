@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<modDesc descVersion="115">
+<modDesc descVersion="116">
     <author>Nalathan</author>
-    <version>1.3.3.0</version>
+    <version>1.4.0.1</version>
     <title>
         <en>Dynamic Market</en>
         <de>Dynamischer Markt</de>
@@ -40,6 +40,10 @@ Multiplayer
 
 GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 Bug reports please only via GitHub or Forbidden Mods. Comments on other download sites cannot be read or answered.
+
+Changelog 1.4.0.1:
+- Bales and pallets in bale and pallet storages now count towards your stock, including the storage location
+- The "In your storage" column of the Market News only lists goods that can be sold on the map
 
 Changelog 1.3.3.0:
 - Russian language added (thanks to Frezer89)
@@ -92,6 +96,10 @@ Mehrspieler
 GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 Fehlermeldungen bitte nur über GitHub oder Forbidden Mods. Kommentare auf anderen Download-Seiten können nicht gelesen oder beantwortet werden.
 
+Changelog 1.4.0.1:
+- Ballen und Paletten in Ballen- und Palettenlagern werden jetzt zum Lagerbestand gezählt, mit Lagerort
+- Die Spalte "In deinem Lager" in den Marktnachrichten zeigt nur noch Waren, die auf der Karte verkauft werden können
+
 Changelog 1.3.3.0:
 - Russische Sprache hinzugefügt (Dank an Frezer89)
 - Ukrainische Sprache hinzugefügt (Dank an MarkusVII)
@@ -142,6 +150,10 @@ Multijoueur
 
 GitHub: https://github.com/Nalathan01/FS_Dynamic_Market/issues
 Merci de signaler les bugs uniquement via GitHub ou Forbidden Mods. Les commentaires sur les autres sites de téléchargement ne peuvent pas être lus ni traités.
+
+Changelog 1.4.0.1 :
+- Les balles et palettes dans les entrepôts à balles et à palettes comptent désormais dans ton stock, avec leur emplacement
+- La colonne « Dans ton stock » des Actualités du marché n'affiche plus que les marchandises vendables sur la carte
 
 Changelog 1.3.3.0 :
 - Langue russe ajoutée (merci à Frezer89)

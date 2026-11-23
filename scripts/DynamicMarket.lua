@@ -3,7 +3,7 @@ DynamicMarket = {}
 DynamicMarket.MOD_NAME = g_currentModName or "FS25_DynamicMarket"
 DynamicMarket.MOD_DIR = g_currentModDirectory or ""
 DynamicMarket.LOG_PREFIX = "[DynamicMarket]"
-DynamicMarket.VERSION = "1.3.1.2"
+DynamicMarket.VERSION = "1.4.0.1"
 
 DynamicMarket.APPLY_CURVES = true
 
