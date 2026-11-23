@@ -2613,6 +2613,18 @@ function DynamicMarket:getStockLevelsByFillType(collectLocations)
                         self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, placeableName, placeableHotspot)
                     end
                 end
+
+                if placeable.spec_objectStorage ~= nil and placeable.getObjectStorageObjectInfos ~= nil then
+                    for _, objectInfo in ipairs(placeable:getObjectStorageObjectInfos() or {}) do
+                        local storedObject = type(objectInfo.objects) == "table" and objectInfo.objects[1] or nil
+                        local attributes = storedObject ~= nil and (storedObject.baleAttributes or storedObject.palletAttributes) or nil
+                        if type(attributes) == "table" and attributes.fillType ~= nil then
+                            local fillTypeIndex = tonumber(attributes.fillType) or self:getFillTypeIndexFromName(tostring(attributes.fillType))
+                            local fillLevel = (tonumber(attributes.fillLevel) or 0) * (tonumber(objectInfo.numObjects) or 0)
+                            self:addStockLevel(stockLevels, fillTypeIndex, fillLevel, locations, placeableName, placeableHotspot)
+                        end
+                    end
+                end
             end
         end
     end
