@@ -2106,6 +2106,27 @@ function DynamicMarket:canShowMarketNewsDialog()
     return true
 end
 
+function DynamicMarket:getSellableFillTypeSet()
+    local sellable = {}
+    local mission = g_currentMission
+    local storageSystem = mission ~= nil and mission.storageSystem or nil
+    if storageSystem == nil or storageSystem.getUnloadingStations == nil then
+        return sellable
+    end
+
+    local farmId = mission.getFarmId ~= nil and mission:getFarmId() or nil
+    for _, station in pairs(storageSystem:getUnloadingStations() or {}) do
+        if station ~= nil and station.isa ~= nil and station:isa(SellingStation) and not station.hideFromPricesMenu and station.acceptedFillTypes ~= nil and station.ownerFarmId ~= farmId then
+            for fillTypeIndex, isAccepted in pairs(station.acceptedFillTypes) do
+                if isAccepted == true then
+                    sellable[fillTypeIndex] = true
+                end
+            end
+        end
+    end
+    return sellable
+end
+
 function DynamicMarket:getStockTitlesByGroup()
     local titlesByGroup = {}
     local mission = g_currentMission
@@ -2115,8 +2136,9 @@ function DynamicMarket:getStockTitlesByGroup()
         return titlesByGroup
     end
 
+    local sellableFillTypes = self:getSellableFillTypeSet()
     for fillTypeIndex, stockLevel in pairs(self:getStockLevelsByFillType()) do
-        if tonumber(stockLevel) ~= nil and stockLevel > 0 then
+        if tonumber(stockLevel) ~= nil and stockLevel > 0 and sellableFillTypes[fillTypeIndex] == true then
             local fillType = self:getFillTypeByIndex(fillTypeIndex)
             if fillType ~= nil then
                 local groupName = self:getGroup(fillType)
